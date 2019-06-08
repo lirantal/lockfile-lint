@@ -14,7 +14,7 @@
     "test:watch": "jest --watch",
     "coverage:view": "opn coverage/lcov-report/index.html",
     "commit": "git-cz",
-    "docs": "npm run docs:code && npm run docs:api",
+    "docs": "yarn run docs:code && yarn run docs:api",
     "docs:api": "doxdox *.js --layout bootstrap --output docs/index.html",
     "docs:code": "docco *.js --output docs/code",
     "semantic-release": "semantic-release"
@@ -26,7 +26,7 @@
   },
   "license": "Apache-2.0",
   "keywords": [
-    "lockfile, lock file, lint, linter, parse, npm, yarn "
+    "lockfile, lock file, lint, linter, parse, npm, yarn"
   ],
   "homepage": "https://github.com/lirantal/lockfile-lint",
   "bugs": {
@@ -37,8 +37,8 @@
     "url": "https://github.com/lirantal/lockfile-lint.git"
   },
   "dependencies": {
-    "debug": "^4.1.0",
-    "yargs": "^13.2.4"
+    "@yarnpkg/lockfile": "^1.1.0",
+    "debug": "^4.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.2.1",
@@ -63,7 +63,7 @@
     "husky": "^1.2.1",
     "jest": "23.6",
     "lint-staged": "^8.1.0",
-    "opn-cli": "^3.1.0",
+    "opn-cli": "3.1.0",
     "prettier-standard": "^8.0.1",
     "semantic-release": "^15.3.2"
   },
@@ -95,15 +95,14 @@
     "hooks": {
       "commit-msg": "commitlint --env HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged",
-      "post-merge": "npm install",
-      "pre-push": "npm run lint && npm run test"
+      "post-merge": "yarn install",
+      "pre-push": "yarn run lint && yarn run test"
     }
   },
   "lint-staged": {
     "linters": {
       "**/*.js": [
-        "prettier-standard",
-        "git add"
+        "prettier-standard"
       ]
     }
   },
