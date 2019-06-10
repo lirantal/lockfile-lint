@@ -7,6 +7,15 @@
     "email": "liran.tal@gmail.com",
     "url": "https://github.com/lirantal"
   },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier-standard '**/*.js'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage:view": "open-cli coverage/lcov-report/index.html",
+    "commit": "git-cz"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -16,6 +25,37 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^3.14.1"
+    "lerna": "^3.14.1",
+    "@commitlint/cli": "8.0.0",
+    "@commitlint/config-conventional": "8.0.0",
+    "commitizen": "3.1.1",
+    "cz-conventional-changelog": "2.1.0",
+    "husky": "2.4.0",
+    "lint-staged": "^8.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint --env HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged",
+      "post-merge": "yarn install",
+      "pre-push": "yarn run lint && yarn run test"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "**/*.js": [
+        "prettier-standard"
+      ]
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
