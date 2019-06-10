@@ -7,6 +7,13 @@
     "node": ">=8.0.0"
   },
   "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier-standard '**/*.js'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage:view": "open-cli coverage/lcov-report/index.html",
+    "commit": "git-cz",
     "docs": "yarn run docs:code && yarn run docs:api",
     "docs:api": "doxdox *.js --layout bootstrap --output docs/index.html",
     "docs:code": "docco *.js --output docs/code",

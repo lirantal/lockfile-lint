@@ -7,15 +7,6 @@
     "email": "liran.tal@gmail.com",
     "url": "https://github.com/lirantal"
   },
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier-standard '**/*.js'",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "coverage:view": "open-cli coverage/lcov-report/index.html",
-    "commit": "git-cz"
-  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -38,7 +29,7 @@
       "commit-msg": "commitlint --env HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged",
       "post-merge": "yarn install",
-      "pre-push": "yarn run lint && yarn run test"
+      "pre-push": "lerna run lint && lerna run test"
     }
   },
   "lint-staged": {
