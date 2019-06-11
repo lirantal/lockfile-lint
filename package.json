@@ -7,6 +7,9 @@
     "email": "liran.tal@gmail.com",
     "url": "https://github.com/lirantal"
   },
+  "scripts": {
+    "lerna": "lerna"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
