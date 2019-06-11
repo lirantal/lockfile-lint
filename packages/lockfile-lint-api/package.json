@@ -24,6 +24,12 @@
     "email": "liran.tal@gmail.com",
     "url": "https://github.com/lirantal"
   },
+  "files": [
+    "*.js",
+    "src/**",
+    "__tests__/**",
+    "jsdoc.json"
+  ],
   "license": "Apache-2.0",
   "keywords": [
     "lockfile, lock file, lint, linter, parse, npm, yarn"
