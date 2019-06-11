@@ -44,7 +44,7 @@ The following lockfile validators are supported
 # Example
 
 ```js
-const {ValidatorHost, ParseLockFile} = require('lockfile-lint-api')
+const {ValidateHost, ParseLockFile} = require('lockfile-lint-api')
 
 // path to the lockfile
 const yarnLockFilePath = '/path/to/my/yarn.lock'
@@ -63,7 +63,7 @@ const lockfile = parser.parseSync()
 
 // now instantiate a validator object with those
 // list of packages
-const validator = new ValidatorHost({packages: lockfile.object})
+const validator = new ValidateHost({packages: lockfile.object})
 try {
   // validation is synchronous and is being called
   // with 'npm' as a shortcut for the npm registry
