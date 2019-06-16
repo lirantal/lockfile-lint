@@ -32,7 +32,14 @@
   ],
   "license": "Apache-2.0",
   "keywords": [
-    "lockfile, lock file, lint, linter, parse, npm, yarn"
+    "lockfile",
+    "lock",
+    "file",
+    "lint",
+    "linter",
+    "parse",
+    "npm",
+    "yarn"
   ],
   "homepage": "https://github.com/lirantal/lockfile-lint",
   "bugs": {
