@@ -14,14 +14,26 @@ module.exports = class ValidateHttps {
   }
 
   validate () {
+    let validationResult = {
+      type: 'success',
+      errors: []
+    }
+
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
       const packageResolvedURL = new URL(packageMetadata.resolved)
 
       if (packageResolvedURL.protocol !== HTTPS_PROTOCOL) {
-        throw new Error(`detected non-https protocol used for package: ${packageName}`)
+        validationResult.errors.push({
+          message: `detected non-https protocol used for package: ${packageName}`,
+          package: packageName
+        })
       }
     }
 
-    return true
+    if (validationResult.errors.length !== 0) {
+      validationResult.type = 'error'
+    }
+
+    return validationResult
   }
 }

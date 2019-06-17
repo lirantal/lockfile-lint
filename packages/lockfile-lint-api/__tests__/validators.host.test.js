@@ -18,7 +18,6 @@ describe('Validator: Host', () => {
   })
 
   it('validator should fail if not allowed host is used for a resource', () => {
-    const failedPackage = '@babel/code-frame'
     const mockedPackages = {
       '@babel/code-frame': {
         resolved: 'https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz'
@@ -32,9 +31,20 @@ describe('Validator: Host', () => {
     }
 
     const validator = new ValidatorHost({packages: mockedPackages})
-    expect(() => {
-      validator.validate(['npm'])
-    }).toThrowError(`detected invalid origin for package: ${failedPackage}`)
+    const a = validator.validate(['npm'])
+    expect(validator.validate(['npm'])).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message: 'detected invalid origin for package: @babel/code-frame',
+          package: '@babel/code-frame'
+        },
+        {
+          message: 'detected invalid origin for package: meow',
+          package: 'meow'
+        }
+      ]
+    })
   })
 
   it('validator should succeed if all resources are from a valid host alias', () => {

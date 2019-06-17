@@ -28,9 +28,15 @@ describe('Validator: HTTPS', () => {
     }
 
     const validator = new ValidatorHTTPS({packages: mockedPackages})
-    expect(() => {
-      validator.validate()
-    }).toThrowError(`detected non-https protocol used for package: ${failedPackage}`)
+    expect(validator.validate()).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message: `detected non-https protocol used for package: ${failedPackage}`,
+          package: failedPackage
+        }
+      ]
+    })
   })
 
   it('validator should succeed if all resources are https', () => {
@@ -47,8 +53,9 @@ describe('Validator: HTTPS', () => {
     }
 
     const validator = new ValidatorHTTPS({packages: mockedPackages})
-    expect(() => {
-      validator.validate()
-    }).not.toThrow()
+    expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
   })
 })

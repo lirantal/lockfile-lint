@@ -41,6 +41,69 @@ The following lockfile validators are supported
 | ValidateHttps | validates the use of HTTPS as protocol schema for all resources                 | ✅          |
 | ValidateHost  | validates a whitelist of allowed hosts to be used for resources in the lockfile | ✅          |
 
+## Success and failures
+
+When validators encounter errors they will throw an exception, and on either success or failure in validating data they will always return a descriptive object for the validation task.
+
+### Successful validation
+
+When validation is successful the following object will be returned from the validating function:
+
+```json
+{
+  "type": "success",
+  "errors": []
+}
+```
+
+### Failed validation
+
+When validation has failed the following object will be returned from the validating function:
+
+```json
+{
+  "type": "error",
+  "errors": [
+    {
+      "package": "@babel/cli",
+      "message": "detected invalid origin for package: @babel/cli"
+    }
+  ]
+}
+```
+
+Notes about the returned object:
+
+- An errors object will always return an array of errors metadata, even if there's only one error associated with the validation being performed
+- All errors should always have a message
+- The availability of the `package` property and other metadata depends on the specific validators being used
+
+### Example
+
+```js
+const validator = new ValidateHost({packages: lockfile.object})
+let result
+try {
+  result = validator.validate(['npm'])
+} catch (error) {
+  // something bad happened during validation and the validation
+  // process couldn't take place
+}
+
+console.log(result)
+/* prints
+{
+  "type": "error",
+  "errors": [
+    {
+      "message": "detected invalid origin for package: meow",
+      "package": "meow"
+    }
+  ]
+}
+*/
+```
+
 # Example
 
 ```js
@@ -64,14 +127,19 @@ const lockfile = parser.parseSync()
 // now instantiate a validator object with those
 // list of packages
 const validator = new ValidateHost({packages: lockfile.object})
+let result
 try {
   // validation is synchronous and is being called
   // with 'npm' as a shortcut for the npm registry
   // host to validate all lockfile resources are
   // whitelisted to the npm host
-  validator.validate(['npm'])
+  result = validator.validate(['npm'])
 } catch (error) {
-  // may throw an error: detected invalid origin for package
+  // couldn't process the validation
+}
+
+if (result.type === 'success') {
+  // validation succeeded
 }
 ```
 
