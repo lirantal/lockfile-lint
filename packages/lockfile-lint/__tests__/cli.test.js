@@ -1,5 +1,6 @@
 'use strict'
 
+// eslint-disable-next-line security/detect-child-process
 const childProcess = require('child_process')
 const cliExecPath = `${__dirname}/../bin/lockfile-lint.js`
 
@@ -58,7 +59,7 @@ describe('CLI tests', () => {
     })
   })
 
-  test('Linting a file that has wrong origin should display an error message and use exit code 1', done => {
+  test('Linting a file that has wrong origin should return exit code 1', done => {
     const process = childProcess.spawn(cliExecPath, [
       '--type',
       'yarn',
@@ -66,11 +67,6 @@ describe('CLI tests', () => {
       '__tests__/fixtures/yarn-only-http.lock',
       '--validate-https'
     ])
-
-    let output = ''
-    process.stderr.on('data', chunk => {
-      output += chunk
-    })
 
     process.on('close', exitCode => {
       expect(exitCode).toBe(1)

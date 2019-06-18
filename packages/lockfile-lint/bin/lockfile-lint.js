@@ -24,6 +24,7 @@ validators.forEach((Validator, commandArgument) => {
 
   let validationResult
 
+  // eslint-disable-next-line security/detect-object-injection
   try {
     validationResult = Validator({
       path: cli['path'],
