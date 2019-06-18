@@ -24,6 +24,12 @@ describe('Main CLI logic', () => {
       expect(result.validatorCount).toEqual(1)
       expect(result.validatorSuccesses).toEqual(0)
     })
+
+    test('should handle exceptions when validators arent provided for runValidators method', () => {
+      expect(() => {
+        main.runValidators()
+      }).toThrow('provided object must have a validators array list')
+    })
   })
 
   describe('validateHttp', () => {

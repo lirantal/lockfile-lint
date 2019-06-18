@@ -8,7 +8,7 @@ module.exports = {
   ValidateHttpsManager
 }
 
-function ValidateHostManager ({path, type, validatorOptions} = {}) {
+function ValidateHostManager ({path, type, validatorOptions}) {
   debug('validate-host-manager')(
     `invoked with validator options: ${JSON.stringify(validatorOptions)}`
   )
@@ -24,7 +24,7 @@ function ValidateHostManager ({path, type, validatorOptions} = {}) {
   return validator.validate(validatorOptions)
 }
 
-function ValidateHttpsManager ({path, type, validatorOptions} = {}) {
+function ValidateHttpsManager ({path, type, validatorOptions}) {
   debug('validate-host-manager')(
     `invoked with validator options: ${JSON.stringify(validatorOptions)}`
   )

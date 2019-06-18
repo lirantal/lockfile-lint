@@ -13,6 +13,10 @@ function runValidators ({type, path, validators} = {}) {
   let validatorFailures = 0
   let validatorSuccesses = 0
 
+  if (!Array.isArray(validators)) {
+    throw new Error('provided object must have a validators array list')
+  }
+
   validators.forEach(validator => {
     const validatorFunction = validatorFunctions.get(validator.name)
     if (!validatorFunction) {
