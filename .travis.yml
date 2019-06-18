@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - '8'
+  - '10'
+install:
+  - yarn install --ignore-engines
+  - yarn add -g codecov
+before_script:
+  - yarn lerna run lint
+script:
+  - yarn lerna run test --stream
+  - codecov
+after_success:
+  - yarn lerna publish
