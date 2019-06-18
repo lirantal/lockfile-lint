@@ -4,7 +4,7 @@ node_js:
   - '10'
 install:
   - yarn install --ignore-engines
-  - yarn add -g codecov
+  - yarn global add codecov
 before_script:
   - yarn lerna run lint
 script:
