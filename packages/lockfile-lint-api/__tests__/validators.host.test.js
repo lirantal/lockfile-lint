@@ -31,7 +31,6 @@ describe('Validator: Host', () => {
     }
 
     const validator = new ValidatorHost({packages: mockedPackages})
-    const a = validator.validate(['npm'])
     expect(validator.validate(['npm'])).toEqual({
       type: 'error',
       errors: [
