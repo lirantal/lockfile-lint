@@ -38,7 +38,9 @@
   "lint-staged": {
     "linters": {
       "**/*.js": [
-        "prettier-standard"
+        "prettier-standard",
+        "lerna run lint",
+        "git add"
       ]
     }
   },
