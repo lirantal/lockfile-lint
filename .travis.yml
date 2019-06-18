@@ -10,9 +10,13 @@ before_script:
 script:
   - yarn lerna run test --stream
   - codecov
+after_success:
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+  - git remote set-url origin https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
+  - git checkout master
 deploy:
   provider: script
-  script: 'git checkout master && yarn lerna publish'
+  script: 'yarn lerna publish'
   skip_cleanup: true
   on:
     node: '10'
