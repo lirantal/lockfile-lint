@@ -96,8 +96,7 @@
     ],
     "collectCoverageFrom": [
       "index.js",
-      "src/**/*.{js,ts}",
-      "bin/**/*.{js,ts}"
+      "src/**/*.{js,ts}"
     ],
     "testMatch": [
       "**/*.test.js"
