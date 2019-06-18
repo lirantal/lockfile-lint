@@ -12,8 +12,8 @@ script:
   - codecov
 deploy:
   provider: script
-  script: 'yarn lerna publish'
-  skip_cleanup: true
+  script: 'git checkout master && yarn lerna publish'
+  skip_cleanup: false
   on:
     node: '10'
     branch: master
