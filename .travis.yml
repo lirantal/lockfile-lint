@@ -13,7 +13,7 @@ script:
 deploy:
   provider: script
   script: 'git checkout master && yarn lerna publish'
-  skip_cleanup: false
+  skip_cleanup: true
   on:
     node: '10'
     branch: master
