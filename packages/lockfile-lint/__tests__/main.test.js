@@ -3,6 +3,29 @@
 const main = require('../src/main')
 
 describe('Main CLI logic', () => {
+  describe('Invoking validators should handle errors and defaults', () => {
+    test('when no validator function is provided expect to fail', () => {
+      const lockfilePath = `${__dirname}/fixtures/yarn-only-http.lock`
+      const lockfileType = 'yarn'
+      const validators = [
+        {
+          name: 'validateHttps',
+          options: []
+        }
+      ]
+
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: lockfileType,
+        validators
+      })
+
+      expect(result.validatorFailures).toEqual(2)
+      expect(result.validatorCount).toEqual(1)
+      expect(result.validatorSuccesses).toEqual(0)
+    })
+  })
+
   describe('validateHttp', () => {
     test('a failing validator should return proper validation failed object', () => {
       const lockfilePath = `${__dirname}/fixtures/yarn-only-http.lock`
