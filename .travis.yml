@@ -10,5 +10,10 @@ before_script:
 script:
   - yarn lerna run test --stream
   - codecov
-after_success:
-  - yarn lerna publish
+deploy:
+  provider: script
+  script: 'yarn lerna publish'
+  skip_cleanup: true
+  on:
+    node: '10'
+    branch: master
