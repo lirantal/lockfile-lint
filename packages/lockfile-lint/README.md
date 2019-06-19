@@ -7,12 +7,12 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.org/package/lockfile-lint"><img src="https://badgen.net/npm/v/lockfile-lint" alt="npm version"/></a>
+<a href="https://www.npmjs.org/package/lockfile-lint"><img src="https://badgen.net/npm/v/lockfile-lint" alt="npm version"/></a>
   <a href="https://www.npmjs.org/package/lockfile-lint"><img src="https://badgen.net/npm/license/lockfile-lint" alt="license"/></a>
   <a href="https://www.npmjs.org/package/lockfile-lint"><img src="https://badgen.net/npm/dt/lockfile-lint" alt="downloads"/></a>
   <a href="https://travis-ci.org/lirantal/lockfile-lint"><img src="https://badgen.net/travis/lirantal/lockfile-lint" alt="build"/></a>
   <a href="https://codecov.io/gh/lirantal/lockfile-lint"><img src="https://badgen.net/codecov/c/github/lirantal/lockfile-lint" alt="codecov"/></a>
-  <a href="https://snyk.io/test/github/lirantal/lockfile-lint"><img src="https://snyk.io/test/github/lirantal/lockfile-lint/badge.svg" alt="Known Vulnerabilities"/></a>
+<a href="https://snyk.io/test/npm/lockfile-lint"><img src="https://snyk.io/test/npm/lockfile-lint/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/npm/lockfile-lint" style="max-width:100%;"></a>
   <a href="https://github.com/nodejs/security-wg/blob/master/processes/responsible_disclosure_template.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Security Responsible Disclosure" /></a>
 </p>
 
