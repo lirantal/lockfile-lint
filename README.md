@@ -7,8 +7,11 @@
 </p>
 
 <p align="center">
+  <a href="https://travis-ci.org/lirantal/lockfile-lint"><img src="https://badgen.net/travis/lirantal/lockfile-lint" alt="build"/></a>
+  <a href="https://codecov.io/gh/lirantal/lockfile-lint"><img src="https://badgen.net/codecov/c/github/lirantal/lockfile-lint" alt="codecov"/></a>
   <a href="https://www.npmjs.org/package/lockfile-lint-api"><img src="https://badgen.net/npm/license/lockfile-lint-api" alt="license"/></a>
   <a href="https://github.com/nodejs/security-wg/blob/master/processes/responsible_disclosure_template.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Security Responsible Disclosure" /></a>
+     <a href="https://github.com/lirantal/lockfile-lint#usage"><img src="https://badgen.net/badge/npx/lockfile-lint%20--path%20yarn.lock%20--type%20yarn%20--validate-https%20--allowed-hosts%20npm/blue?icon=npm" alt="npx lockfile-lint" /></a>
 </p>
 
 # About
@@ -21,6 +24,12 @@ Exactly!
 Lint your lockfiles to ensure they adhere to pre-defined security policies and mitigate this vector of attack.
 
 # Usage
+
+Easily invoked with npx on any project and lint it:
+
+![carbon](https://user-images.githubusercontent.com/316371/59755684-09923200-9291-11e9-9add-6886dfc6689a.png)
+
+Refer to [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint) for more details on the CLI usage.
 
 Two methods are available to lint a lockfile:
 
