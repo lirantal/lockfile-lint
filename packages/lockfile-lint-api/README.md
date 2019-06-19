@@ -145,7 +145,7 @@ if (result.type === 'success') {
 
 # Contributing
 
-Please consult [CONTIRBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.
+Please consult [CONTIRBUTING](../../CONTRIBUTING.md) for guidelines on contributing to this project.
 
 # Author
 

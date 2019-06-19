@@ -1,5 +1,6 @@
-<p align="center"><h1 align="center">
-  lockfile-lint
+packages/lockfile-lint-api/README.md<p align="center"><h1 align="center">
+lockfile-lint
+
 </h1>
 
 <p align="center">
@@ -44,16 +45,18 @@ DEBUG=* lockfile-lint --path yarn.lock --type yarn --allowed-hosts npm
 
 # CLI command options
 
-| command line argument    | description                                                                                                                                                                                                                                                                                | implemented |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
-| `--path`, `-p`           | path to the lockfile                                                                                                                                                                                                                                                                       | ✅          |
-| `--type`, `-t`           | lockfile type, options are `npm` or `yarn`                                                                                                                                                                                                                                                 | ✅          |
-| `--validate-https`, `-s` | validates the use of HTTPS as protocol schema for all resources in the lockfile                                                                                                                                                                                                            | ✅          |
-| `--allowed-hosts`, `-a`  | validates a whitelist of allowed hosts to be used for all resources in the lockfile. Supported short-hands aliases are `npm`, `yarn`, and `verdaccio` which will match URLs `https://registry.npmjs.org`, `https://registry.yarnpkg.com` and `https://registry.verdaccio.org` respectively | ✅          |
+| command line argument        | description                                                                                                                                                                                                                                                                                | implemented    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| `--path`, `-p`               | path to the lockfile                                                                                                                                                                                                                                                                       | ✅             |
+| `--type`, `-t`               | lockfile type, options are `npm` or `yarn`                                                                                                                                                                                                                                                 | ✅             |
+| `--validate-https`, `-s`     | validates the use of HTTPS as protocol schema for all resources in the lockfile                                                                                                                                                                                                            | ✅             |
+| `--allowed-hosts`, `-a`      | validates a whitelist of allowed hosts to be used for all resources in the lockfile. Supported short-hands aliases are `npm`, `yarn`, and `verdaccio` which will match URLs `https://registry.npmjs.org`, `https://registry.yarnpkg.com` and `https://registry.verdaccio.org` respectively | ✅             |
+| `--validate-checksum`, `-c`  | check that all resources include a checksum                                                                                                                                                                                                                                                | ❌ PRs welcome |
+| `--validate-integrity`, `-i` | check that all resources include an integrity field                                                                                                                                                                                                                                        | ❌ PRs welcome |
 
 # Contributing
 
-Please consult [CONTIRBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.
+Please consult [CONTIRBUTING](../../CONTRIBUTING.md) for guidelines on contributing to this project.
 
 # Author
 
