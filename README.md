@@ -11,6 +11,7 @@
   <a href="https://codecov.io/gh/lirantal/lockfile-lint"><img src="https://badgen.net/codecov/c/github/lirantal/lockfile-lint" alt="codecov"/></a>
   <a href="https://www.npmjs.org/package/lockfile-lint-api"><img src="https://badgen.net/npm/license/lockfile-lint-api" alt="license"/></a>
   <a href="https://github.com/nodejs/security-wg/blob/master/processes/responsible_disclosure_template.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Security Responsible Disclosure" /></a>
+  <a href="https://twitter.com/liran_tal/" alt="follow liran_tal twitter"><img src="https://badgen.net/twitter/follow/liran_tal" /></a>
      <a href="https://github.com/lirantal/lockfile-lint#usage"><img src="https://badgen.net/badge/npx/lockfile-lint%20--path%20yarn.lock%20--type%20yarn%20--validate-https%20--allowed-hosts%20npm/blue?icon=npm" alt="npx lockfile-lint" /></a>
 </p>
 
