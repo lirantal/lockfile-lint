@@ -52,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint.git"
+    "url": "https://github.com/lirantal/lockfile-lint.git"
   },
   "dependencies": {
     "debug": "^4.1.0",
