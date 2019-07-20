@@ -1,28 +1,28 @@
 /* eslint-disable no-new */
 'use strict'
 
-const ParseLockFile = require('../src/ParseLockFile')
+const ParseLockfile = require('../src/ParseLockfile')
 const path = require('path')
 
-describe('ParseLockFile', () => {
+describe('ParseLockfile', () => {
   it('instantiating a parser with invalid object throws an error', () => {
     expect(() => {
-      new ParseLockFile()
+      new ParseLockfile()
     }).toThrowError('expecting options object')
   })
 
   it('instantiating a parser with string type throws an error', () => {
     expect(() => {
-      new ParseLockFile('/path/to/file')
+      new ParseLockfile('/path/to/file')
     }).toThrowError('expecting options object')
   })
 
   it('parsing a yarn lockfile returns an object with packages', () => {
-    const mockYarnLockFilePath = path.join(__dirname, './__fixtures__/yarn.lock')
+    const mockYarnLockfilePath = path.join(__dirname, './__fixtures__/yarn.lock')
     const options = {
-      lockFilePath: mockYarnLockFilePath
+      lockfilePath: mockYarnLockfilePath
     }
-    const parser = new ParseLockFile(options)
+    const parser = new ParseLockfile(options)
     const lockfile = parser.parseSync()
 
     expect(lockfile.type).toEqual('success')
