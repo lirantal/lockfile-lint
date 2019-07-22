@@ -34,7 +34,7 @@ class ParseLockfile {
 
     // eslint-disable-next-line security/detect-non-literal-fs-filename
     const file = fs.readFileSync(this.options.lockfilePath, 'utf8')
-    return lockfileParser(file)
+    return lockfileParser.call(this, file)
   }
 
   resolvePkgMgrForLockfile () {
@@ -69,12 +69,46 @@ class ParseLockfile {
     return lockfileResolverByFilename[baseFilename]
   }
 
-  parseYarnLockfile (file) {
-    return yarnLockfileParser.parse(file)
+  parseYarnLockfile (lockfileBuffer) {
+    return yarnLockfileParser.parse(lockfileBuffer)
   }
 
-  // @TODO
-  parseNpmLockfile () {}
+  parseNpmLockfile (lockfileBuffer) {
+    const packageJsonParsed = JSON.parse(lockfileBuffer)
+
+    // transform original format of npm's package-json
+    // to match yarns so we have a unified format to validate
+    // against
+    const npmDepsTree = packageJsonParsed.dependencies
+    const flattenedDepTree = this._flattenNpmDepsTree(npmDepsTree)
+
+    return {
+      type: 'success',
+      object: flattenedDepTree
+    }
+  }
+
+  _flattenNpmDepsTree (npmDepsTree) {
+    let flattenedDepTree = {}
+    let flattenedNestedDepsTree = {}
+    for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
+      const depMetadataShortend = {
+        version: depMetadata.version,
+        resolved: depMetadata.resolved,
+        integrity: depMetadata.integrity,
+        requires: depMetadata.requires
+      }
+
+      flattenedDepTree[`${depName}@${depMetadata.version}`] = depMetadataShortend
+
+      const nestedDepsTree = depMetadata.dependencies
+      if (nestedDepsTree && Object.keys(nestedDepsTree).length !== 0) {
+        flattenedNestedDepsTree = this._flattenNpmDepsTree(nestedDepsTree)
+      }
+    }
+
+    return Object.assign({}, flattenedDepTree, flattenedNestedDepsTree)
+  }
 }
 
 module.exports = ParseLockfile
