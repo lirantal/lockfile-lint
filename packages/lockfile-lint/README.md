@@ -1,4 +1,4 @@
-packages/lockfile-lint-api/README.md<p align="center"><h1 align="center">
+<p align="center"><h1 align="center">
 lockfile-lint
 
 </h1>
