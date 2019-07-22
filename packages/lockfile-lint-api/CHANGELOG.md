@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@1.0.7...lockfile-lint-api@2.0.0) (2019-07-22)
+
+
+### Features
+
+* support npm lockfile parsing ([#2](https://github.com/lirantal/lockfile-lint/issues/2)) ([b94ab49](https://github.com/lirantal/lockfile-lint/commit/b94ab49))
+
+
+### BREAKING CHANGES
+
+* exported lockfile parser util renamed
+
+* feat(parsers): compatability with new yarn/npm parsers
+
+BREAKING CHANGE
+
+* feat(parsers): support npm parser
+
+* build(yarn): update CI version of yarn
+
+* build(cache): disable all cache
+
+* fix(filenames): case-sensitive filename changed
+
+* fix(file): removed old file
+
+
+
+
+
 ## [1.0.7](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@1.0.6...lockfile-lint-api@1.0.7) (2019-06-19)
 
 
