@@ -1,6 +1,6 @@
 'use strict'
 
-const {ValidateHost, ParseLockFile, ValidateHttps} = require('lockfile-lint-api')
+const {ValidateHost, ParseLockfile, ValidateHttps} = require('lockfile-lint-api')
 const debug = require('debug')
 
 module.exports = {
@@ -14,10 +14,11 @@ function ValidateHostManager ({path, type, validatorOptions}) {
   )
 
   const options = {
-    lockFilePath: path
+    lockfilePath: path,
+    lockfileType: type
   }
 
-  const parser = new ParseLockFile(options)
+  const parser = new ParseLockfile(options)
   const lockfile = parser.parseSync()
   const validator = new ValidateHost({packages: lockfile.object})
 
@@ -30,10 +31,11 @@ function ValidateHttpsManager ({path, type, validatorOptions}) {
   )
 
   const options = {
-    lockFilePath: path
+    lockfilePath: path,
+    lockfileType: type
   }
 
-  const parser = new ParseLockFile(options)
+  const parser = new ParseLockfile(options)
   const lockfile = parser.parseSync()
   const validator = new ValidateHttps({packages: lockfile.object})
 
