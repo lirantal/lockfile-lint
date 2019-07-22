@@ -20,6 +20,6 @@ describe('Validators', () => {
 
 describe('Utils', () => {
   it('library should export ParseLockFile util', () => {
-    expect(app).toHaveProperty('ParseLockFile')
+    expect(app).toHaveProperty('ParseLockfile')
   })
 })

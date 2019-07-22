@@ -2,10 +2,10 @@
 
 const ValidateHost = require('./src/validators/ValidateHost')
 const ValidateHttps = require('./src/validators/ValidateHttps')
-const ParseLockFile = require('./src/ParseLockFile')
+const ParseLockfile = require('./src/ParseLockfile')
 
 module.exports = {
-  ParseLockFile,
+  ParseLockfile,
   ValidateHost,
   ValidateHttps
 }
