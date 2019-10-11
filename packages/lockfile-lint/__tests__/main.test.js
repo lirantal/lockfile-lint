@@ -118,4 +118,90 @@ describe('Main CLI logic', () => {
       expect(result.validatorSuccesses).toEqual(1)
     })
   })
+
+  describe('validateSchemes', () => {
+    test('should fail validating allowed schemes for a package-lock.json file', () => {
+      const lockfilePath = `${__dirname}/fixtures/package-lock-git-scheme.json`
+      const lockfileType = 'npm'
+      const validators = [
+        {
+          name: 'validateSchemes',
+          options: ['https']
+        }
+      ]
+
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: lockfileType,
+        validators
+      })
+
+      expect(result.validatorFailures).toEqual(2)
+      expect(result.validatorCount).toEqual(1)
+      expect(result.validatorSuccesses).toEqual(0)
+    })
+
+    test('should succeed validating allowed schemes for a package-lock.json file', () => {
+      const lockfilePath = `${__dirname}/fixtures/package-lock-git-scheme.json`
+      const lockfileType = 'npm'
+      const validators = [
+        {
+          name: 'validateSchemes',
+          options: ['https:', 'git+https:']
+        }
+      ]
+
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: lockfileType,
+        validators
+      })
+
+      expect(result.validatorFailures).toEqual(0)
+      expect(result.validatorCount).toEqual(1)
+      expect(result.validatorSuccesses).toEqual(1)
+    })
+
+    test('should fail validating allowed schemes for a yarn.lock file', () => {
+      const lockfilePath = `${__dirname}/fixtures/yarn-lock-schemes.lock`
+      const lockfileType = 'yarn'
+      const validators = [
+        {
+          name: 'validateSchemes',
+          options: ['https']
+        }
+      ]
+
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: lockfileType,
+        validators
+      })
+
+      expect(result.validatorFailures).toEqual(3)
+      expect(result.validatorCount).toEqual(1)
+      expect(result.validatorSuccesses).toEqual(0)
+    })
+
+    test('should succeed validating allowed schemes for a yarn.lock file', () => {
+      const lockfilePath = `${__dirname}/fixtures/yarn-lock-schemes.lock`
+      const lockfileType = 'yarn'
+      const validators = [
+        {
+          name: 'validateSchemes',
+          options: ['https:', 'git+https:']
+        }
+      ]
+
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: lockfileType,
+        validators
+      })
+
+      expect(result.validatorFailures).toEqual(0)
+      expect(result.validatorCount).toEqual(1)
+      expect(result.validatorSuccesses).toEqual(1)
+    })
+  })
 })

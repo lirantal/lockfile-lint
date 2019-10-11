@@ -9,7 +9,8 @@ debug(`parsed the following CLI arguments: ${JSON.stringify(cli)}`)
 let validators = []
 const supportedValidators = new Map([
   ['allowed-hosts', 'validateHosts'],
-  ['validate-https', 'validateHttps']
+  ['validate-https', 'validateHttps'],
+  ['allowed-schemes', 'validateSchemes']
 ])
 
 for (const [commandArgument, commandValue] of Object.entries(cli)) {

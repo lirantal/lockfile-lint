@@ -94,7 +94,7 @@ class ParseLockfile {
     for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
       const depMetadataShortend = {
         version: depMetadata.version,
-        resolved: depMetadata.resolved,
+        resolved: depMetadata.resolved ? depMetadata.resolved : depMetadata.version,
         integrity: depMetadata.integrity,
         requires: depMetadata.requires
       }

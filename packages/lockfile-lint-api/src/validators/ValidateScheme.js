@@ -2,13 +2,7 @@
 
 const {URL} = require('url')
 
-const REGISTRY = {
-  npm: 'registry.npmjs.org',
-  yarn: 'registry.yarnpkg.com',
-  verdaccio: 'registry.verdaccio.org'
-}
-
-module.exports = class ValidateHost {
+module.exports = class ValidateProtocol {
   constructor ({packages} = {}) {
     if (typeof packages !== 'object') {
       throw new Error('expecting an object passed to validator constructor')
@@ -17,8 +11,8 @@ module.exports = class ValidateHost {
     this.packages = packages
   }
 
-  validate (hosts) {
-    if (!Array.isArray(hosts)) {
+  validate (schemes) {
+    if (!Array.isArray(schemes)) {
       throw new Error('validate method requires an array')
     }
 
@@ -29,16 +23,10 @@ module.exports = class ValidateHost {
 
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
       const packageResolvedURL = new URL(packageMetadata.resolved)
-
-      const allowedHosts = hosts.map(hostValue => {
-        // eslint-disable-next-line security/detect-object-injection
-        return REGISTRY[hostValue] ? REGISTRY[hostValue] : hostValue
-      })
-
-      if (allowedHosts.indexOf(packageResolvedURL.host) === -1) {
+      if (schemes.indexOf(packageResolvedURL.protocol) === -1) {
         // throw new Error(`detected invalid origin for package: ${packageName}`)
         validationResult.errors.push({
-          message: `detected invalid host for package: ${packageName}`,
+          message: `detected invalid scheme for package: ${packageName}`,
           package: packageName
         })
       }

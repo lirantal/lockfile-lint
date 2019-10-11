@@ -35,7 +35,7 @@ describe('CLI tests', () => {
     })
   })
 
-  test('Linting a file that has wrong origin should display an error message and use exit code 1', done => {
+  test('Linting a file that has wrong host should display an error message and use exit code 1', done => {
     const process = childProcess.spawn(cliExecPath, [
       '--type',
       'yarn',
@@ -59,7 +59,7 @@ describe('CLI tests', () => {
     })
   })
 
-  test('Linting a file that has wrong origin should return exit code 1', done => {
+  test('Linting a file that has wrong host should return exit code 1', done => {
     const process = childProcess.spawn(cliExecPath, [
       '--type',
       'yarn',
