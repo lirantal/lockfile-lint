@@ -1,11 +1,16 @@
 'use strict'
 
 const debug = require('debug')('lockfile-lint')
-const {ValidateHostManager, ValidateHttpsManager} = require('../src/validators')
+const {
+  ValidateHostManager,
+  ValidateHttpsManager,
+  ValidateSchemeManager
+} = require('../src/validators')
 
 const validatorFunctions = new Map([
   ['validateHosts', ValidateHostManager],
-  ['validateHttps', ValidateHttpsManager]
+  ['validateHttps', ValidateHttpsManager],
+  ['validateSchemes', ValidateSchemeManager]
 ])
 
 function runValidators ({type, path, validators} = {}) {

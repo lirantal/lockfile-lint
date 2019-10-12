@@ -35,12 +35,8 @@ describe('Validator: Host', () => {
       type: 'error',
       errors: [
         {
-          message: 'detected invalid origin for package: @babel/code-frame',
+          message: 'detected invalid host for package: @babel/code-frame',
           package: '@babel/code-frame'
-        },
-        {
-          message: 'detected invalid origin for package: meow',
-          package: 'meow'
         }
       ]
     })
@@ -120,5 +116,30 @@ describe('Validator: Host', () => {
     expect(() => {
       validator.validate(null)
     }).toThrowError(`validate method requires an array`)
+  })
+
+  it('validator should allow for git-based URLs', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      },
+      meow: {
+        resolved: 'git+ssh://lirantal@github.com/lirantal/dockly.git#1234567890'
+      },
+      '@babel/generator': {
+        resolved: 'https://registry.npmjs.org/@babel/generator/-/generator-7.4.4.tgz'
+      }
+    }
+
+    const validator = new ValidatorHost({packages: mockedPackages})
+    expect(validator.validate(['npm', 'github.com'])).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message: 'detected invalid host for package: @babel/code-frame',
+          package: '@babel/code-frame'
+        }
+      ]
+    })
   })
 })
