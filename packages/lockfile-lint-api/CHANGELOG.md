@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@2.0.0...lockfile-lint-api@2.1.0) (2019-10-12)
+
+
+### Features
+
+* **schema:** support protocol schema and refactor host validators ([#12](https://github.com/lirantal/lockfile-lint/issues/12)) ([a483115](https://github.com/lirantal/lockfile-lint/commit/a483115))
+
+
+
+
+
 # [2.0.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@1.0.7...lockfile-lint-api@2.0.0) (2019-07-22)
 
 
