@@ -31,9 +31,9 @@ try {
     validators
   })
 } catch (error) {
-  console.error('ABORTING lockfile lint process due to error exceptions')
-  console.error(error.message)
-  console.error(error.stack)
+  console.error('ABORTING lockfile lint process due to error exceptions', '\n')
+  console.error(error.message, '\n')
+  console.error(error.stack, '\n')
   console.error('error: command failed with exit code 1')
   process.exit(1)
 }
