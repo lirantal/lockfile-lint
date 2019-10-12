@@ -36,10 +36,11 @@ npm install --save lockfile-lint-api
 
 The following lockfile validators are supported
 
-| Validator API | description                                                                     | implemented |
-| ------------- | ------------------------------------------------------------------------------- | ----------- |
-| ValidateHttps | validates the use of HTTPS as protocol schema for all resources                 | ✅          |
-| ValidateHost  | validates a whitelist of allowed hosts to be used for resources in the lockfile | ✅          |
+| Validator API   | description                                                                     | implemented |
+| --------------  | ------------------------------------------------------------------------------- | ----------- |
+| ValidateHttps   | validates the use of HTTPS as protocol schema for all resources                 | ✅          |
+| ValidateHost    | validates a whitelist of allowed hosts to be used for resources in the lockfile | ✅          |
+| ValidateScheme  | validates a whitelist of allowed URI schemes to be used for hosts               | ✅          |
 
 ## Success and failures
 
