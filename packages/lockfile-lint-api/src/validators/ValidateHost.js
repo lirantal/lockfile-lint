@@ -1,6 +1,7 @@
 'use strict'
 
 const {URL} = require('url')
+const PackageError = require('../common/PackageError')
 
 const REGISTRY = {
   npm: 'registry.npmjs.org',
@@ -28,7 +29,12 @@ module.exports = class ValidateHost {
     }
 
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
-      const packageResolvedURL = new URL(packageMetadata.resolved)
+      let packageResolvedURL = {}
+      try {
+        packageResolvedURL = new URL(packageMetadata.resolved)
+      } catch (error) {
+        throw new PackageError(packageName, error)
+      }
 
       const allowedHosts = hosts.map(hostValue => {
         // eslint-disable-next-line security/detect-object-injection
