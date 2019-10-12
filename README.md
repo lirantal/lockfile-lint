@@ -28,14 +28,20 @@ Lint your lockfiles to ensure they adhere to pre-defined security policies and m
 
 Easily invoked with npx on any project and lint it:
 
+```bash
+npx lockfile-lint --path yarn.lock --allowed-hosts npm yarn --validate-https
+```
+
+If lockfile-lint detects exceptions to the policies it will report them:
+
 ![carbon](https://user-images.githubusercontent.com/316371/59755684-09923200-9291-11e9-9add-6886dfc6689a.png)
 
 Refer to [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint) for more details on the CLI usage.
 
-Two methods are available to lint a lockfile:
+You can use `lockfile-lint` as a standalone CLI tool, or as an API library using the following npm packages:
 
-- [lockfile-lint-api](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint-api) - a library providing a programmatic API
 - [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint) - a CLI tool that can be easily integrated as a pre-commit hook or part of a CI/build
+- [lockfile-lint-api](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint-api) - a library providing a programmatic API
 
 # Author
 
