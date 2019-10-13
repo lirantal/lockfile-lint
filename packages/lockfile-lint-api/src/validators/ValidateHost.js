@@ -2,12 +2,7 @@
 
 const {URL} = require('url')
 const PackageError = require('../common/PackageError')
-
-const REGISTRY = {
-  npm: 'registry.npmjs.org',
-  yarn: 'registry.yarnpkg.com',
-  verdaccio: 'registry.verdaccio.org'
-}
+const {REGISTRY} = require('../common/constants')
 
 module.exports = class ValidateHost {
   constructor ({packages} = {}) {
