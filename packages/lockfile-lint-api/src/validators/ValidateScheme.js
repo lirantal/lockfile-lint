@@ -33,7 +33,7 @@ module.exports = class ValidateProtocol {
       if (schemes.indexOf(packageResolvedURL.protocol) === -1) {
         // throw new Error(`detected invalid origin for package: ${packageName}`)
         validationResult.errors.push({
-          message: `detected invalid scheme for package: ${packageName}`,
+          message: `detected invalid scheme(s) ${schemes} for package: ${packageName}`,
           package: packageName
         })
       }
