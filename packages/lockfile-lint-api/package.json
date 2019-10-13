@@ -25,10 +25,8 @@
     "url": "https://github.com/lirantal"
   },
   "files": [
-    "*.js",
-    "src/**",
-    "__tests__/**",
-    "jsdoc.json"
+    "index.js",
+    "src/**/*.js"
   ],
   "license": "Apache-2.0",
   "keywords": [
