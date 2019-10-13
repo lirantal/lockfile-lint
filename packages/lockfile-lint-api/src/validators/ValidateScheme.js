@@ -1,6 +1,7 @@
 'use strict'
 
 const {URL} = require('url')
+const PackageError = require('../common/PackageError')
 
 module.exports = class ValidateProtocol {
   constructor ({packages} = {}) {
@@ -22,7 +23,13 @@ module.exports = class ValidateProtocol {
     }
 
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
-      const packageResolvedURL = new URL(packageMetadata.resolved)
+      let packageResolvedURL = {}
+      try {
+        packageResolvedURL = new URL(packageMetadata.resolved)
+      } catch (error) {
+        throw new PackageError(packageName, error)
+      }
+
       if (schemes.indexOf(packageResolvedURL.protocol) === -1) {
         // throw new Error(`detected invalid origin for package: ${packageName}`)
         validationResult.errors.push({
