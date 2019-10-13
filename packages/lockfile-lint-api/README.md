@@ -113,7 +113,7 @@ const {ValidateHost, ParseLockFile} = require('lockfile-lint-api')
 // path to the lockfile
 const yarnLockFilePath = '/path/to/my/yarn.lock'
 const options = {
-  lockFilePath: yarnLockFilePath
+  lockfilePath: yarnLockFilePath
 }
 
 // instantiate a new parser with options object
