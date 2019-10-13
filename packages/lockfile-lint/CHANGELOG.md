@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@2.1.2...lockfile-lint@2.1.3) (2019-10-13)
+
+
+### Bug Fixes
+
+* **package:** remove tests and other files from published package ([#15](https://github.com/lirantal/lockfile-lint/issues/15)) ([1e61938](https://github.com/lirantal/lockfile-lint/commit/1e61938))
+
+
+
+
+
 ## [2.1.2](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@2.1.1...lockfile-lint@2.1.2) (2019-10-12)
 
 **Note:** Version bump only for package lockfile-lint
