@@ -4,7 +4,7 @@
 const fs = require('fs')
 const path = require('path')
 const yarnLockfileParser = require('@yarnpkg/lockfile')
-const {ParsingError, ERROR_KEYS} = require('./common/ParsingError')
+const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
 const {
   NO_OPTIONS,
   NO_PARSER_FOR_PATH,
@@ -12,7 +12,7 @@ const {
   READ_FAILED,
   PARSE_NPMLOCKFILE_FAILED,
   PARSE_YARNLOCKFILE_FAILED
-} = ERROR_KEYS
+} = ERROR_MESSAGES
 
 class ParseLockfile {
   /**
