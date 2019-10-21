@@ -30,11 +30,11 @@ describe('Validator: Protocol', () => {
       type: 'error',
       errors: [
         {
-          message: `detected invalid scheme(s) ${allowedProtocols} for package: meow`,
+          message: `detected invalid scheme(s) for package: meow\n    expected: ${allowedProtocols}\n    found: http:`,
           package: 'meow'
         },
         {
-          message: `detected invalid scheme(s) ${allowedProtocols} for package: @babel/generator`,
+          message: `detected invalid scheme(s) for package: @babel/generator\n    expected: ${allowedProtocols}\n    found: git+ssh:`,
           package: '@babel/generator'
         }
       ]
