@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@2.1.4...lockfile-lint-api@2.2.0) (2019-10-24)
+
+
+### Features
+
+* **errors:** user friendly error messages in lockfile parsing ([#22](https://github.com/lirantal/lockfile-lint/issues/22)) ([17654d0](https://github.com/lirantal/lockfile-lint/commit/17654d0))
+
+
+
+
+
 ## [2.1.4](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@2.1.3...lockfile-lint-api@2.1.4) (2019-10-15)
 
 
