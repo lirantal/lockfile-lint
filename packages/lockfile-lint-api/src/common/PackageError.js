@@ -4,7 +4,7 @@ module.exports = class PackageError extends Error {
   /**
    * constructor
    * @param {string} packageName - the name of the package where the error occured
-   * @param {string} error - the original error object
+   * @param {Error} error - the original error object
    */
   constructor (packageName = '', error = {}) {
     super()

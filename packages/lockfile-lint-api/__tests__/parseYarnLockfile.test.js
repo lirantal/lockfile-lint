@@ -23,4 +23,16 @@ describe('ParseLockfile Yarn', () => {
       })
     )
   })
+
+  it('parsing a yarn lockfile with invalid content throws an error', () => {
+    const mockYarnLockfilePath = path.join(__dirname, './__fixtures__/bad-yarn.lock')
+    const options = {
+      lockfilePath: mockYarnLockfilePath,
+      lockfileType: 'yarn'
+    }
+    const parser = new ParseLockfile(options)
+    expect(() => parser.parseSync()).toThrowError(
+      `Unable to parse yarn lockfile "${mockYarnLockfilePath}"`
+    )
+  })
 })

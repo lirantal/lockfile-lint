@@ -42,4 +42,16 @@ describe('ParseLockfile Npm', () => {
       })
     )
   })
+
+  it('parsing an npm lockfile with invalid content throws an error', () => {
+    const mockNpmLockfilePath = path.join(__dirname, './__fixtures__/bad-package-lock.json')
+    const options = {
+      lockfilePath: mockNpmLockfilePath,
+      lockfileType: 'npm'
+    }
+    const parser = new ParseLockfile(options)
+    expect(() => parser.parseSync()).toThrowError(
+      `Unable to parse npm lockfile "${mockNpmLockfilePath}"`
+    )
+  })
 })

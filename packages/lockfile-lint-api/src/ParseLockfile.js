@@ -4,6 +4,15 @@
 const fs = require('fs')
 const path = require('path')
 const yarnLockfileParser = require('@yarnpkg/lockfile')
+const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
+const {
+  NO_OPTIONS,
+  NO_PARSER_FOR_PATH,
+  NO_PARSER_FOR_TYPE,
+  READ_FAILED,
+  PARSE_NPMLOCKFILE_FAILED,
+  PARSE_YARNLOCKFILE_FAILED
+} = ERROR_MESSAGES
 
 class ParseLockfile {
   /**
@@ -14,12 +23,20 @@ class ParseLockfile {
    */
   constructor (options) {
     if (!options || typeof options !== 'object') {
-      throw new Error('expecting options object')
+      throw new ParsingError(NO_OPTIONS)
     }
 
     this.options = {}
     this.options.lockfilePath = options.lockfilePath
     this.options.lockfileType = options.lockfileType
+  }
+
+  /**
+   * Checks if lockfile type option was provided
+   * @return boolean
+   */
+  isLockfileTypeGiven () {
+    return typeof this.options.lockfileType === 'string' && this.options.lockfileType
   }
 
   /**
@@ -29,11 +46,20 @@ class ParseLockfile {
   parseSync () {
     const lockfileParser = this.resolvePkgMgrForLockfile()
     if (!lockfileParser) {
-      throw new Error('unable to find relevant lockfile parser')
+      if (this.isLockfileTypeGiven()) {
+        throw new ParsingError(NO_PARSER_FOR_TYPE, this.options.lockfileType)
+      }
+      throw new ParsingError(NO_PARSER_FOR_PATH, this.options.lockfilePath)
     }
 
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
-    const file = fs.readFileSync(this.options.lockfilePath, 'utf8')
+    let file
+    try {
+      // eslint-disable-next-line security/detect-non-literal-fs-filename
+      file = fs.readFileSync(this.options.lockfilePath, 'utf8')
+    } catch (error) {
+      throw new ParsingError(READ_FAILED, this.options.lockfilePath, error)
+    }
+
     return lockfileParser.call(this, file)
   }
 
@@ -46,7 +72,7 @@ class ParseLockfile {
     }
 
     let resolver
-    if (typeof this.options.lockfileType === 'string' && this.options.lockfileType) {
+    if (this.isLockfileTypeGiven()) {
       resolver = lockfileResolversByPackageManager[this.options.lockfileType]
     }
 
@@ -70,17 +96,27 @@ class ParseLockfile {
   }
 
   parseYarnLockfile (lockfileBuffer) {
-    return yarnLockfileParser.parse(lockfileBuffer)
+    let parsedFile
+    try {
+      parsedFile = yarnLockfileParser.parse(lockfileBuffer)
+    } catch (error) {
+      throw new ParsingError(PARSE_YARNLOCKFILE_FAILED, this.options.lockfilePath, error)
+    }
+    return parsedFile
   }
 
   parseNpmLockfile (lockfileBuffer) {
-    const packageJsonParsed = JSON.parse(lockfileBuffer)
+    let flattenedDepTree
+    try {
+      const packageJsonParsed = JSON.parse(lockfileBuffer)
 
-    // transform original format of npm's package-json
-    // to match yarns so we have a unified format to validate
-    // against
-    const npmDepsTree = packageJsonParsed.dependencies
-    const flattenedDepTree = this._flattenNpmDepsTree(npmDepsTree)
+      // transform original format of npm's package-json to match yarns
+      // so we have a unified format to validate against
+      const npmDepsTree = packageJsonParsed.dependencies
+      flattenedDepTree = this._flattenNpmDepsTree(npmDepsTree)
+    } catch (error) {
+      throw new ParsingError(PARSE_NPMLOCKFILE_FAILED, this.options.lockfilePath, error)
+    }
 
     return {
       type: 'success',
