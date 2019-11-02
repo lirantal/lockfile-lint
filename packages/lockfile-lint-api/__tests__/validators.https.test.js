@@ -33,7 +33,7 @@ describe('Validator: HTTPS', () => {
       type: 'error',
       errors: [
         {
-          message: `detected non-https protocol used for package: ${failedPackage}`,
+          message: `detected invalid protocol for package: ${failedPackage}\n    expected: https:\n    found: http:\n`,
           package: failedPackage
         }
       ]

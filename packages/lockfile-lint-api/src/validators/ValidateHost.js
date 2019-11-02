@@ -44,7 +44,9 @@ module.exports = class ValidateHost {
       if (allowedHosts.indexOf(packageResolvedURL.host) === -1) {
         // throw new Error(`detected invalid origin for package: ${packageName}`)
         validationResult.errors.push({
-          message: `detected invalid host for package: ${packageName}`,
+          message: `detected invalid host(s) for package: ${packageName}\n    expected: ${allowedHosts}\n    found: ${
+            packageResolvedURL.host
+          }\n`,
           package: packageName
         })
       }

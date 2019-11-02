@@ -36,7 +36,7 @@ describe('Validator: Host', () => {
       type: 'error',
       errors: [
         {
-          message: 'detected invalid host for package: @babel/code-frame',
+          message: `detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org\n    found: registry.yarnpkg.com\n`,
           package: '@babel/code-frame'
         }
       ]
@@ -137,7 +137,7 @@ describe('Validator: Host', () => {
       type: 'error',
       errors: [
         {
-          message: 'detected invalid host for package: @babel/code-frame',
+          message:`detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org,github.com\n    found: registry.yarnpkg.com\n`,
           package: '@babel/code-frame'
         }
       ]
