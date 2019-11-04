@@ -30,7 +30,7 @@ module.exports = class ValidateHttps {
 
       if (packageResolvedURL.protocol !== HTTPS_PROTOCOL) {
         validationResult.errors.push({
-          message: `detected invalid protocol for package: ${packageName}\n    expected: ${HTTPS_PROTOCOL}\n    found: ${
+          message: `detected invalid protocol for package: ${packageName}\n    expected: ${HTTPS_PROTOCOL}\n    actual: ${
             packageResolvedURL.protocol
           }\n`,
           package: packageName
