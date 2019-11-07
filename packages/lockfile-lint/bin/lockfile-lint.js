@@ -34,7 +34,7 @@ try {
   console.error('ABORTING lockfile lint process due to error exceptions', '\n')
   console.error(error.message, '\n')
   console.error(error.stack, '\n')
-  console.error('error: command failed with exit code 1')
+  console.error('error: command failed with exit code 1', '\n')
   process.exit(1)
 }
 
@@ -45,6 +45,6 @@ debug(`total validator failures: ${validatorFailures}`)
 debug(`total validator successes: ${validatorSuccesses}`)
 
 if (validatorFailures !== 0) {
-  console.error('error: command failed with exit code 1')
+  console.error('error: command failed with exit code 1', '\n')
   process.exit(1)
 }

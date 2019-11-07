@@ -50,10 +50,10 @@ describe('CLI tests', () => {
     })
 
     process.stdout.on('close', exit => {
-      expect(output.indexOf('detected non-https protocol used for package: debug@^4.1.1')).not.toBe(
+      expect(output.indexOf('detected invalid protocol for package: debug@^4.1.1\n    expected: https:\n    actual: http:\n')).not.toBe(
         -1
       )
-      expect(output.indexOf('detected non-https protocol used for package: ms@^2.1.1')).not.toBe(-1)
+      expect(output.indexOf('detected invalid protocol for package: ms@^2.1.1\n    expected: https:\n    actual: http:\n')).not.toBe(-1)
       expect(output.indexOf('error: command failed with exit code 1')).not.toBe(-1)
       done()
     })
