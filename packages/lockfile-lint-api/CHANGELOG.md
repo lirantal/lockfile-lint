@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@2.2.0...lockfile-lint-api@2.3.0) (2019-11-07)
+
+
+### Features
+
+* **errors:** provide the actual bad string in ValidateScheme ([#20](https://github.com/lirantal/lockfile-lint/issues/20)) ([45fb7d2](https://github.com/lirantal/lockfile-lint/commit/45fb7d2))
+
+
+
+
+
 # [2.2.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@2.1.4...lockfile-lint-api@2.2.0) (2019-10-24)
 
 
