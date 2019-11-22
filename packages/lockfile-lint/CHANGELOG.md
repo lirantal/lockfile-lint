@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@2.2.0...lockfile-lint@3.0.0) (2019-11-22)
+
+
+### Features
+
+* **emptyhostname:** allow empty hostnames in lockfiles ([#26](https://github.com/lirantal/lockfile-lint/issues/26)) ([7d859e1](https://github.com/lirantal/lockfile-lint/commit/7d859e1))
+
+
+### BREAKING CHANGES
+
+* **emptyhostname:** lockfile-lint-api internal method API has changed its function signature
+to allow receiving a value, and then an options object in a second argument.
+
+Relevant issues:
+- https://github.com/lirantal/lockfile-lint/issues/23
+- https://github.com/lirantal/lockfile-lint/issues/25
+
+
+
+
+
 # [2.2.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@2.1.6...lockfile-lint@2.2.0) (2019-11-07)
 
 
