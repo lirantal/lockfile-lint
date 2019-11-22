@@ -1,6 +1,7 @@
 'use strict'
 
 const {URL} = require('url')
+const debug = require('debug')('lockfile-lint-api')
 const PackageError = require('../common/PackageError')
 const {REGISTRY} = require('../common/constants')
 
@@ -13,7 +14,7 @@ module.exports = class ValidateHost {
     this.packages = packages
   }
 
-  validate (hosts) {
+  validate (hosts, options) {
     if (!Array.isArray(hosts)) {
       throw new Error('validate method requires an array')
     }
@@ -37,13 +38,16 @@ module.exports = class ValidateHost {
       })
 
       if (allowedHosts.indexOf(packageResolvedURL.host) === -1) {
-        // throw new Error(`detected invalid origin for package: ${packageName}`)
-        validationResult.errors.push({
-          message: `detected invalid host(s) for package: ${packageName}\n    expected: ${allowedHosts}\n    actual: ${
-            packageResolvedURL.host
-          }\n`,
-          package: packageName
-        })
+        if (!packageResolvedURL.host && options && options.emptyHostname) {
+          debug(`detected empty hostname but allowing because emptyHostname is not false`)
+        } else {
+          validationResult.errors.push({
+            message: `detected invalid host(s) for package: ${packageName}\n    expected: ${allowedHosts}\n    actual: ${
+              packageResolvedURL.host
+            }\n`,
+            package: packageName
+          })
+        }
       }
     }
 
