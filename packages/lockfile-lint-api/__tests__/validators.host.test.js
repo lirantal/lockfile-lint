@@ -154,4 +154,45 @@ describe('Validator: Host', () => {
 
     expect(() => validator.validate(['npm'])).toThrow(PackageError)
   })
+
+  it('validator should not throw if emptyHostnames are allowed', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'github:XhmikosR/metalsmith-permalinks#master'
+      }
+    }
+    const validator = new ValidatorHost({packages: mockedPackages})
+
+    expect(
+      validator.validate(['npm'], {
+        emptyHostname: true
+      })
+    ).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should return errors if emptyHostnames are not allowed', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'github:XhmikosR/metalsmith-permalinks#master'
+      }
+    }
+    const validator = new ValidatorHost({packages: mockedPackages})
+
+    expect(
+      validator.validate(['npm'], {
+        emptyHostname: false
+      })
+    ).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message: `detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org\n    actual: \n`,
+          package: '@babel/code-frame'
+        }
+      ]
+    })
+  })
 })
