@@ -9,9 +9,9 @@ module.exports = {
   ValidateSchemeManager
 }
 
-function ValidateSchemeManager ({path, type, validatorOptions}) {
+function ValidateSchemeManager ({path, type, validatorValues, validatorOptions}) {
   debug('validate-scheme-manager')(
-    `invoked with validator options: ${JSON.stringify(validatorOptions)}`
+    `invoked with validator options: ${JSON.stringify(validatorValues)}`
   )
 
   const options = {
@@ -23,12 +23,12 @@ function ValidateSchemeManager ({path, type, validatorOptions}) {
   const lockfile = parser.parseSync()
   const validator = new ValidateScheme({packages: lockfile.object})
 
-  return validator.validate(validatorOptions)
+  return validator.validate(validatorValues)
 }
 
-function ValidateHostManager ({path, type, validatorOptions}) {
+function ValidateHostManager ({path, type, validatorValues, validatorOptions}) {
   debug('validate-host-manager')(
-    `invoked with validator options: ${JSON.stringify(validatorOptions)}`
+    `invoked with validator options: ${JSON.stringify(validatorValues)}`
   )
 
   const options = {
@@ -40,12 +40,12 @@ function ValidateHostManager ({path, type, validatorOptions}) {
   const lockfile = parser.parseSync()
   const validator = new ValidateHost({packages: lockfile.object})
 
-  return validator.validate(validatorOptions)
+  return validator.validate(validatorValues, validatorOptions)
 }
 
-function ValidateHttpsManager ({path, type, validatorOptions}) {
+function ValidateHttpsManager ({path, type, validatorValues, validatorOptions}) {
   debug('validate-host-manager')(
-    `invoked with validator options: ${JSON.stringify(validatorOptions)}`
+    `invoked with validator options: ${JSON.stringify(validatorValues)}`
   )
 
   const options = {

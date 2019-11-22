@@ -35,6 +35,7 @@ function runValidators ({type, path, validators} = {}) {
     let validationResult = validatorFunction({
       path,
       type,
+      validatorValues: validator.values,
       validatorOptions: validator.options
     })
 

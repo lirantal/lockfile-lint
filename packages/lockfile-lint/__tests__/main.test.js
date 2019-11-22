@@ -83,7 +83,7 @@ describe('Main CLI logic', () => {
       const validators = [
         {
           name: 'validateHosts',
-          options: ['npm']
+          values: ['npm']
         }
       ]
 
@@ -97,13 +97,38 @@ describe('Main CLI logic', () => {
       expect(result.validatorCount).toEqual(1)
       expect(result.validatorSuccesses).toEqual(0)
     })
+
+    test('a failing validator should throw an error if an empty host is not allowed', () => {
+      const lockfilePath = `${__dirname}/fixtures/package-lock-empty-hostname.json`
+      const lockfileType = 'npm'
+      const validators = [
+        {
+          name: 'validateHosts',
+          values: ['npm'],
+          options: {
+            emptyHostname: false
+          }
+        }
+      ]
+
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: lockfileType,
+        validators
+      })
+
+      expect(result.validatorFailures).toEqual(2)
+      expect(result.validatorCount).toEqual(1)
+      expect(result.validatorSuccesses).toEqual(0)
+    })
+
     test('a successful validator should return proper validation object', () => {
       const lockfilePath = `${__dirname}/fixtures/yarn-only-https.lock`
       const lockfileType = 'yarn'
       const validators = [
         {
           name: 'validateHosts',
-          options: ['yarn']
+          values: ['yarn']
         }
       ]
 
@@ -126,7 +151,7 @@ describe('Main CLI logic', () => {
       const validators = [
         {
           name: 'validateSchemes',
-          options: ['https']
+          values: ['https']
         }
       ]
 
@@ -147,7 +172,7 @@ describe('Main CLI logic', () => {
       const validators = [
         {
           name: 'validateSchemes',
-          options: ['https:', 'git+https:']
+          values: ['https:', 'git+https:']
         }
       ]
 
@@ -168,7 +193,7 @@ describe('Main CLI logic', () => {
       const validators = [
         {
           name: 'validateSchemes',
-          options: ['https']
+          values: ['https']
         }
       ]
 
@@ -189,7 +214,7 @@ describe('Main CLI logic', () => {
       const validators = [
         {
           name: 'validateSchemes',
-          options: ['https:', 'git+https:']
+          values: ['https:', 'git+https:']
         }
       ]
 
