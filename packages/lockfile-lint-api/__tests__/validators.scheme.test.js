@@ -12,6 +12,16 @@ describe('Validator: Protocol', () => {
     expect(() => new ValidatorScheme({asda: 1234})).toThrowError()
   })
 
+  it('validator should throw error if not provided array of values', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      }
+    }
+    const validator = new ValidatorScheme({packages: mockedPackages})
+    expect(() => validator.validate()).toThrow(`validate method requires an array`)
+  })
+
   it('validator should fail if finding a non-https resource', () => {
     const allowedProtocols = ['https:']
     const mockedPackages = {
