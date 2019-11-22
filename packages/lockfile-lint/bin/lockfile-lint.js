@@ -18,7 +18,10 @@ for (const [commandArgument, commandValue] of Object.entries(cli)) {
     const validatorItem = supportedValidators.get(commandArgument)
     validators.push({
       name: validatorItem,
-      options: commandValue
+      values: commandValue,
+      options: {
+        emptyHostname: cli['empty-hostname']
+      }
     })
   }
 }

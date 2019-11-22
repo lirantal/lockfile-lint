@@ -24,6 +24,12 @@ const argv = yargs
       type: 'boolean',
       describe: 'validates the use of HTTPS as protocol schema for all resources'
     },
+    e: {
+      alias: 'empty-hostname',
+      type: 'boolean',
+      default: true,
+      describe: 'allows empty hostnames, or set to false if you wish for a stricter policy'
+    },
     a: {
       alias: ['allowed-hosts'],
       type: 'array',
