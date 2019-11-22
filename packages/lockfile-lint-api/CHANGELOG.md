@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.0.0...lockfile-lint-api@5.0.1) (2019-11-22)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
 # [5.0.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@2.3.0...lockfile-lint-api@5.0.0) (2019-11-22)
 
 
