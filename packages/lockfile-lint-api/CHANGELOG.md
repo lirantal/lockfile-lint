@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.2](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.0.1...lockfile-lint-api@5.0.2) (2019-11-28)
+
+
+### Bug Fixes
+
+* **docs:** typo in project README ([#29](https://github.com/lirantal/lockfile-lint/issues/29)) ([4229a03](https://github.com/lirantal/lockfile-lint/commit/4229a03))
+
+
+
+
+
 ## [5.0.1](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.0.0...lockfile-lint-api@5.0.1) (2019-11-22)
 
 **Note:** Version bump only for package lockfile-lint-api
