@@ -52,7 +52,7 @@
     "url": "https://github.com/lirantal/lockfile-lint.git"
   },
   "dependencies": {
-    "debug": "^4.1.0",
+    "debug": "^4.1.1",
     "lockfile-lint-api": "^5.0.2",
     "yargs": "^15.0.2"
   },
