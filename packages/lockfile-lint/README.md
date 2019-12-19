@@ -37,7 +37,9 @@ lockfile-lint --type <yarn|npm> --path <path-to-lockfile> --validate-https --all
 
 # Example
 
-An example of running the linter with debug output for a yarn lockfile and asserting that all resources are using the official npm registry as source for packages:
+An example of running the linter with [debug] output for a yarn lockfile and asserting that all resources are using the official npm registry as source for packages:
+
+[debug]: https://www.npmjs.com/package/debug
 
 ```bash
 DEBUG=* lockfile-lint --path yarn.lock --type yarn --allowed-hosts npm
