@@ -108,16 +108,16 @@ console.log(result)
 # Example
 
 ```js
-const {ValidateHost, ParseLockFile} = require('lockfile-lint-api')
+const {ValidateHost, ParseLockfile} = require('lockfile-lint-api')
 
 // path to the lockfile
-const yarnLockFilePath = '/path/to/my/yarn.lock'
+const yarnLockfilePath = '/path/to/my/yarn.lock'
 const options = {
-  lockfilePath: yarnLockFilePath
+  lockfilePath: yarnLockfilePath
 }
 
 // instantiate a new parser with options object
-const parser = new ParseLockFile(options)
+const parser = new ParseLockfile(options)
 
 // read the file synchronously and parses it
 // providing back an object that is compatible
