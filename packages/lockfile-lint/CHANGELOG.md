@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.5](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.4...lockfile-lint@3.0.5) (2019-12-23)
+
+**Note:** Version bump only for package lockfile-lint
+
+
+
+
+
 ## [3.0.4](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.3...lockfile-lint@3.0.4) (2019-12-18)
 
 **Note:** Version bump only for package lockfile-lint
