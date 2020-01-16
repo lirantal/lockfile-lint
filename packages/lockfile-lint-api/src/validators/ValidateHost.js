@@ -25,6 +25,10 @@ module.exports = class ValidateHost {
     }
 
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
+      if (!('resolved' in packageMetadata)) {
+        continue
+      }
+
       let packageResolvedURL = {}
       try {
         packageResolvedURL = new URL(packageMetadata.resolved)
