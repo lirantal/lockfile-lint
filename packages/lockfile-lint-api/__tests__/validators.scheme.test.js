@@ -80,4 +80,21 @@ describe('Validator: Protocol', () => {
 
     expect(() => validator.validate(['npm'])).toThrow(PackageError)
   })
+
+  it('validator should succeed if package has no `resolved` field', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      },
+      meow: {},
+      '@babel/generator': {
+        resolved: 'git+ssh://registry.npmjs.org/@babel/generator/-/generator-7.4.4.tgz'
+      }
+    }
+    const validator = new ValidatorScheme({packages: mockedPackages})
+    expect(validator.validate(['https:', 'git+ssh:'])).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
 })

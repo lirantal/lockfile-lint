@@ -70,4 +70,22 @@ describe('Validator: HTTPS', () => {
 
     expect(() => validator.validate(['npm'])).toThrow(PackageError)
   })
+
+  it('validator should succeed if package has no `resolved` field', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      },
+      meow: {},
+      '@babel/generator': {
+        resolved: 'https://registry.npmjs.org/@babel/generator/-/generator-7.4.4.tgz'
+      }
+    }
+
+    const validator = new ValidatorHTTPS({packages: mockedPackages})
+    expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
 })

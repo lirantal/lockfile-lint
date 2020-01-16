@@ -195,4 +195,18 @@ describe('Validator: Host', () => {
       ]
     })
   })
+
+  it('validator should not throw if package has no `resolved` field', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      },
+      meow: {}
+    }
+    const validator = new ValidatorHost({packages: mockedPackages})
+
+    expect(() => {
+      validator.validate(['npm'])
+    }).not.toThrow()
+  })
 })
