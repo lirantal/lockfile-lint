@@ -1,6 +1,6 @@
 {
   "name": "lockfile-lint-api",
-  "version": "5.0.6",
+  "version": "5.0.7",
   "description": "Lint an npm or yarn lockfile to analyze and detect issues",
   "main": "index.js",
   "engines": {
