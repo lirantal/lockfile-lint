@@ -20,8 +20,6 @@
 
 Lints an npm or yarn lockfile to analyze and detect issues
 
-NOTE: currently only yarn's `yarn.lock` is supported. PRs to support npm's `package-lock.json` are welcome 🤗
-
 # Install
 
 ```bash
