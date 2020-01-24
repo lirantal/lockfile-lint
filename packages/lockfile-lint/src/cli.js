@@ -46,6 +46,7 @@ const argv = yargs
   .example(
     'lockfile-lint --path yarn.lock --allowed-schemes "https:" "git+ssh:" --allowed-hosts npm yarn verdaccio'
   )
-  .epilogue('curated by Liran Tal at https://github.com/lirantal/lockfile-lint').argv
+  .epilogue('curated by Liran Tal at https://github.com/lirantal/lockfile-lint')
+  .detectLocale(false).argv
 
 module.exports = argv
