@@ -1,6 +1,6 @@
+dist: bionic
 language: node_js
 node_js:
-  - '8'
   - '10'
   - '12'
 install:
@@ -15,10 +15,19 @@ after_success:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
   - git remote set-url origin https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
   - git checkout master
-deploy:
-  provider: script
-  script: 'yarn lerna publish'
-  skip_cleanup: true
-  on:
-    node: '10'
-    branch: master
+
+jobs:
+  include:
+    - stage: test other locales
+      before_install:
+        - sudo apt-get update && sudo apt-get --reinstall install -qq language-pack-en language-pack-fr
+        - sudo locale-gen fr_FR.UTF-8
+      script: LANG="fr_FR.UTF8" LC_ALL="fr_FR.UTF8" yarn lerna run test --stream
+      
+    - stage: deploy
+      node_js: "10"
+      deploy:
+        provider: npm
+        skip_cleanup: true
+        branch: master
+        script: 'yarn lerna publish'
