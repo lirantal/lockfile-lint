@@ -26,10 +26,13 @@ module.exports = class ValidateHttps {
       }
 
       let packageResolvedURL = {}
-      try {
-        packageResolvedURL = new URL(packageMetadata.resolved)
-      } catch (error) {
-        throw new PackageError(packageName, error)
+
+      if (packageMetadata.resolved) {
+        try {
+          packageResolvedURL = new URL(packageMetadata.resolved)
+        } catch (error) {
+          throw new PackageError(packageName, error)
+        }
       }
 
       if (packageResolvedURL.protocol !== HTTPS_PROTOCOL) {

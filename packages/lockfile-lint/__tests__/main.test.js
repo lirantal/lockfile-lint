@@ -161,7 +161,7 @@ describe('Main CLI logic', () => {
         validators
       })
 
-      expect(result.validatorFailures).toEqual(2)
+      expect(result.validatorFailures).toEqual(1)
       expect(result.validatorCount).toEqual(1)
       expect(result.validatorSuccesses).toEqual(0)
     })

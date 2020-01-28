@@ -28,12 +28,16 @@ module.exports = class ValidateProtocol {
       }
 
       let packageResolvedURL = {}
-      try {
-        packageResolvedURL = new URL(packageMetadata.resolved)
-      } catch (error) {
-        throw new PackageError(packageName, error)
+
+      if (packageMetadata.resolved) {
+        try {
+          packageResolvedURL = new URL(packageMetadata.resolved)
+        } catch (error) {
+          throw new PackageError(packageName, error)
+        }
       }
-      if (schemes.indexOf(packageResolvedURL.protocol) === -1) {
+
+      if (packageResolvedURL.protocol && schemes.indexOf(packageResolvedURL.protocol) === -1) {
         // throw new Error(`detected invalid origin for package: ${packageName}`)
         validationResult.errors.push({
           message: `detected invalid scheme(s) for package: ${packageName}\n    expected: ${schemes}\n    actual: ${

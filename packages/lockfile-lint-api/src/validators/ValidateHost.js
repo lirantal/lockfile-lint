@@ -30,10 +30,13 @@ module.exports = class ValidateHost {
       }
 
       let packageResolvedURL = {}
-      try {
-        packageResolvedURL = new URL(packageMetadata.resolved)
-      } catch (error) {
-        throw new PackageError(packageName, error)
+
+      if (packageMetadata.resolved) {
+        try {
+          packageResolvedURL = new URL(packageMetadata.resolved)
+        } catch (error) {
+          throw new PackageError(packageName, error)
+        }
       }
 
       const allowedHosts = hosts.map(hostValue => {
