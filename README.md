@@ -46,6 +46,14 @@ You can use `lockfile-lint` as a standalone CLI tool, or as an API library using
 - [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint) - a CLI tool that can be easily integrated as a pre-commit hook or part of a CI/build
 - [lockfile-lint-api](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint-api) - a library providing a programmatic API
 
+# Security Disclaimer
+
+Please be advised of the following security disclaimers that are outside of the control of a lockfile linter:
+
+When you whitelist all hosts from npmjs, yarnpkg, github or other registries you implicitly convey that you trust all the packages originating from these sources. As such, a malicious package can exist in a registry source that you whitelist. Direct dependencies that you add should to a project should be well vetted before adding such as using a tool like [npq](https://github.com/lirantal/npq).
+
+
+
 # Author
 
 **lockfile-lint** © [Liran Tal](https://github.com/lirantal), Released under the [Apache-2.0](./LICENSE) License.
