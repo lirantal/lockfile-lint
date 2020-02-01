@@ -35,6 +35,10 @@ npm install --save lockfile-lint
 lockfile-lint --type <yarn|npm> --path <path-to-lockfile> --validate-https --allowed-hosts <host-to-match>
 ```
 
+Supported lockfiles:
+- npm's `package-lock.json` and `npm-shrinkwrap.json`
+- yarn's `yarn.lock`
+
 # Example
 
 An example of running the linter with debug output for a yarn lockfile and asserting that all resources are using the official npm registry as source for packages:
