@@ -17,12 +17,15 @@
 
 # About
 
-Lockfiles are used as trusted whitelist of resources manifest to fetch packages from. However, keeping track of the changes introduced to lockfiles is not an easy task as they are designed to consumed by machines 🤖.
+Lockfiles are used as trusted whitelist of resources manifest to fetch packages from.
+However, keeping track of the changes introduced to lockfiles is not an easy task as they are designed to consumed by machines 🤖.
 
 What happens when someone creates a Pull Request and sneaks a malicious resource package that replaces a real library? 😱
 
 Exactly!
 Lint your lockfiles to ensure they adhere to pre-defined security policies and mitigate this vector of attack.
+
+**Why is this important?** read: [Why npm lockfiles can be a security blindspot for injecting malicious modules](https://snyk.io/blog/why-npm-lockfiles-can-be-a-security-blindspot-for-injecting-malicious-modules/)
 
 # Usage
 
