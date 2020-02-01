@@ -46,7 +46,7 @@ You can use `lockfile-lint` as a standalone CLI tool, or as an API library using
 - [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint) - a CLI tool that can be easily integrated as a pre-commit hook or part of a CI/build
 - [lockfile-lint-api](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint-api) - a library providing a programmatic API
 
-# Security Disclaimer
+## Security Disclaimer
 
 Please be advised of the following security disclaimers that are outside of the control of a lockfile linter:
 
