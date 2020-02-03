@@ -17,8 +17,8 @@ describe('ParseLockfile Npm', () => {
     expect(lockfile.type).toEqual('success')
     expect(lockfile.object).toEqual(
       expect.objectContaining({
-        'debug@4.1.1': expect.any(Object),
-        'ms@2.1.2': expect.any(Object)
+        'debug@4.1.1-031b0fadad70d901aa76ca1028682c7fc8ed370c': expect.any(Object),
+        'ms@2.1.2-d6934ce87f6e568c4f5d6d9f6e5c5697992e7b91': expect.any(Object)
       })
     )
   })
@@ -35,10 +35,10 @@ describe('ParseLockfile Npm', () => {
     expect(lockfile.type).toEqual('success')
     expect(lockfile.object).toEqual(
       expect.objectContaining({
-        'debug@4.1.1': expect.any(Object),
-        'ms@2.1.2': expect.any(Object),
-        'ms@2.0.0': expect.any(Object),
-        'escape-html@1.0.3': expect.any(Object)
+        'debug@4.1.1-031b0fadad70d901aa76ca1028682c7fc8ed370c': expect.any(Object),
+        'ms@2.1.2-d6934ce87f6e568c4f5d6d9f6e5c5697992e7b91': expect.any(Object),
+        'ms@2.0.0-e3988f0b9b049286d39bee2b87cda1737adf1ba7': expect.any(Object),
+        'escape-html@1.0.3-541618a9ecf9b6e94c9131aec4590d01a5b0e720': expect.any(Object)
       })
     )
   })

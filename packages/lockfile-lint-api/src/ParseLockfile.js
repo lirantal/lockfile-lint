@@ -4,6 +4,7 @@
 const fs = require('fs')
 const path = require('path')
 const yarnLockfileParser = require('@yarnpkg/lockfile')
+const hash = require('object-hash')
 const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
 const {
   NO_OPTIONS,
@@ -124,9 +125,7 @@ class ParseLockfile {
     }
   }
 
-  _flattenNpmDepsTree (npmDepsTree) {
-    let flattenedDepTree = {}
-    let flattenedNestedDepsTree = {}
+  _flattenNpmDepsTree (npmDepsTree, npmDepMap = {}) {
     for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
       const depMetadataShortend = {
         version: depMetadata.version,
@@ -134,16 +133,18 @@ class ParseLockfile {
         integrity: depMetadata.integrity,
         requires: depMetadata.requires
       }
+      const hashedDepValues = hash(depMetadataShortend)
 
-      flattenedDepTree[`${depName}@${depMetadata.version}`] = depMetadataShortend
+      npmDepMap[`${depName}@${depMetadata.version}-${hashedDepValues}`] = depMetadataShortend
 
       const nestedDepsTree = depMetadata.dependencies
+
       if (nestedDepsTree && Object.keys(nestedDepsTree).length !== 0) {
-        flattenedNestedDepsTree = this._flattenNpmDepsTree(nestedDepsTree)
+        this._flattenNpmDepsTree(nestedDepsTree, npmDepMap)
       }
     }
 
-    return Object.assign({}, flattenedDepTree, flattenedNestedDepsTree)
+    return npmDepMap
   }
 }
 

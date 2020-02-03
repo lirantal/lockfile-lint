@@ -1,7 +1,6 @@
 'use strict'
 
 const {URL} = require('url')
-const PackageError = require('../common/PackageError')
 
 const HTTPS_PROTOCOL = 'https:'
 
@@ -26,10 +25,11 @@ module.exports = class ValidateHttps {
       }
 
       let packageResolvedURL = {}
+
       try {
         packageResolvedURL = new URL(packageMetadata.resolved)
       } catch (error) {
-        throw new PackageError(packageName, error)
+        // swallow error (assume that the version is correct)
       }
 
       if (packageResolvedURL.protocol !== HTTPS_PROTOCOL) {

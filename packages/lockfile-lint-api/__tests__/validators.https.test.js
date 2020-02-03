@@ -1,5 +1,4 @@
 const ValidatorHTTPS = require('../src/validators/ValidateHttps')
-const PackageError = require('../src/common/PackageError')
 
 describe('Validator: HTTPS', () => {
   it('validator should throw an error when provided a string', () => {
@@ -58,17 +57,6 @@ describe('Validator: HTTPS', () => {
       type: 'success',
       errors: []
     })
-  })
-
-  it('validator should throw a descriptive error when one is encounterd in a package', () => {
-    const mockedPackages = {
-      '@babel/code-frame': {
-        resolved: 'debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791'
-      }
-    }
-    const validator = new ValidatorHTTPS({packages: mockedPackages})
-
-    expect(() => validator.validate(['npm'])).toThrow(PackageError)
   })
 
   it('validator should succeed if package has no `resolved` field', () => {
