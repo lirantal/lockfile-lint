@@ -28,8 +28,9 @@ jobs:
     - stage: deploy
       node_js: "10"
       skip_cleanup: true
-      branch: master
+      if: branch = master
       script: 
         - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
         - git remote set-url origin https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
+        - git checkout master
         - yarn lerna publish
