@@ -2,7 +2,6 @@
 
 const {URL} = require('url')
 const debug = require('debug')('lockfile-lint-api')
-const PackageError = require('../common/PackageError')
 const {REGISTRY} = require('../common/constants')
 
 module.exports = class ValidateHost {
@@ -31,12 +30,10 @@ module.exports = class ValidateHost {
 
       let packageResolvedURL = {}
 
-      if (packageMetadata.resolved) {
-        try {
-          packageResolvedURL = new URL(packageMetadata.resolved)
-        } catch (error) {
-          throw new PackageError(packageName, error)
-        }
+      try {
+        packageResolvedURL = new URL(packageMetadata.resolved)
+      } catch (error) {
+        // swallow error (assume that the version is correct)
       }
 
       const allowedHosts = hosts.map(hostValue => {

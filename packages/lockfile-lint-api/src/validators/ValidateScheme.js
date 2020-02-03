@@ -1,7 +1,6 @@
 'use strict'
 
 const {URL} = require('url')
-const PackageError = require('../common/PackageError')
 
 module.exports = class ValidateProtocol {
   constructor ({packages} = {}) {
@@ -29,12 +28,10 @@ module.exports = class ValidateProtocol {
 
       let packageResolvedURL = {}
 
-      if (packageMetadata.resolved) {
-        try {
-          packageResolvedURL = new URL(packageMetadata.resolved)
-        } catch (error) {
-          throw new PackageError(packageName, error)
-        }
+      try {
+        packageResolvedURL = new URL(packageMetadata.resolved)
+      } catch (error) {
+        // swallow error (assume that the version is correct)
       }
 
       if (packageResolvedURL.protocol && schemes.indexOf(packageResolvedURL.protocol) === -1) {

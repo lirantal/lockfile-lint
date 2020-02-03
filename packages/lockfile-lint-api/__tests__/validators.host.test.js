@@ -1,5 +1,4 @@
 const ValidatorHost = require('../src/validators/ValidateHost')
-const PackageError = require('../src/common/PackageError')
 
 describe('Validator: Host', () => {
   it('validator should throw an error when provided a string', () => {
@@ -142,17 +141,6 @@ describe('Validator: Host', () => {
         }
       ]
     })
-  })
-
-  it('validator should throw a descriptive error when one is encounterd in a package', () => {
-    const mockedPackages = {
-      '@babel/code-frame': {
-        resolved: 'debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791'
-      }
-    }
-    const validator = new ValidatorHost({packages: mockedPackages})
-
-    expect(() => validator.validate(['npm'])).toThrow(PackageError)
   })
 
   it('validator should not throw if emptyHostnames are allowed', () => {
