@@ -8,13 +8,20 @@ install:
   - yarn global add codecov
 before_script:
   - yarn lerna run lint
-script:
-  - yarn lerna run test --stream
-  - codecov
 
+stages:
+  - test
+  - test_locales
+  - name: deploy
+    if: branch = master
 jobs:
   include:
-    - stage: test other locales
+    - stage: test
+      script:
+        - yarn lerna run test --stream
+        - codecov
+       
+    - stage: test_locales
       before_install:
         - sudo apt-get update && sudo apt-get --reinstall install -qq language-pack-en language-pack-fr
         - sudo locale-gen fr_FR.UTF-8
@@ -22,11 +29,9 @@ jobs:
       
     - stage: deploy
       node_js: "10"
-      deploy:
-        provider: script
-        skip_cleanup: true
-        branch: master
-        script: 
-          - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          - git remote set-url origin https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
-          - yarn lerna publish
+      skip_cleanup: true
+      branch: master
+      script: 
+        - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        - git remote set-url origin https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
+        - yarn lerna publish
