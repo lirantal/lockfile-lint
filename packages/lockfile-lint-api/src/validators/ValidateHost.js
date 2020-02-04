@@ -32,26 +32,26 @@ module.exports = class ValidateHost {
 
       try {
         packageResolvedURL = new URL(packageMetadata.resolved)
+
+        const allowedHosts = hosts.map(hostValue => {
+          // eslint-disable-next-line security/detect-object-injection
+          return REGISTRY[hostValue] ? REGISTRY[hostValue] : hostValue
+        })
+
+        if (allowedHosts.indexOf(packageResolvedURL.host) === -1) {
+          if (!packageResolvedURL.host && options && options.emptyHostname) {
+            debug(`detected empty hostname but allowing because emptyHostname is not false`)
+          } else {
+            validationResult.errors.push({
+              message: `detected invalid host(s) for package: ${packageName}\n    expected: ${allowedHosts}\n    actual: ${
+                packageResolvedURL.host
+              }\n`,
+              package: packageName
+            })
+          }
+        }
       } catch (error) {
         // swallow error (assume that the version is correct)
-      }
-
-      const allowedHosts = hosts.map(hostValue => {
-        // eslint-disable-next-line security/detect-object-injection
-        return REGISTRY[hostValue] ? REGISTRY[hostValue] : hostValue
-      })
-
-      if (allowedHosts.indexOf(packageResolvedURL.host) === -1) {
-        if (!packageResolvedURL.host && options && options.emptyHostname) {
-          debug(`detected empty hostname but allowing because emptyHostname is not false`)
-        } else {
-          validationResult.errors.push({
-            message: `detected invalid host(s) for package: ${packageName}\n    expected: ${allowedHosts}\n    actual: ${
-              packageResolvedURL.host
-            }\n`,
-            package: packageName
-          })
-        }
       }
     }
 
