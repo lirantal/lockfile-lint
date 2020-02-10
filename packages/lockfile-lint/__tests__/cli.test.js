@@ -1,8 +1,9 @@
 'use strict'
 
+const path = require('path')
 // eslint-disable-next-line security/detect-child-process
 const childProcess = require('child_process')
-const cliExecPath = `${__dirname}/../bin/lockfile-lint.js`
+const cliExecPath = path.join(__dirname, '../bin/lockfile-lint.js')
 
 describe('CLI tests', () => {
   test('Running without parameters should display help', done => {
