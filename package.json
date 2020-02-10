@@ -19,12 +19,12 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^3.14.1",
-    "@commitlint/cli": "8.0.0",
+    "@commitlint/cli": "8.3.5",
     "@commitlint/config-conventional": "8.0.0",
     "commitizen": "3.1.1",
     "cz-conventional-changelog": "2.1.0",
     "husky": "2.4.0",
+    "lerna": "^3.14.1",
     "lint-staged": "^8.1.0"
   },
   "husky": {
