@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier-standard '**/*.js'",
+    "format": "prettier-standard \"**/*.js\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage:view": "open-cli coverage/lcov-report/index.html",
