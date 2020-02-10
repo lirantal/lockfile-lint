@@ -7,7 +7,7 @@ const cliExecPath = path.join(__dirname, '../bin/lockfile-lint.js')
 
 describe('CLI tests', () => {
   test('Running without parameters should display help', done => {
-    const process = childProcess.spawn(cliExecPath, [])
+    const process = childProcess.spawn('node', [cliExecPath])
 
     let output = ''
     process.stderr.on('data', chunk => {
@@ -23,7 +23,7 @@ describe('CLI tests', () => {
   })
 
   test('Running without parameters should display a requirement for the p option', done => {
-    const process = childProcess.spawn(cliExecPath, [])
+    const process = childProcess.spawn('node', [cliExecPath])
 
     let output = ''
     process.stderr.on('data', chunk => {
@@ -37,7 +37,8 @@ describe('CLI tests', () => {
   })
 
   test('Linting a file that has wrong host should display an error message and use exit code 1', done => {
-    const process = childProcess.spawn(cliExecPath, [
+    const process = childProcess.spawn('node', [
+      cliExecPath,
       '--type',
       'yarn',
       '--path',
@@ -63,7 +64,8 @@ describe('CLI tests', () => {
   })
 
   test('Linting a file that has wrong host should return exit code 1', done => {
-    const process = childProcess.spawn(cliExecPath, [
+    const process = childProcess.spawn('node', [
+      cliExecPath,
       '--type',
       'yarn',
       '--path',
