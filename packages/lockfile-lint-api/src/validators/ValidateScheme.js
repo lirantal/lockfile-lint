@@ -31,7 +31,7 @@ module.exports = class ValidateProtocol {
       try {
         packageResolvedURL = new URL(packageMetadata.resolved)
 
-        if (packageResolvedURL.protocol && schemes.indexOf(packageResolvedURL.protocol) === -1) {
+        if (packageResolvedURL.protocol && !schemes.includes(packageResolvedURL.protocol)) {
           validationResult.errors.push({
             message: `detected invalid scheme(s) for package: ${packageName}\n    expected: ${schemes}\n    actual: ${
               packageResolvedURL.protocol

@@ -14,9 +14,9 @@ describe('CLI tests', () => {
     })
 
     process.stdout.on('close', () => {
-      expect(output.indexOf('Usage:')).not.toBe(-1)
-      expect(output.indexOf('Options:')).not.toBe(-1)
-      expect(output.indexOf('Examples:')).not.toBe(-1)
+      expect(output).toContain('Usage:')
+      expect(output).toContain('Options:')
+      expect(output).toContain('Examples:')
       done()
     })
   })
@@ -30,7 +30,7 @@ describe('CLI tests', () => {
     })
 
     process.stdout.on('close', () => {
-      expect(output.indexOf('Missing required argument: p')).not.toBe(-1)
+      expect(output).toContain('Missing required argument: p')
       done()
     })
   })
@@ -50,11 +50,13 @@ describe('CLI tests', () => {
     })
 
     process.stdout.on('close', exit => {
-      expect(output.indexOf('detected invalid protocol for package: debug@^4.1.1\n    expected: https:\n    actual: http:\n')).not.toBe(
-        -1
+      expect(output).toContain(
+        'detected invalid protocol for package: debug@^4.1.1\n    expected: https:\n    actual: http:\n'
       )
-      expect(output.indexOf('detected invalid protocol for package: ms@^2.1.1\n    expected: https:\n    actual: http:\n')).not.toBe(-1)
-      expect(output.indexOf('error: command failed with exit code 1')).not.toBe(-1)
+      expect(output).toContain(
+        'detected invalid protocol for package: ms@^2.1.1\n    expected: https:\n    actual: http:\n'
+      )
+      expect(output).toContain('error: command failed with exit code 1')
       done()
     })
   })
