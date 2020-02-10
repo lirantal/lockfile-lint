@@ -38,8 +38,7 @@ const argv = yargs
     o: {
       alias: ['allowed-schemes'],
       type: 'array',
-      describe: 'validates a whitelist of allowed schemes to be used for resources in the lockfile',
-      conflicts: ['validate-https', 's']
+      describe: 'validates a whitelist of allowed schemes to be used for resources in the lockfile'
     }
   })
   .example('lockfile-lint --path yarn.lock --validate-https')
