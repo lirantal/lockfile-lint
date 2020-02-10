@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.18](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.17...lockfile-lint@3.0.18) (2020-02-10)
+
+
+### Bug Fixes
+
+* **tests:** shebangs don't work on Windows ([#71](https://github.com/lirantal/lockfile-lint/issues/71)) ([6baff98](https://github.com/lirantal/lockfile-lint/commit/6baff98))
+
+
+
+
+
 ## [3.0.17](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.16...lockfile-lint@3.0.17) (2020-02-10)
 
 
