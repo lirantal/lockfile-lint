@@ -50,7 +50,7 @@ You can use `lockfile-lint` as a standalone CLI tool, or as an API library using
 
 Please be advised of the following security disclaimers that are outside of the control of a lockfile linter:
 
-When you whitelist all hosts from npmjs, yarnpkg, github or other registries you implicitly convey that you trust all the packages originating from these sources. As such, a malicious package can exist in a registry source that you whitelist. Direct dependencies that you add should to a project should be well vetted before adding such as using a tool like [npq](https://github.com/lirantal/npq).
+When you whitelist all hosts from npmjs, yarnpkg, github or other registries you implicitly convey that you trust all the packages originating from these sources. As such, a malicious package can exist in a registry source that you whitelist. Direct dependencies that you should add to a project should be well vetted before adding such as using a tool like [npq](https://github.com/lirantal/npq).
 
 
 
