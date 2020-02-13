@@ -18,7 +18,7 @@
 # About
 
 Lockfiles are used as trusted whitelist of resources manifest to fetch packages from.
-However, keeping track of the changes introduced to lockfiles is not an easy task as they are designed to consumed by machines 🤖.
+However, keeping track of the changes introduced to lockfiles is not an easy task as they are designed to be consumed by machines 🤖.
 
 What happens when someone creates a Pull Request and sneaks a malicious resource package that replaces a real library? 😱
 
