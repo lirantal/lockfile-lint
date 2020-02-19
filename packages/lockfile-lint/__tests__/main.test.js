@@ -1,11 +1,12 @@
 'use strict'
 
+const path = require('path')
 const main = require('../src/main')
 
 describe('Main CLI logic', () => {
   describe('Invoking validators should handle errors and defaults', () => {
     test('when no validator function is provided expect to fail', () => {
-      const lockfilePath = `${__dirname}/fixtures/yarn-only-http.lock`
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-only-http.lock')
       const lockfileType = 'yarn'
       const validators = [
         {
@@ -34,7 +35,7 @@ describe('Main CLI logic', () => {
 
   describe('validateHttp', () => {
     test('a failing validator should return proper validation failed object', () => {
-      const lockfilePath = `${__dirname}/fixtures/yarn-only-http.lock`
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-only-http.lock')
       const lockfileType = 'yarn'
       const validators = [
         {
@@ -55,7 +56,7 @@ describe('Main CLI logic', () => {
     })
 
     test('a successful validator should return proper validation object', () => {
-      const lockfilePath = `${__dirname}/fixtures/yarn-only-https.lock`
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-only-https.lock')
       const lockfileType = 'yarn'
       const validators = [
         {
@@ -78,7 +79,7 @@ describe('Main CLI logic', () => {
 
   describe('validateHosts', () => {
     test('a failing validator should return proper validation failed object', () => {
-      const lockfilePath = `${__dirname}/fixtures/yarn-only-https.lock`
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-only-https.lock')
       const lockfileType = 'yarn'
       const validators = [
         {
@@ -99,7 +100,7 @@ describe('Main CLI logic', () => {
     })
 
     test('a failing validator should throw an error if an empty host is not allowed', () => {
-      const lockfilePath = `${__dirname}/fixtures/package-lock-empty-hostname.json`
+      const lockfilePath = path.join(__dirname, '/fixtures/package-lock-empty-hostname.json')
       const lockfileType = 'npm'
       const validators = [
         {
@@ -123,7 +124,7 @@ describe('Main CLI logic', () => {
     })
 
     test('a successful validator should return proper validation object', () => {
-      const lockfilePath = `${__dirname}/fixtures/yarn-only-https.lock`
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-only-https.lock')
       const lockfileType = 'yarn'
       const validators = [
         {
@@ -146,7 +147,7 @@ describe('Main CLI logic', () => {
 
   describe('validateSchemes', () => {
     test('should fail validating allowed schemes for a package-lock.json file', () => {
-      const lockfilePath = `${__dirname}/fixtures/package-lock-git-scheme.json`
+      const lockfilePath = path.join(__dirname, '/fixtures/package-lock-git-scheme.json')
       const lockfileType = 'npm'
       const validators = [
         {
@@ -167,7 +168,7 @@ describe('Main CLI logic', () => {
     })
 
     test('should succeed validating allowed schemes for a package-lock.json file', () => {
-      const lockfilePath = `${__dirname}/fixtures/package-lock-git-scheme.json`
+      const lockfilePath = path.join(__dirname, '/fixtures/package-lock-git-scheme.json')
       const lockfileType = 'npm'
       const validators = [
         {
@@ -188,7 +189,7 @@ describe('Main CLI logic', () => {
     })
 
     test('should fail validating allowed schemes for a yarn.lock file', () => {
-      const lockfilePath = `${__dirname}/fixtures/yarn-lock-schemes.lock`
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-lock-schemes.lock')
       const lockfileType = 'yarn'
       const validators = [
         {
@@ -209,7 +210,7 @@ describe('Main CLI logic', () => {
     })
 
     test('should succeed validating allowed schemes for a yarn.lock file', () => {
-      const lockfilePath = `${__dirname}/fixtures/yarn-lock-schemes.lock`
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-lock-schemes.lock')
       const lockfileType = 'yarn'
       const validators = [
         {

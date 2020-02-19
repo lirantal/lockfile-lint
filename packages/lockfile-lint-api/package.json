@@ -1,6 +1,6 @@
 {
   "name": "lockfile-lint-api",
-  "version": "5.0.10",
+  "version": "5.0.12",
   "description": "Lint an npm or yarn lockfile to analyze and detect issues",
   "main": "index.js",
   "engines": {
@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier-standard '**/*.js'",
+    "format": "prettier-standard \"**/*.js\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage:view": "open-cli coverage/lcov-report/index.html",

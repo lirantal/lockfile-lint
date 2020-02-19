@@ -38,7 +38,7 @@ module.exports = class ValidateHost {
           return REGISTRY[hostValue] ? REGISTRY[hostValue] : hostValue
         })
 
-        if (allowedHosts.indexOf(packageResolvedURL.host) === -1) {
+        if (!allowedHosts.includes(packageResolvedURL.host)) {
           if (!packageResolvedURL.host && options && options.emptyHostname) {
             debug(`detected empty hostname but allowing because emptyHostname is not false`)
           } else {

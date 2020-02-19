@@ -3,6 +3,66 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.18](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.17...lockfile-lint@3.0.18) (2020-02-10)
+
+
+### Bug Fixes
+
+* **tests:** shebangs don't work on Windows ([#71](https://github.com/lirantal/lockfile-lint/issues/71)) ([6baff98](https://github.com/lirantal/lockfile-lint/commit/6baff98))
+
+
+
+
+
+## [3.0.17](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.16...lockfile-lint@3.0.17) (2020-02-10)
+
+
+### Bug Fixes
+
+* **cli:** use `path.join` when concatenating paths ([#70](https://github.com/lirantal/lockfile-lint/issues/70)) ([4fa9090](https://github.com/lirantal/lockfile-lint/commit/4fa9090))
+
+
+
+
+
+## [3.0.16](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.15...lockfile-lint@3.0.16) (2020-02-10)
+
+**Note:** Version bump only for package lockfile-lint
+
+
+
+
+
+## [3.0.15](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.14...lockfile-lint@3.0.15) (2020-02-10)
+
+**Note:** Version bump only for package lockfile-lint
+
+
+
+
+
+## [3.0.14](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.13...lockfile-lint@3.0.14) (2020-02-10)
+
+
+### Bug Fixes
+
+* **cli:** REVERT conflicting arguments will error ([#64](https://github.com/lirantal/lockfile-lint/issues/64)) ([b9768ad](https://github.com/lirantal/lockfile-lint/commit/b9768ad))
+
+
+
+
+
+## [3.0.13](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.12...lockfile-lint@3.0.13) (2020-02-10)
+
+
+### Bug Fixes
+
+* **cli:** conflicting arguments will error ([#64](https://github.com/lirantal/lockfile-lint/issues/64)) ([2d451c9](https://github.com/lirantal/lockfile-lint/commit/2d451c9))
+
+
+
+
+
 ## [3.0.12](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.11...lockfile-lint@3.0.12) (2020-02-04)
 
 **Note:** Version bump only for package lockfile-lint

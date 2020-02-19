@@ -1,6 +1,6 @@
 {
   "name": "lockfile-lint",
-  "version": "3.0.12",
+  "version": "3.0.18",
   "description": "A CLI to lint a lockfile for security policies",
   "bin": {
     "lockfile-lint": "./bin/lockfile-lint.js"
@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier-standard '**/*.js'",
+    "format": "prettier-standard \"**/*.js\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage:view": "open-cli coverage/lcov-report/index.html",
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "lockfile-lint-api": "^5.0.10",
+    "lockfile-lint-api": "^5.0.12",
     "yargs": "^15.0.2"
   },
   "devDependencies": {

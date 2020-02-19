@@ -18,7 +18,7 @@
 # About
 
 Lockfiles are used as trusted whitelist of resources manifest to fetch packages from.
-However, keeping track of the changes introduced to lockfiles is not an easy task as they are designed to consumed by machines 🤖.
+However, keeping track of the changes introduced to lockfiles is not an easy task as they are designed to be consumed by machines 🤖.
 
 What happens when someone creates a Pull Request and sneaks a malicious resource package that replaces a real library? 😱
 
@@ -50,7 +50,7 @@ You can use `lockfile-lint` as a standalone CLI tool, or as an API library using
 
 Please be advised of the following security disclaimers that are outside of the control of a lockfile linter:
 
-When you whitelist all hosts from npmjs, yarnpkg, github or other registries you implicitly convey that you trust all the packages originating from these sources. As such, a malicious package can exist in a registry source that you whitelist. Direct dependencies that you add should to a project should be well vetted before adding such as using a tool like [npq](https://github.com/lirantal/npq).
+When you whitelist all hosts from npmjs, yarnpkg, github or other registries you implicitly convey that you trust all the packages originating from these sources. As such, a malicious package can exist in a registry source that you whitelist. Direct dependencies that you should add to a project should be well vetted before adding such as using a tool like [npq](https://github.com/lirantal/npq).
 
 
 
