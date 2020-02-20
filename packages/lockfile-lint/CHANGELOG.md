@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.18...lockfile-lint@4.0.0) (2020-02-20)
+
+
+### Bug Fixes
+
+* **cli:** conflicting arguments will error ([#72](https://github.com/lirantal/lockfile-lint/issues/72)) ([3e0eb59](https://github.com/lirantal/lockfile-lint/commit/3e0eb59))
+
+
+### BREAKING CHANGES
+
+* **cli:** CLI may show an error when arguments
+conflict and the order of short and long options was reversed
+to be more descriptive on CLI options errors.
+
+
+
+
+
 ## [3.0.18](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.17...lockfile-lint@3.0.18) (2020-02-10)
 
 
