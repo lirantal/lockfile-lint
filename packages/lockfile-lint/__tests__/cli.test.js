@@ -78,4 +78,26 @@ describe('CLI tests', () => {
       done()
     })
   })
+
+  test('Providing conflicting arguments should display an error', done => {
+    const process = childProcess.spawn(cliExecPath, [
+      '--type',
+      'yarn',
+      '--path',
+      '__tests__/fixtures/yarn-only-http.lock',
+      '--validate-https',
+      '--allowed-schemes',
+      'https:'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.stderr.on('close', _ => {
+      expect(output.indexOf('Arguments o and validate-https are mutually exclusive')).not.toBe(-1)
+      done()
+    })
+  })
 })
