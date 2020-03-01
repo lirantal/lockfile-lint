@@ -35,6 +35,14 @@ Easily invoked with npx on any project and lint it:
 npx lockfile-lint --path yarn.lock --allowed-hosts npm yarn --validate-https
 ```
 
+To lint the npm-shrinkwrap.json file, add the `--type npm` flag:
+
+```bash
+npx lockfile-lint --path npm-shrinkwarp.json --type npm --allowed-hosts npm yarn --validate-https
+```
+
+If you get no results, congratulations, the file passes!
+
 If lockfile-lint detects exceptions to the policies it will report them:
 
 ![carbon](https://user-images.githubusercontent.com/316371/59755684-09923200-9291-11e9-9add-6886dfc6689a.png)
