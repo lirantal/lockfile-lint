@@ -18,7 +18,8 @@ let validators = []
 const supportedValidators = new Map([
   ['allowed-hosts', 'validateHosts'],
   ['validate-https', 'validateHttps'],
-  ['allowed-schemes', 'validateSchemes']
+  ['allowed-schemes', 'validateSchemes'],
+  ['allowed-urls', 'validateUrls']
 ])
 
 for (const [commandArgument, commandValue] of Object.entries(config)) {
