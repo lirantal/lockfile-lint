@@ -1,9 +1,27 @@
 'use strict'
 
+const debug = require('debug')('lockfile-lint')
 const yargs = require('yargs')
+const {cosmiconfigSync} = require('cosmiconfig')
+
+let cosmiconfigResult
+try {
+  cosmiconfigResult = cosmiconfigSync('lockfile-lint').search()
+} catch (err) {
+  debug(`error encountered while loading configuration: ${err}`)
+}
+
+let fileConfig = {}
+if (cosmiconfigResult) {
+  fileConfig = cosmiconfigResult.config
+  debug(
+    `loaded the following config from ${cosmiconfigResult.filepath}: ${JSON.stringify(fileConfig)}`
+  )
+}
 
 const argv = yargs
   .version()
+  .config(fileConfig)
   .usage('Usage: lockfile-lint --path <path-to-lockfile> --allowed-hosts yarn npm')
   .help('help')
   .alias('help', 'h')
