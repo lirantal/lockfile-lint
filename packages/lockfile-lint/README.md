@@ -78,6 +78,19 @@ lockfile-lint --path yarn.lock --allowed-hosts yarn github.com --validate-https 
 | `--validate-checksum`, `-c`  | check that all resources include a checksum                                                                                                                                                                                                                                                | ❌ PRs welcome |
 | `--validate-integrity`, `-i` | check that all resources include an integrity field                                                                                                                                                                                                                                        | ❌ PRs welcome |
 
+# File-Based Configuration
+
+Lockfile-lint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) for configuration file support. This means you can configure the above options via (in order of precedence):
+
+- A "lockfile-lint" key in your package.json file.
+- A .lockfile-lintrc file, written in JSON or YAML, with optional extensions: .json/.yaml/.yml (without extension takes precedence).
+- A .lockfile-lint.js or lockfilelint.config.js file that exports an object.
+- A .lockfile-lint.toml file, written in TOML (the .toml extension is required).
+
+The configuration file will be resolved starting from the current working directory, and searching up the file tree until a config file is (or isn't) found. Command-line options take precedence over any file-based configuration.
+
+The options accepted in the configuration file are the same as the options above in camelcase (e.g. "path", "allowedHosts").
+
 # Contributing
 
 Please consult [CONTIRBUTING](../../CONTRIBUTING.md) for guidelines on contributing to this project.
