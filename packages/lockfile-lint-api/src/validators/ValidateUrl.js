@@ -25,9 +25,8 @@ module.exports = class ValidateUrl {
       }
 
       try {
-        const isMatchingUrl = allowedUrls.indexOf(packageMetadata.resolved) !== -1
-
-        if (!isMatchingUrl) {
+        const isPassing = allowedUrls.indexOf(packageMetadata.resolved) > -1
+        if (!isPassing) {
           validationResult.errors.push({
             message: `detected invalid url(s) for package: ${packageName}\n    expected: ${allowedUrls}\n    actual: ${
               packageMetadata.resolved
@@ -45,5 +44,17 @@ module.exports = class ValidateUrl {
     }
 
     return validationResult
+  }
+
+  validateSingle (packageName, allowedUrls) {
+    // eslint-disable-next-line security/detect-object-injection
+    const packageMetadata = this.packages[packageName]
+    if (!('resolved' in packageMetadata)) {
+      return true
+    }
+
+    const resolvedUrl = packageMetadata.resolved
+
+    return allowedUrls.indexOf(resolvedUrl) > -1
   }
 }

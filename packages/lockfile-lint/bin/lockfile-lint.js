@@ -29,7 +29,9 @@ for (const [commandArgument, commandValue] of Object.entries(config)) {
       name: validatorItem,
       values: commandValue,
       options: {
-        emptyHostname: config['empty-hostname']
+        emptyHostname: config['empty-hostname'],
+        allowedHosts: config['allowed-hosts'],
+        allowedUrls: config['allowed-urls']
       }
     })
   }
