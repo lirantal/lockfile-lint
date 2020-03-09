@@ -100,4 +100,58 @@ describe('CLI tests', () => {
       done()
     })
   })
+
+  describe('cosmiconfig integration', () => {
+    it('options are loaded from cosmiconfig files', done => {
+      const lintProcess = childProcess.spawn(cliExecPath, [], {
+        cwd: path.join(__dirname, 'fixtures/valid-config')
+      })
+
+      let output = ''
+      lintProcess.stderr.on('data', chunk => {
+        output += chunk
+      })
+
+      lintProcess.on('close', exitCode => {
+        console.log(output)
+        expect(exitCode).toBe(0)
+        done()
+      })
+    })
+
+    it('command-line options take precedence', done => {
+      const lintProcess = childProcess.spawn(cliExecPath, ['-p', '../yarn-only-http.lock'], {
+        cwd: path.join(__dirname, 'fixtures/valid-config')
+      })
+
+      lintProcess.on('close', exitCode => {
+        expect(exitCode).toBe(1)
+        done()
+      })
+    })
+
+    it('invalid config files are ignored', done => {
+      const lintProcess = childProcess.spawn(
+        cliExecPath,
+        ['-p', '../yarn-only-https.lock', '--type', 'yarn', '--validate-https'],
+        {
+          cwd: path.join(__dirname, 'fixtures/invalid-config'),
+          env: Object.assign({}, process.env, {DEBUG: 'lockfile-lint'})
+        }
+      )
+
+      let stderr = ''
+      lintProcess.stderr.on('data', chunk => {
+        stderr += chunk
+      })
+
+      lintProcess.on('close', exitCode => {
+        expect(stderr).toEqual(
+          expect.stringMatching(/error encountered while loading configuration/i)
+        )
+        expect(exitCode).toBe(0)
+        done()
+      })
+    })
+  })
 })

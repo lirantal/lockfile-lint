@@ -3,8 +3,16 @@
 
 const debug = require('debug')('lockfile-lint')
 const main = require('../src/main')
-const cli = require('../src/cli')
-debug(`parsed the following CLI arguments: ${JSON.stringify(cli)}`)
+
+let config
+
+try {
+  config = require('../src/config')(process.argv)
+  debug(`parsed the following options: ${JSON.stringify(config)}`)
+} catch (err) {
+  debug(`error loading options from CLI arguments/files: ${err}`)
+  process.exit(1)
+}
 
 let validators = []
 const supportedValidators = new Map([
@@ -13,14 +21,14 @@ const supportedValidators = new Map([
   ['allowed-schemes', 'validateSchemes']
 ])
 
-for (const [commandArgument, commandValue] of Object.entries(cli)) {
+for (const [commandArgument, commandValue] of Object.entries(config)) {
   if (supportedValidators.has(commandArgument)) {
     const validatorItem = supportedValidators.get(commandArgument)
     validators.push({
       name: validatorItem,
       values: commandValue,
       options: {
-        emptyHostname: cli['empty-hostname']
+        emptyHostname: config['empty-hostname']
       }
     })
   }
@@ -29,8 +37,8 @@ for (const [commandArgument, commandValue] of Object.entries(cli)) {
 let result
 try {
   result = main.runValidators({
-    path: cli['path'],
-    type: cli['type'],
+    path: config['path'],
+    type: config['type'],
     validators
   })
 } catch (error) {
