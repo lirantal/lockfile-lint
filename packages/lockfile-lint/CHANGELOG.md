@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.0.0...lockfile-lint@4.1.0) (2020-03-09)
+
+
+### Features
+
+* **cli:** add file-based configuration ([#75](https://github.com/lirantal/lockfile-lint/issues/75)) ([e183593](https://github.com/lirantal/lockfile-lint/commit/e183593))
+
+
+
+
+
 # [4.0.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@3.0.18...lockfile-lint@4.0.0) (2020-02-20)
 
 
