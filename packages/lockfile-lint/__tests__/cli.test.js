@@ -107,7 +107,13 @@ describe('CLI tests', () => {
         cwd: path.join(__dirname, 'fixtures/valid-config')
       })
 
+      let output = ''
+      lintProcess.stderr.on('data', chunk => {
+        output += chunk
+      })
+
       lintProcess.on('close', exitCode => {
+        console.log(output)
         expect(exitCode).toBe(0)
         done()
       })
