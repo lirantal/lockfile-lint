@@ -94,4 +94,45 @@ describe('Validator: Url', () => {
       validator.validate(['https://registry.npms.org/@babel/code-frame'])
     }).not.toThrow()
   })
+
+  it('validator should return true for a single package with a valid URL', () => {
+    const mockedPackages = {
+      'bolt11@https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247': {
+        resolved: 'https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247'
+      }
+    }
+    const validator = new ValidatorUrl({packages: mockedPackages})
+
+    expect(
+      validator.validateSingle(
+        'bolt11@https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247',
+        ['https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247']
+      )
+    ).toEqual(true)
+  })
+
+  it('validator should return false for a single package with an invalid URL', () => {
+    const mockedPackages = {
+      'bolt11@https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247': {
+        resolved: 'https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247'
+      }
+    }
+    const validator = new ValidatorUrl({packages: mockedPackages})
+
+    expect(
+      validator.validateSingle(
+        'bolt11@https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247',
+        ['https://github.com/LN-Zap/bolt11']
+      )
+    ).toEqual(false)
+  })
+
+  it('validator should return true for a single package that does not have a resolved URL', () => {
+    const mockedPackages = {
+      meow: {}
+    }
+    const validator = new ValidatorUrl({packages: mockedPackages})
+
+    expect(validator.validateSingle('meow', ['https://github.com/LN-Zap/bolt11'])).toEqual(true)
+  })
 })
