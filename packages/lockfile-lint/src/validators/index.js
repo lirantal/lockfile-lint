@@ -95,21 +95,6 @@ function ValidateUrlManager ({path, type, validatorValues, validatorOptions}) {
   const parser = new ParseLockfile(options)
   const lockfile = parser.parseSync()
   const validator = new ValidateUrl({packages: lockfile.object})
-  const validationResult = validator.validate(validatorValues, validatorOptions)
 
-  // Check if some of the errors are for allowed hosts and filter those out
-  if (validatorOptions && validatorOptions.allowedHosts) {
-    const hostValidator = new ValidateHost({packages: lockfile.object})
-
-    validationResult.errors = validationResult.errors.filter(
-      result => !hostValidator.validateSingle(result.package, validatorOptions.allowedHosts)
-    )
-
-    // If we don't have any errors left at this point make sure it's a success type
-    if (!validationResult.errors.length) {
-      validationResult.type = 'success'
-    }
-  }
-
-  return validationResult
+  return validator.validate(validatorValues, validatorOptions)
 }

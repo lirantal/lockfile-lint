@@ -23,6 +23,18 @@ const supportedValidators = new Map([
 ])
 
 for (const [commandArgument, commandValue] of Object.entries(config)) {
+  /**
+   * If we have both --allowed-urls and --allowed-hosts flags active
+   * then we can skip doing the work for allowed urls as the validator
+   * for allowed hosts will check for both.
+   *
+   * We only need to run the check for allowed urls if the user does not
+   * specify allowed hosts.
+   */
+  if (commandArgument === 'allowed-urls' && config['allowed-hosts']) {
+    continue
+  }
+
   if (supportedValidators.has(commandArgument)) {
     const validatorItem = supportedValidators.get(commandArgument)
     validators.push({

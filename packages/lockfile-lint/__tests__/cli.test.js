@@ -215,23 +215,6 @@ describe('Validator managers:', () => {
     })
   })
 
-  it('URL manager should work together with Host manager', () => {
-    const result = ValidateUrlManager({
-      path: '__tests__/fixtures/yarn-and-github-url.lock',
-      type: 'yarn',
-      validatorValues: [
-        'https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247'
-      ],
-      validatorOptions: {
-        allowedHosts: ['yarn']
-      }
-    })
-    expect(result).toEqual({
-      type: 'success',
-      errors: []
-    })
-  })
-
   it('URL manager should return errors for lock file with packages on other URLs', () => {
     const result = ValidateUrlManager({
       path: '__tests__/fixtures/yarn-and-github-url.lock',
