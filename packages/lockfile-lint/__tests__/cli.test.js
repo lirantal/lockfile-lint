@@ -4,6 +4,7 @@ const path = require('path')
 // eslint-disable-next-line security/detect-child-process
 const childProcess = require('child_process')
 const cliExecPath = path.join(__dirname, '../bin/lockfile-lint.js')
+const {ValidateHostManager, ValidateUrlManager} = require('../src/validators/index')
 
 describe('CLI tests', () => {
   test('Running without parameters should display help', done => {
@@ -101,6 +102,29 @@ describe('CLI tests', () => {
     })
   })
 
+  test('Allowed hosts and allowed urls flags should work together', done => {
+    const process = childProcess.spawn(cliExecPath, [
+      '--type',
+      'yarn',
+      '--path',
+      '__tests__/fixtures/yarn-and-github-url.lock',
+      '--allowed-hosts',
+      'yarn',
+      '--allowed-urls',
+      'https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.stderr.on('close', _ => {
+      expect(output).toBe('')
+      done()
+    })
+  })
+
   describe('cosmiconfig integration', () => {
     it('options are loaded from cosmiconfig files', done => {
       const lintProcess = childProcess.spawn(cliExecPath, [], {
@@ -152,6 +176,61 @@ describe('CLI tests', () => {
         expect(exitCode).toBe(0)
         done()
       })
+    })
+  })
+})
+
+describe('Validator managers:', () => {
+  it('Host manager should work together with URL manager', () => {
+    const result = ValidateHostManager({
+      path: '__tests__/fixtures/yarn-and-github-url.lock',
+      type: 'yarn',
+      validatorValues: ['yarn'],
+      validatorOptions: {
+        allowedUrls: ['https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247']
+      }
+    })
+    expect(result).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('Host manager should return errors for lock file with packages on other hosts', () => {
+    const result = ValidateHostManager({
+      path: '__tests__/fixtures/yarn-and-github-url.lock',
+      type: 'yarn',
+      validatorValues: ['yarn']
+    })
+    expect(result).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message:
+            'detected invalid host(s) for package: bolt11@https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247\n    expected: registry.yarnpkg.com\n    actual: github.com\n',
+          package:
+            'bolt11@https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247'
+        }
+      ]
+    })
+  })
+
+  it('URL manager should return errors for lock file with packages on other URLs', () => {
+    const result = ValidateUrlManager({
+      path: '__tests__/fixtures/yarn-and-github-url.lock',
+      type: 'yarn',
+      validatorValues: ['https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247']
+    })
+
+    expect(result).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message:
+            'detected invalid url(s) for package: ms@^2.1.1\n    expected: https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247\n    actual: https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009\n',
+          package: 'ms@^2.1.1'
+        }
+      ]
     })
   })
 })

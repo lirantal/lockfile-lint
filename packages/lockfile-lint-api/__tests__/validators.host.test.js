@@ -197,4 +197,24 @@ describe('Validator: Host', () => {
       validator.validate(['npm'])
     }).not.toThrow()
   })
+
+  it('validator should return true for a single package on a valid host', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      }
+    }
+    const validator = new ValidatorHost({packages: mockedPackages})
+
+    expect(validator.validateSingle('@babel/code-frame', ['npm'])).toEqual(true)
+  })
+
+  it('validator should return true for a single package that does not have a resolved URL', () => {
+    const mockedPackages = {
+      meow: {}
+    }
+    const validator = new ValidatorHost({packages: mockedPackages})
+
+    expect(validator.validateSingle('meow', ['npm'])).toEqual(true)
+  })
 })

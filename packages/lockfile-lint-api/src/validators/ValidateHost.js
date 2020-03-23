@@ -28,17 +28,14 @@ module.exports = class ValidateHost {
         continue
       }
 
-      let packageResolvedURL = {}
-
       try {
-        packageResolvedURL = new URL(packageMetadata.resolved)
-
+        const packageResolvedURL = new URL(packageMetadata.resolved)
         const allowedHosts = hosts.map(hostValue => {
           // eslint-disable-next-line security/detect-object-injection
           return REGISTRY[hostValue] ? REGISTRY[hostValue] : hostValue
         })
-
-        if (!allowedHosts.includes(packageResolvedURL.host)) {
+        const isPassing = allowedHosts.includes(packageResolvedURL.host)
+        if (!isPassing) {
           if (!packageResolvedURL.host && options && options.emptyHostname) {
             debug(`detected empty hostname but allowing because emptyHostname is not false`)
           } else {
@@ -60,5 +57,22 @@ module.exports = class ValidateHost {
     }
 
     return validationResult
+  }
+
+  validateSingle (packageName, hosts) {
+    // eslint-disable-next-line security/detect-object-injection
+    const packageMetadata = this.packages[packageName]
+
+    if (!('resolved' in packageMetadata)) {
+      return true
+    }
+
+    const packageResolvedURL = new URL(packageMetadata.resolved)
+    const allowedHosts = hosts.map(hostValue => {
+      // eslint-disable-next-line security/detect-object-injection
+      return REGISTRY[hostValue] ? REGISTRY[hostValue] : hostValue
+    })
+
+    return allowedHosts.includes(packageResolvedURL.host)
   }
 }
