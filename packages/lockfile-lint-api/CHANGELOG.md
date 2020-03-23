@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.0.12...lockfile-lint-api@5.1.0) (2020-03-23)
+
+
+### Features
+
+* **validators:** add URL validator ([#52](https://github.com/lirantal/lockfile-lint/issues/52)) ([e81ffe9](https://github.com/lirantal/lockfile-lint/commit/e81ffe9))
+
+
+
+
+
 ## [5.0.12](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.0.11...lockfile-lint-api@5.0.12) (2020-02-10)
 
 **Note:** Version bump only for package lockfile-lint-api
