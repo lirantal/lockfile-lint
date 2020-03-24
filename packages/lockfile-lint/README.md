@@ -32,7 +32,7 @@ npm install --save lockfile-lint
 `lockfile-lint` can be installed per a project scope, or globally and exposes a `lockfile-lint` executable that should be practiced during builds, CIs, and general static code analysis procedures to ensure that lockfiles are kept up to date with pre-defined security and usage policies.
 
 ```bash
-lockfile-lint --type <yarn|npm> --path <path-to-lockfile> --validate-https --allowed-hosts <host-to-match>
+lockfile-lint --type <yarn|npm> --path <path-to-lockfile> --validate-https --allowed-hosts <host-to-match> --allowed-urls <urls-to-match>
 ```
 
 Supported lockfiles:
@@ -65,6 +65,15 @@ lockfile-lint --path yarn.lock --allowed-hosts yarn github.com --validate-https 
 - `--allowed-hosts` explicitly set to match github.com as a host and specifies `yarn` as the alias for yarn's official mirror host
 - `--allowed-schemes` overrides `validate-https` and so it explicitly allows both `https:` and `git+https:` for the github URL
 
+**Example 4**: allow the lockfile to contain a package which resolves to a specific URL specified by the `--allowed-urls` option while all other packages must resolve to yarn as specified by `--allowed-hosts`
+
+```bash
+lockfile-lint --path yarn.lock --allowed-hosts yarn --allowed-urls https://github.com/lirantal/lockfile-lint#d30ce73a3e5977dede29450df1c79b09f02779b2
+```
+
+- `--allowed-hosts` allows packages from yarn only
+- `--allowed-urls` overrides `allowed-hosts` and allows a specific Github URL to pass validation
+
 # CLI command options
 
 | command line argument        | description                                                                                                                                                                                                                                                                                | implemented    |
@@ -74,6 +83,7 @@ lockfile-lint --path yarn.lock --allowed-hosts yarn github.com --validate-https 
 | `--validate-https`, `-s`     | validates the use of HTTPS as protocol schema for all resources in the lockfile                                                                                                                                                                                                            | ✅             |
 | `--allowed-hosts`, `-a`      | validates a whitelist of allowed hosts to be used for all resources in the lockfile. Supported short-hands aliases are `npm`, `yarn`, and `verdaccio` which will match URLs `https://registry.npmjs.org`, `https://registry.yarnpkg.com` and `https://registry.verdaccio.org` respectively | ✅             |
 | `--allowed-schemes`, `-o`    | allowed [URI schemes](https://tools.ietf.org/html/rfc2396#section-3.1) such as "https:", "http", "git+ssh:", or "git+https:"                                                                                                                                                               | ✅             |
+| `--allowed-urls`, `-u`       | allowed URLs (e.g. `https://github.com/some-org/some-repo#some-hash`)                                                                                                                                                                                                                      | ✅             |
 | `--empty-hostname`, `-e`     | allow empty hostnames, or set to false if you wish for a stricter policy                                                                                                                                                                                                                   | ✅             |
 | `--validate-checksum`, `-c`  | check that all resources include a checksum                                                                                                                                                                                                                                                | ❌ PRs welcome |
 | `--validate-integrity`, `-i` | check that all resources include an integrity field                                                                                                                                                                                                                                        | ❌ PRs welcome |
