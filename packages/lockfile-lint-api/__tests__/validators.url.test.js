@@ -81,7 +81,7 @@ describe('Validator: Url', () => {
     }).toThrowError(`validate method requires an array`)
   })
 
-  it('validator should not throw if package has no `resolved` field', () => {
+  it('validator should not fail even if one of the packages has no `resolved` field', () => {
     const mockedPackages = {
       '@babel/code-frame': {
         resolved: 'https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
@@ -90,9 +90,12 @@ describe('Validator: Url', () => {
     }
     const validator = new ValidatorUrl({packages: mockedPackages})
 
-    expect(() => {
-      validator.validate(['https://registry.npms.org/@babel/code-frame'])
-    }).not.toThrow()
+    expect(
+      validator.validate(['https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'])
+    ).toEqual({
+      type: 'success',
+      errors: []
+    })
   })
 
   it('validator should return true for a single package with a valid URL', () => {
