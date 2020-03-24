@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.0...lockfile-lint-api@5.1.1) (2020-03-24)
+
+
+### Bug Fixes
+
+* **refactor:** use includes() instead of indexOf() ([#86](https://github.com/lirantal/lockfile-lint/issues/86)) ([ab50386](https://github.com/lirantal/lockfile-lint/commit/ab50386))
+
+
+
+
+
 # [5.1.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.0.12...lockfile-lint-api@5.1.0) (2020-03-23)
 
 
