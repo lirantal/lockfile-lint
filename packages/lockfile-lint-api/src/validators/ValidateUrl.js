@@ -55,6 +55,6 @@ module.exports = class ValidateUrl {
 
     const resolvedUrl = packageMetadata.resolved
 
-    return allowedUrls.includes(resolvedUrl);
+    return allowedUrls.includes(resolvedUrl)
   }
 }
