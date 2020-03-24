@@ -25,7 +25,7 @@ module.exports = class ValidateUrl {
       }
 
       try {
-        const isPassing = allowedUrls.indexOf(packageMetadata.resolved) > -1
+        const isPassing = allowedUrls.includes(packageMetadata.resolved)
         if (!isPassing) {
           validationResult.errors.push({
             message: `detected invalid url(s) for package: ${packageName}\n    expected: ${allowedUrls}\n    actual: ${
@@ -55,6 +55,6 @@ module.exports = class ValidateUrl {
 
     const resolvedUrl = packageMetadata.resolved
 
-    return allowedUrls.indexOf(resolvedUrl) > -1
+    return allowedUrls.includes(resolvedUrl);
   }
 }
