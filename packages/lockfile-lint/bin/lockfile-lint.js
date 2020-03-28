@@ -58,4 +58,8 @@ debug(`total validator successes: ${validatorSuccesses}`)
 if (validatorFailures !== 0) {
   console.error('error: command failed with exit code 1', '\n')
   process.exit(1)
+} else {
+  const GREEN = '\x1b[32m'
+  const RESET = '\x1b[0m'
+  console.info(GREEN, '👍 No issues detected', '\n', RESET)
 }
