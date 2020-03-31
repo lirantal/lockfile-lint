@@ -56,9 +56,10 @@ describe('Validator: Host', () => {
     }
 
     const validator = new ValidatorHost({packages: mockedPackages})
-    expect(() => {
-      validator.validate(['npm'])
-    }).not.toThrow()
+    expect(validator.validate(['npm'])).toEqual({
+      type: 'success',
+      errors: []
+    })
   })
 
   it('validator should succeed if all resources are from a valid list of host aliases', () => {
@@ -75,9 +76,10 @@ describe('Validator: Host', () => {
     }
 
     const validator = new ValidatorHost({packages: mockedPackages})
-    expect(() => {
-      validator.validate(['npm', 'yarn'])
-    }).not.toThrow()
+    expect(validator.validate(['npm', 'yarn'])).toEqual({
+      type: 'success',
+      errors: []
+    })
   })
 
   it('validator should succeed if all resources are matching a host address', () => {
@@ -94,9 +96,10 @@ describe('Validator: Host', () => {
     }
 
     const validator = new ValidatorHost({packages: mockedPackages})
-    expect(() => {
-      validator.validate(['https://registry.verdaccio.org'])
-    }).not.toThrow()
+    expect(validator.validate(['https://registry.verdaccio.org'])).toEqual({
+      type: 'success',
+      errors: []
+    })
   })
 
   it('validator should fail if validate method receives a non-array value', () => {
@@ -193,9 +196,10 @@ describe('Validator: Host', () => {
     }
     const validator = new ValidatorHost({packages: mockedPackages})
 
-    expect(() => {
-      validator.validate(['npm'])
-    }).not.toThrow()
+    expect(validator.validate(['npm'])).toEqual({
+      type: 'success',
+      errors: []
+    })
   })
 
   it('validator should return true for a single package on a valid host', () => {
