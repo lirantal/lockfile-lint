@@ -30,9 +30,18 @@ module.exports = class ValidateHost {
 
       try {
         const packageResolvedURL = new URL(packageMetadata.resolved)
-        const allowedHosts = hosts.map(hostValue => {
+        const allowedHosts = hosts.map(allowedHost => {
           // eslint-disable-next-line security/detect-object-injection
-          return REGISTRY[hostValue] ? REGISTRY[hostValue] : hostValue
+          const host = REGISTRY[allowedHost] ? REGISTRY[allowedHost] : allowedHost
+          let hostValue
+          try {
+            const parsedHost = new URL(host)
+            hostValue = parsedHost.host
+          } catch (error) {
+            hostValue = host
+          }
+
+          return hostValue
         })
         const isPassing = allowedHosts.includes(packageResolvedURL.host)
         if (!isPassing) {

@@ -96,6 +96,26 @@ describe('Validator: Host', () => {
     }
 
     const validator = new ValidatorHost({packages: mockedPackages})
+    expect(validator.validate(['registry.verdaccio.org'])).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should succeed if all resources are matching a host address but input is a full URL', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://registry.verdaccio.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      },
+      meow: {
+        resolved: 'https://registry.verdaccio.org/meow/-/meow-4.0.1.tgz'
+      },
+      '@babel/generator': {
+        resolved: 'https://registry.verdaccio.org/@babel/generator/-/generator-7.4.4.tgz'
+      }
+    }
+
+    const validator = new ValidatorHost({packages: mockedPackages})
     expect(validator.validate(['https://registry.verdaccio.org'])).toEqual({
       type: 'success',
       errors: []
