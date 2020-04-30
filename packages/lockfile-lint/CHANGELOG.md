@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.2.2...lockfile-lint@4.3.0) (2020-04-30)
+
+
+### Features
+
+* add validation success console message ([#87](https://github.com/lirantal/lockfile-lint/issues/87)) ([3ff6eb8](https://github.com/lirantal/lockfile-lint/commit/3ff6eb8))
+
+
+
+
+
 ## [4.2.2](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.2.1...lockfile-lint@4.2.2) (2020-03-25)
 
 **Note:** Version bump only for package lockfile-lint
