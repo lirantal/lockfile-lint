@@ -33,16 +33,20 @@ module.exports = class ValidateHost {
         const allowedHosts = hosts.map(allowedHost => {
           // eslint-disable-next-line security/detect-object-injection
           const host = REGISTRY[allowedHost] ? REGISTRY[allowedHost] : allowedHost
-          let hostValue
+          let hostValue = host
+
           try {
             const parsedHost = new URL(host)
-            hostValue = parsedHost.host
+            if (parsedHost.host) {
+              hostValue = parsedHost.host
+            }
           } catch (error) {
-            hostValue = host
+            debug(`failed parsing a URL object from given host value so using as is: ${host}`)
           }
 
           return hostValue
         })
+
         const isPassing = allowedHosts.includes(packageResolvedURL.host)
         if (!isPassing) {
           if (!packageResolvedURL.host && options && options.emptyHostname) {
