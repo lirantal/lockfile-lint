@@ -241,4 +241,38 @@ describe('Validator: Host', () => {
 
     expect(validator.validateSingle('meow', ['npm'])).toEqual(true)
   })
+
+  it('validator should succeed if resources match a host:port address as input', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://nexus.example.com:8089/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      },
+      meow: {
+        resolved: 'https://registry.yarnpkg.com/meow/-/meow-4.0.1.tgz'
+      },
+      '@babel/generator': {
+        resolved: 'https://nexus.example.com:8089/@babel/generator/-/generator-7.4.4.tgz'
+      }
+    }
+
+    const validator = new ValidatorHost({packages: mockedPackages})
+    expect(validator.validate(['yarn', 'nexus.example.com:8089'])).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should succeed if a resource matches a host:port address as input', () => {
+    const mockedPackages = {
+      '@babel/code-frame': {
+        resolved: 'https://nexus.example.com:8089/@babel/code-frame/-/code-frame-7.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatorHost({packages: mockedPackages})
+    expect(validator.validate(['nexus.example.com:8089'])).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
 })
