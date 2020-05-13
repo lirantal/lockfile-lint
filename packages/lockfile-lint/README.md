@@ -59,7 +59,7 @@ lockfile-lint --path yarn.lock --allowed-hosts registry.yarnpkg.com --validate-h
 **Example 3**: allow the lockfile to contain packages served over github and so need to specify github.com as a host as well as the `git+https:` as a valid URI scheme
 
 ```bash
-lockfile-lint --path yarn.lock --allowed-hosts yarn github.com --validate-https --allowed-schemes "https:" "git+https:"
+lockfile-lint --path yarn.lock --allowed-hosts yarn github.com --allowed-schemes "https:" "git+https:"
 ```
 
 - `--allowed-hosts` explicitly set to match github.com as a host and specifies `yarn` as the alias for yarn's official mirror host
