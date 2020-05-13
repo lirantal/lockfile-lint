@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.5](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.2...lockfile-lint-api@5.1.5) (2020-05-13)
+
+
+### Bug Fixes
+
+* **hostvalidator:** support full urls for host ([#88](https://github.com/lirantal/lockfile-lint/issues/88)) ([d0002e7](https://github.com/lirantal/lockfile-lint/commit/d0002e7))
+* bump package ver that skipped releases ([7d239ca](https://github.com/lirantal/lockfile-lint/commit/7d239ca))
+
+
+
+
+
 ## [5.1.3](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.2...lockfile-lint-api@5.1.3) (2020-04-30)
 
 
