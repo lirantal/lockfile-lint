@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.6](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.5...lockfile-lint-api@5.1.6) (2020-05-13)
+
+
+### Bug Fixes
+
+* support host:port syntax ([#94](https://github.com/lirantal/lockfile-lint/issues/94)) ([37d8eef](https://github.com/lirantal/lockfile-lint/commit/37d8eef))
+
+
+
+
+
 ## [5.1.5](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.2...lockfile-lint-api@5.1.5) (2020-05-13)
 
 
