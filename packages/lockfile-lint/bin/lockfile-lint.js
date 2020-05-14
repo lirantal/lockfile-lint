@@ -76,5 +76,5 @@ if (validatorFailures !== 0) {
 } else {
   const GREEN = '\x1b[32m'
   const RESET = '\x1b[0m'
-  console.info(GREEN, '👍 No issues detected', '\n', RESET)
+  console.info(GREEN, 'No issues detected', '\n', RESET)
 }
