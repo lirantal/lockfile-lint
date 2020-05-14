@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.6](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.5...lockfile-lint@4.3.6) (2020-05-14)
+
+
+### Bug Fixes
+
+* **windows:** remove emoji from output not supported on windows ([#96](https://github.com/lirantal/lockfile-lint/issues/96)) ([6115d68](https://github.com/lirantal/lockfile-lint/commit/6115d68))
+
+
+
+
+
 ## [4.3.5](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.4...lockfile-lint@4.3.5) (2020-05-14)
 
 
