@@ -7,7 +7,7 @@ const {
   ValidateScheme,
   ValidateUrl
 } = require('lockfile-lint-api')
-const debug = require('debug')
+const debug = require('debug')('lockfile-lint')
 
 module.exports = {
   ValidateHostManager,
@@ -17,8 +17,8 @@ module.exports = {
 }
 
 function ValidateSchemeManager ({path, type, validatorValues, validatorOptions}) {
-  debug('validate-scheme-manager')(
-    `invoked with validator options: ${JSON.stringify(validatorValues)}`
+  debug(
+    `validate-scheme-manager invoked with validator options: ${JSON.stringify(validatorValues)}`
   )
 
   const options = {
@@ -34,9 +34,7 @@ function ValidateSchemeManager ({path, type, validatorValues, validatorOptions})
 }
 
 function ValidateHostManager ({path, type, validatorValues, validatorOptions}) {
-  debug('validate-host-manager')(
-    `invoked with validator options: ${JSON.stringify(validatorValues)}`
-  )
+  debug(`validate-host-manager invoked with validator options: ${JSON.stringify(validatorValues)}`)
 
   const options = {
     lockfilePath: path,
@@ -66,9 +64,7 @@ function ValidateHostManager ({path, type, validatorValues, validatorOptions}) {
 }
 
 function ValidateHttpsManager ({path, type, validatorValues, validatorOptions}) {
-  debug('validate-host-manager')(
-    `invoked with validator options: ${JSON.stringify(validatorValues)}`
-  )
+  debug(`validate-host-manager invoked with validator options: ${JSON.stringify(validatorValues)}`)
 
   const options = {
     lockfilePath: path,
@@ -83,9 +79,7 @@ function ValidateHttpsManager ({path, type, validatorValues, validatorOptions}) 
 }
 
 function ValidateUrlManager ({path, type, validatorValues, validatorOptions}) {
-  debug('validate-url-manager')(
-    `invoked with validator options: ${JSON.stringify(validatorValues)}`
-  )
+  debug(`validate-url-manager invoked with validator options: ${JSON.stringify(validatorValues)}`)
 
   const options = {
     lockfilePath: path,
