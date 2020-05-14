@@ -1,6 +1,6 @@
 {
   "name": "lockfile-lint",
-  "version": "4.3.4",
+  "version": "4.3.5",
   "description": "A CLI to lint a lockfile for security policies",
   "bin": {
     "lockfile-lint": "./bin/lockfile-lint.js"
