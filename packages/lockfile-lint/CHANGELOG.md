@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.7](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.6...lockfile-lint@4.3.7) (2020-06-24)
+
+
+### Bug Fixes
+
+* **readme:** update docs for allowed-schemes ([#97](https://github.com/lirantal/lockfile-lint/issues/97)) ([e763b99](https://github.com/lirantal/lockfile-lint/commit/e763b99)), closes [#91](https://github.com/lirantal/lockfile-lint/issues/91)
+
+
+
+
+
 ## [4.3.6](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.5...lockfile-lint@4.3.6) (2020-05-14)
 
 
