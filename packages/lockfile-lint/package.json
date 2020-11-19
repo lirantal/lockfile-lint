@@ -55,7 +55,7 @@
     "cosmiconfig": "^6.0.0",
     "debug": "^4.1.1",
     "lockfile-lint-api": "^5.1.6",
-    "yargs": "^15.0.2"
+    "yargs": "^16.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
