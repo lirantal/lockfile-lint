@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.8](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.7...lockfile-lint@4.3.8) (2020-11-21)
+
+
+### Bug Fixes
+
+* packages/lockfile-lint/package.json to reduce vulnerabilities ([#98](https://github.com/lirantal/lockfile-lint/issues/98)) ([2aed559](https://github.com/lirantal/lockfile-lint/commit/2aed559))
+
+
+
+
+
 ## [4.3.7](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.6...lockfile-lint@4.3.7) (2020-06-24)
 
 
