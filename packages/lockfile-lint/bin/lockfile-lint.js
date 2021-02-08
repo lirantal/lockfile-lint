@@ -4,6 +4,28 @@
 const debug = require('debug')('lockfile-lint')
 const main = require('../src/main')
 
+const isSupported =
+  process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color'
+
+const symbolsDefault = {
+  info: 'ℹ',
+  success: '✔',
+  error: '✖'
+}
+
+const symbolsFallback = {
+  info: 'i',
+  success: '√',
+  error: '×'
+}
+
+const symbols = isSupported ? symbolsDefault : symbolsFallback
+
+const RESET = '\x1b[0m'
+const RED = '\x1b[31m'
+const GREEN = '\x1b[32m'
+const YELLOW = '\x1b[33m'
+
 let config
 
 try {
@@ -57,10 +79,15 @@ try {
     validators
   })
 } catch (error) {
-  console.error('ABORTING lockfile lint process due to error exceptions', '\n')
+  console.error(
+    YELLOW,
+    `${symbols.info} ABORTING lockfile lint process due to error exceptions`,
+    '\n',
+    RESET
+  )
   console.error(error.message, '\n')
   console.error(error.stack, '\n')
-  console.error('error: command failed with exit code 1', '\n')
+  console.error(RED, `${symbols.error} Error: command failed with exit code 1`, '\n', RESET)
   process.exit(1)
 }
 
@@ -71,10 +98,8 @@ debug(`total validator failures: ${validatorFailures}`)
 debug(`total validator successes: ${validatorSuccesses}`)
 
 if (validatorFailures !== 0) {
-  console.error('error: command failed with exit code 1', '\n')
+  console.error(RED, `${symbols.error} Error: security issues detected!`, '\n', RESET)
   process.exit(1)
 } else {
-  const GREEN = '\x1b[32m'
-  const RESET = '\x1b[0m'
-  console.info(GREEN, 'No issues detected', '\n', RESET)
+  console.info(GREEN, `${symbols.success} No issues detected`, '\n', RESET)
 }

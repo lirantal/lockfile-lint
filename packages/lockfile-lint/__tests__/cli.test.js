@@ -59,7 +59,7 @@ describe('CLI tests', () => {
       expect(output).toContain(
         'detected invalid protocol for package: ms@^2.1.1\n    expected: https:\n    actual: http:\n'
       )
-      expect(output).toContain('error: command failed with exit code 1')
+      expect(output).toContain('Error: security issues detected!')
       done()
     })
   })
