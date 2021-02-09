@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.8...lockfile-lint@4.4.0) (2021-02-09)
+
+
+### Features
+
+* use log sysmbols for easier to read output ([#21](https://github.com/lirantal/lockfile-lint/issues/21)) ([#104](https://github.com/lirantal/lockfile-lint/issues/104)) ([281c8ec](https://github.com/lirantal/lockfile-lint/commit/281c8ec))
+
+
+
+
+
 ## [4.3.8](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint@4.3.7...lockfile-lint@4.3.8) (2020-11-21)
 
 
