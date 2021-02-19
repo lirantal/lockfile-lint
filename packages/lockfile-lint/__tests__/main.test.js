@@ -31,6 +31,27 @@ describe('Main CLI logic', () => {
         main.runValidators()
       }).toThrow('provided object must have a validators array list')
     })
+
+    test('should handle unknown validator function name gracefully', () => {
+      const lockfilePath = path.join(__dirname, '/fixtures/yarn-only-http.lock')
+      const lockfileType = 'yarn'
+      const validators = [
+        {
+          name: `unknown-validator-function-${Math.random().toString(36)}`,
+          options: []
+        }
+      ]
+
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: lockfileType,
+        validators
+      })
+
+      expect(result.validatorFailures).toEqual(0)
+      expect(result.validatorCount).toEqual(0)
+      expect(result.validatorSuccesses).toEqual(0)
+    })    
   })
 
   describe('validateHttp', () => {
