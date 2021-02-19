@@ -51,7 +51,7 @@ describe('Main CLI logic', () => {
       expect(result.validatorFailures).toEqual(0)
       expect(result.validatorCount).toEqual(0)
       expect(result.validatorSuccesses).toEqual(0)
-    })    
+    })
   })
 
   describe('validateHttp', () => {
