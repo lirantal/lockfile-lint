@@ -114,7 +114,7 @@ class ParseLockfile {
       // transform original format of npm's package-json to match yarns
       // so we have a unified format to validate against
       const npmDepsTree = packageJsonParsed.dependencies
-      flattenedDepTree = this._flattenNpmDepsTree(npmDepsTree)
+      flattenedDepTree = npmDepsTree ? this._flattenNpmDepsTree(npmDepsTree) : {}
     } catch (error) {
       throw new ParsingError(PARSE_NPMLOCKFILE_FAILED, this.options.lockfilePath, error)
     }
