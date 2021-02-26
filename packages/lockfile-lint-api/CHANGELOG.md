@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.7](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.6...lockfile-lint-api@5.1.7) (2021-02-26)
+
+
+### Bug Fixes
+
+* **parser:** Fix exception on empty dependencies ([#107](https://github.com/lirantal/lockfile-lint/issues/107)) ([1ab87a9](https://github.com/lirantal/lockfile-lint/commit/1ab87a9))
+
+
+
+
+
 ## [5.1.6](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.5...lockfile-lint-api@5.1.6) (2020-05-13)
 
 
