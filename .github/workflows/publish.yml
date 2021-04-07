@@ -1,0 +1,28 @@
+
+name: Module Publish workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  publish:
+    name: publishing the module
+    runs-on: 'ubuntu-latest'
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '10.x'
+      - name: install dependencies
+        run: yarn install --ignore-engines
+      - name: publish
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: yarn lerna publish
