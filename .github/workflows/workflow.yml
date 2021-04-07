@@ -1,0 +1,51 @@
+name: Lockfile Line Github Workflow
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    strategy:
+      matrix:
+        node: ["10.x", "12.x"]
+        platform: [ubuntu-latest]
+    name: Lint job running on Node v${{matrix.node}} ({{$matrix.platform}})
+    runs-on: ${{matrix.platform}}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.node}}
+      - run: yarn install --ignore-engines
+      - run: yarn run lerna lint
+    
+  build:
+    strategy:
+      matrix:
+        node: ["10.x", "12.x"]
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+    name: CI job running on Node v${{matrix.node}} ((${matrix.platform}))
+    runs-on: ${{matrix.platform}}
+    steps:
+      - uses: actions/checkout@v2
+      
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.node}}
+      
+      - run: yarn install --ignore-engines
+      
+      - name: Linting the code
+        run: yarn lerna run lint
+
+      - name: Testing the code
+        run: yarn lerna run test --stream
+
+      - uses: codecov/codecov-action@v1
+  
+
+
+
+  
+
+
+      
