@@ -1,7 +1,5 @@
-name: Lint and Test Workflow
-
+name: main
 on: [push, pull_request]
-
 jobs:
   test:
     strategy:
@@ -27,8 +25,23 @@ jobs:
           verbose: false
         env:
           CI: true
-      
-
+  publish:
+    name: publishing the module
+    runs-on: 'ubuntu-latest'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '10.x'
+      - name: install dependencies
+        run: yarn install --ignore-engines
+      - name: publish
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: yarn lerna publish
 
 
   
