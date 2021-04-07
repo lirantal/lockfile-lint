@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/lirantal/lockfile-lint/actions/workflows/test.yml/badge.svg?branch=master" alt="test">
+  <img src="https://github.com/lirantal/lockfile-lint/actions/workflows/main.yml/badge.svg?branch=master" alt="test">
   <a href="https://codecov.io/gh/lirantal/lockfile-lint"><img src="https://badgen.net/codecov/c/github/lirantal/lockfile-lint" alt="codecov"/></a>
   <a href="https://www.npmjs.org/package/lockfile-lint-api"><img src="https://badgen.net/npm/license/lockfile-lint-api" alt="license"/></a>
   <a href="https://github.com/nodejs/security-wg/blob/master/processes/responsible_disclosure_template.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Security Responsible Disclosure" /></a>
