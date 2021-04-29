@@ -8,6 +8,8 @@
     "url": "https://github.com/lirantal"
   },
   "scripts": {
+    "lint": "lerna exec yarn lint",
+    "test": "lerna exec yarn test",
     "lerna": "lerna"
   },
   "license": "Apache-2.0",
