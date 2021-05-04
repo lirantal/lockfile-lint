@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.1.8 (2021-05-04)
+
+
+### Bug Fixes
+
+* missing git step on release with lerna ([#111](https://github.com/lirantal/lockfile-lint/issues/111)) ([5fcd65b](https://github.com/lirantal/lockfile-lint/commit/5fcd65b))
+
+
+
+
+
 ## [5.1.7](https://github.com/lirantal/lockfile-lint/compare/lockfile-lint-api@5.1.6...lockfile-lint-api@5.1.7) (2021-02-26)
 
 
