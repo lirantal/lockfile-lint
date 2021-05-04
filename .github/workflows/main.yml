@@ -37,6 +37,10 @@ jobs:
           node-version: '10.x'
       - name: install dependencies
         run: yarn install --ignore-engines
+      - name: Configure Git User
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com        
       - name: publish
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
         env:
