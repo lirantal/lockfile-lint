@@ -45,6 +45,13 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
         type: 'boolean',
         describe: 'validates the use of HTTPS as protocol schema for all resources'
       },
+      n: {
+        alias: ['validate-package-names'],
+        type: 'boolean',
+        describe:
+          "validates that the resource URL specifies the same package name as that listed as the lockfile entry's key",
+        implies: 'allowed-hosts'
+      },
       e: {
         alias: 'empty-hostname',
         type: 'boolean',

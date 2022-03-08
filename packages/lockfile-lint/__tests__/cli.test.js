@@ -80,6 +80,30 @@ describe('CLI tests', () => {
     })
   })
 
+  test('Linting a file that has incorrect package name in resolved url should return exit code 1', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'yarn',
+      '--path',
+      '__tests__/fixtures/yarn-incorrect-package-name.lock',
+      '--validate-package-names',
+      '--allowed-hosts',
+      'yarn'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.on('close', exitCode => {
+      expect(output.indexOf('detected resolved URL for package with a different name')).not.toBe(-1)
+      expect(exitCode).toBe(1)
+      done()
+    })
+  })
+
   test('Providing conflicting arguments should display an error', done => {
     const process = childProcess.spawn(cliExecPath, [
       '--type',
