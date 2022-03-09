@@ -81,15 +81,20 @@ describe('config', () => {
         'yarn.lock',
         '--type',
         'npm',
+        '--allowed-hosts',
+        'yarn',
         '--validate-https',
         'true',
         '--empty-hostname',
-        'false'
+        'false',
+        '--validate-package-names',
+        'true'
       ],
       expected: {
         path: 'yarn.lock',
         type: 'npm',
         validateHttps: true,
+        validatePackageNames: true,
         emptyHostname: false
       }
     }
