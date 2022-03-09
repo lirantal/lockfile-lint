@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 5.2.0 (2022-03-09)
+
+
+### Features
+
+* validate package names ([#114](https://github.com/lirantal/lockfile-lint/issues/114)) ([7aa0b3d](https://github.com/lirantal/lockfile-lint/commit/7aa0b3d))
+
+
+
+
+
 ## 5.1.8 (2021-05-04)
 
 
