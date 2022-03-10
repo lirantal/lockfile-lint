@@ -45,7 +45,7 @@ jobs:
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-      - run: yarn lerna publish
+      - run: yarn lerna publish --no-verify-access
 
 
   
