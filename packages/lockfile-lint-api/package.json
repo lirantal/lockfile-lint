@@ -50,7 +50,7 @@
   "dependencies": {
     "@yarnpkg/lockfile": "^1.1.0",
     "debug": "^4.1.1",
-    "object-hash": "^2.0.1"
+    "object-hash": "^3.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
