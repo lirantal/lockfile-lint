@@ -19,7 +19,7 @@ jobs:
       - name: run tests
         run: yarn lerna run test --stream
       - name: coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           verbose: false
