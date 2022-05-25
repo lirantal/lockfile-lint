@@ -1,16 +1,16 @@
 'use strict'
 
-const {URL} = require('url')
-const debug = require('debug')('lockfile-lint-api')
 const {REGISTRY} = require('../common/constants')
 
+const noop = () => {}
 module.exports = class ValidateHost {
-  constructor ({packages} = {}) {
+  constructor ({packages, debug = noop} = {}) {
     if (typeof packages !== 'object') {
       throw new Error('expecting an object passed to validator constructor')
     }
 
     this.packages = packages
+    this.debug = debug
   }
 
   validate (hosts, options) {
@@ -41,7 +41,7 @@ module.exports = class ValidateHost {
               hostValue = parsedHost.host
             }
           } catch (error) {
-            debug(`failed parsing a URL object from given host value so using as is: ${host}`)
+            this.debug(`failed parsing a URL object from given host value so using as is: ${host}`)
           }
 
           return hostValue
@@ -50,7 +50,7 @@ module.exports = class ValidateHost {
         const isPassing = allowedHosts.includes(packageResolvedURL.host)
         if (!isPassing) {
           if (!packageResolvedURL.host && options && options.emptyHostname) {
-            debug(`detected empty hostname but allowing because emptyHostname is not false`)
+            this.debug(`detected empty hostname but allowing because emptyHostname is not false`)
           } else {
             validationResult.errors.push({
               message: `detected invalid host(s) for package: ${packageName}\n    expected: ${allowedHosts}\n    actual: ${
