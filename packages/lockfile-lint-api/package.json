@@ -48,7 +48,7 @@
     "url": "https://github.com/lirantal/lockfile-lint.git"
   },
   "dependencies": {
-    "@yarnpkg/lockfile": "^1.1.0",
+    "@yarnpkg/parsers": "^3.0.0-rc.6",
     "debug": "^4.1.1",
     "object-hash": "^2.0.1"
   },

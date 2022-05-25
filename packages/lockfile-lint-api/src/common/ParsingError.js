@@ -3,7 +3,8 @@
 const {LOCKFILE_TYPES} = require('./constants')
 
 const ERROR_MESSAGES = {
-  NO_OPTIONS: () => 'Did not receive options for lockfile path or type',
+  NO_OPTIONS: () => 'Did not receive options for lockfile or type',
+  NO_LOCKFILE: () => 'Did not receive lockfile path or text',
   NO_PARSER_FOR_TYPE: type =>
     `Unable to find relevant lockfile parser for type "${type}", the currently available options are ${LOCKFILE_TYPES}.`,
   NO_PARSER_FOR_PATH: path =>
