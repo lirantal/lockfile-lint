@@ -1,7 +1,5 @@
 'use strict'
 
-const {URL} = require('url')
-
 module.exports = class ValidateProtocol {
   constructor ({packages} = {}) {
     if (typeof packages !== 'object') {

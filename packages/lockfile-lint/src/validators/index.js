@@ -45,7 +45,7 @@ function ValidateHostManager ({path, type, validatorValues, validatorOptions}) {
 
   const parser = new ParseLockfile(options)
   const lockfile = parser.parseSync()
-  const validator = new ValidateHost({packages: lockfile.object})
+  const validator = new ValidateHost({packages: lockfile.object, debug: require('debug')('lockfile-lint')})
   const validationResult = validator.validate(validatorValues, validatorOptions)
 
   // Check if some of the errors are for allowed URLs and filter those out
