@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.2.5 (2022-06-11)
+
+
+### Bug Fixes
+
+* continues [#125](https://github.com/lirantal/lockfile-lint/issues/125) with lockfile update ([#130](https://github.com/lirantal/lockfile-lint/issues/130)) ([988347f](https://github.com/lirantal/lockfile-lint/commit/988347f))
+
+
+
+
+
 ## 5.2.4 (2022-03-13)
 
 **Note:** Version bump only for package lockfile-lint-api
