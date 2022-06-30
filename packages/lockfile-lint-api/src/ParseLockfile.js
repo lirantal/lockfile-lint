@@ -140,10 +140,8 @@ class ParseLockfile {
     try {
       parsedFile = yarnParseAndVerify(lockfileBuffer)
     } catch (error) {
-      console.log(error)
       throw new ParsingError(PARSE_YARNLOCKFILE_FAILED, this.options.lockfilePath, error)
     }
-    console.log(typeof parsedFile, parsedFile)
     return parsedFile
   }
 
