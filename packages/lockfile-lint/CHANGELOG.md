@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.7.6 (2022-07-02)
+
+
+### Bug Fixes
+
+* **lockfile-lint-api:** remove extra console.log in yarn.lock parsing ([#131](https://github.com/lirantal/lockfile-lint/issues/131)) ([75bb6d2](https://github.com/lirantal/lockfile-lint/commit/75bb6d2))
+
+
+
+
+
 ## 4.7.5 (2022-06-11)
 
 
