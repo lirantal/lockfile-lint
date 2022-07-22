@@ -61,6 +61,11 @@ Please be advised of the following security disclaimers that are outside of the 
 When you whitelist all hosts from npmjs, yarnpkg, github or other registries you implicitly convey that you trust all the packages originating from these sources. As such, a malicious package can exist in a registry source that you whitelist. Direct dependencies that you should add to a project should be well vetted before adding such as using a tool like [npq](https://github.com/lirantal/npq).
 
 
+# References
+
+- [Secure Nodejs Guidelines section on Lockfile Attack](https://securenodejsguidelines.ulisesgascon.com/attacks/lockfile-posioned)
+- [pnpm's lockfile injection #4361](https://github.com/pnpm/pnpm/issues/4361)
+- [yarn's lockfile injection #4136](https://github.com/yarnpkg/berry/discussions/4136)
 
 # Author
 
