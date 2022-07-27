@@ -74,6 +74,13 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
         alias: ['allowed-urls'],
         type: 'array',
         describe: 'validates a whitelist of allowed URLs to be used for resources in the lockfile'
+      },
+      f: {
+        alias: ['format'],
+        type: 'string',
+        description: 'format of the report output',
+        choices: ['plain', 'pretty'],
+        default: 'pretty'
       }
     })
     .example('lockfile-lint --path yarn.lock --validate-https')
