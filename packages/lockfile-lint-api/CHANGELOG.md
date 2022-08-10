@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 5.3.0 (2022-08-10)
+
+
+### Features
+
+* add format options for report output ([#134](https://github.com/lirantal/lockfile-lint/issues/134)) ([4667c3d](https://github.com/lirantal/lockfile-lint/commit/4667c3d))
+
+
+
+
+
 ## 5.2.7 (2022-07-22)
 
 **Note:** Version bump only for package lockfile-lint-api
