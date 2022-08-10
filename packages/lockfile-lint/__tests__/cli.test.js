@@ -149,6 +149,82 @@ describe('CLI tests', () => {
     })
   })
 
+  test('default usage has output with symbols and color', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'yarn',
+      '--path',
+      '__tests__/fixtures/yarn-incorrect-package-name.lock',
+      '--validate-package-names',
+      '--allowed-hosts',
+      'yarn'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.stderr.on('close', _ => {
+      expect(output).toMatch(/[×✖]/)
+      expect(output).toContain('\x1b[0m')
+      done()
+    })
+  })
+
+  test('When using --pretty formatting then output has symbols and color', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'yarn',
+      '--path',
+      '__tests__/fixtures/yarn-incorrect-package-name.lock',
+      '--validate-package-names',
+      '--allowed-hosts',
+      'yarn',
+      '--format',
+      'pretty'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.stderr.on('close', _ => {
+      expect(output).toMatch(/[×✖]/)
+      expect(output).toContain('\x1b[0m')
+      done()
+    })
+  })
+
+  test('When using --plain formatting then output does not have symbols or color', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'yarn',
+      '--path',
+      '__tests__/fixtures/yarn-incorrect-package-name.lock',
+      '--validate-package-names',
+      '--allowed-hosts',
+      'yarn',
+      '--format',
+      'plain'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.stderr.on('close', _ => {
+      expect(output).not.toMatch(/[×✖]/)
+      expect(output).not.toContain('\x1b[0m')
+      done()
+    })
+  })
+
   describe('cosmiconfig integration', () => {
     it('options are loaded from cosmiconfig files', done => {
       const lintProcess = childProcess.spawn(cliExecPath, [], {

@@ -88,14 +88,17 @@ describe('config', () => {
         '--empty-hostname',
         'false',
         '--validate-package-names',
-        'true'
+        'true',
+        '--format',
+        'plain'
       ],
       expected: {
         path: 'yarn.lock',
         type: 'npm',
         validateHttps: true,
         validatePackageNames: true,
-        emptyHostname: false
+        emptyHostname: false,
+        format: 'plain'
       }
     }
   ].forEach(({name, args, expected}) => {
