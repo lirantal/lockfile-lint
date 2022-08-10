@@ -173,7 +173,7 @@ describe('CLI tests', () => {
     })
   })
 
-  test('Format pretty has symbols and color', done => {
+  test('When using --pretty formatting then output has symbols and color', done => {
     const process = childProcess.spawn('node', [
       cliExecPath,
       '--type',
