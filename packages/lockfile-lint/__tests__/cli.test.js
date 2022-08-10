@@ -199,7 +199,7 @@ describe('CLI tests', () => {
     })
   })
 
-  test('Format plain does not have symbols or color', done => {
+  test('hen using --plain formatting then output does not have symbols or color', done => {
     const process = childProcess.spawn('node', [
       cliExecPath,
       '--type',
