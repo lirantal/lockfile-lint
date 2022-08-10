@@ -149,7 +149,7 @@ describe('CLI tests', () => {
     })
   })
 
-  test('Unspecified output has symbols and color', done => {
+  test('default usage has output with symbols and color', done => {
     const process = childProcess.spawn('node', [
       cliExecPath,
       '--type',
