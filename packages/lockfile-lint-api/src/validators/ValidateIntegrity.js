@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = class ValidateIntegrityHashType {
+module.exports = class ValidateIntegrity {
   constructor ({packages} = {}) {
     if (typeof packages !== 'object') {
       throw new Error('expecting an object passed to validator constructor')

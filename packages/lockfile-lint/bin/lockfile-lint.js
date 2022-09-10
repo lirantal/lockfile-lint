@@ -44,7 +44,8 @@ const supportedValidators = new Map([
   ['validate-https', 'validateHttps'],
   ['validate-package-names', 'ValidatePackageNames'],
   ['allowed-schemes', 'validateSchemes'],
-  ['allowed-urls', 'validateUrls']
+  ['allowed-urls', 'validateUrls'],
+  ['validate-integrity', 'validateIntegrity']
 ])
 
 for (const [commandArgument, commandValue] of Object.entries(config)) {

@@ -7,7 +7,7 @@ const {
   ValidatePackageNames,
   ValidateScheme,
   ValidateUrl,
-  ValidateIntegrityHashType
+  ValidateIntegrity
 } = require('lockfile-lint-api')
 const debug = require('debug')('lockfile-lint')
 
@@ -17,7 +17,7 @@ module.exports = {
   ValidatePackageNamesManager,
   ValidateSchemeManager,
   ValidateUrlManager,
-  ValidateIntegrityHashTypeManager
+  ValidateIntegrityManager
 }
 
 function ValidateSchemeManager ({path, type, validatorValues, validatorOptions}) {
@@ -47,7 +47,10 @@ function ValidateHostManager ({path, type, validatorValues, validatorOptions}) {
 
   const parser = new ParseLockfile(options)
   const lockfile = parser.parseSync()
-  const validator = new ValidateHost({packages: lockfile.object, debug: require('debug')('lockfile-lint')})
+  const validator = new ValidateHost({
+    packages: lockfile.object,
+    debug: require('debug')('lockfile-lint')
+  })
   const validationResult = validator.validate(validatorValues, validatorOptions)
 
   // Check if some of the errors are for allowed URLs and filter those out
@@ -116,11 +119,9 @@ function ValidateUrlManager ({path, type, validatorValues, validatorOptions}) {
   return validator.validate(validatorValues, validatorOptions)
 }
 
-function ValidateIntegrityHashTypeManager ({path, type, validatorValues, validatorOptions}) {
+function ValidateIntegrityManager ({path, type, validatorValues, validatorOptions}) {
   debug(
-    `validate-integrity-hash-type-manager invoked with validator options: ${JSON.stringify(
-      validatorValues
-    )}`
+    `validate-integrity-manager invoked with validator options: ${JSON.stringify(validatorValues)}`
   )
 
   const options = {
@@ -130,7 +131,7 @@ function ValidateIntegrityHashTypeManager ({path, type, validatorValues, validat
 
   const parser = new ParseLockfile(options)
   const lockfile = parser.parseSync()
-  const validator = new ValidateIntegrityHashType({packages: lockfile.object})
+  const validator = new ValidateIntegrity({packages: lockfile.object})
 
   return validator.validate()
 }

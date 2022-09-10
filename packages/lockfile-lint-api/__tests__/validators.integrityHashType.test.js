@@ -1,20 +1,20 @@
-const ValidateIntegrityHashType = require('../src/validators/ValidateIntegrityHashType')
+const ValidateIntegrity = require('../src/validators/ValidateIntegrity')
 
 describe('Validator: IntegrityHashType', () => {
   it('validator should throw an error when provided a string', () => {
-    expect(() => new ValidateIntegrityHashType('ss')).toThrowError()
+    expect(() => new ValidateIntegrity('ss')).toThrowError()
   })
 
   it('validator should throw an error when provided null', () => {
-    expect(() => new ValidateIntegrityHashType(null)).toThrowError()
+    expect(() => new ValidateIntegrity(null)).toThrowError()
   })
 
   it('validator should throw an error when provided array', () => {
-    expect(() => new ValidateIntegrityHashType(['a'])).toThrowError()
+    expect(() => new ValidateIntegrity(['a'])).toThrowError()
   })
 
   it('validator should throw an error instantiated with no value', () => {
-    expect(() => new ValidateIntegrityHashType()).toThrowError()
+    expect(() => new ValidateIntegrity()).toThrowError()
   })
 
   it('validator should fail if not allowed hash type is used for a resource', () => {
@@ -24,7 +24,7 @@ describe('Validator: IntegrityHashType', () => {
       }
     }
 
-    const validator = new ValidateIntegrityHashType({packages: mockedPackages})
+    const validator = new ValidateIntegrity({packages: mockedPackages})
     expect(validator.validate()).toEqual({
       type: 'error',
       errors: [
@@ -48,7 +48,7 @@ describe('Validator: IntegrityHashType', () => {
       }
     }
 
-    const validator = new ValidateIntegrityHashType({packages: mockedPackages})
+    const validator = new ValidateIntegrity({packages: mockedPackages})
     expect(validator.validate()).toEqual({
       type: 'success',
       errors: []
@@ -63,7 +63,7 @@ describe('Validator: IntegrityHashType', () => {
       },
       meow: {}
     }
-    const validator = new ValidateIntegrityHashType({packages: mockedPackages})
+    const validator = new ValidateIntegrity({packages: mockedPackages})
 
     expect(validator.validate()).toEqual({
       type: 'success',
@@ -78,7 +78,7 @@ describe('Validator: IntegrityHashType', () => {
           'sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig=='
       }
     }
-    const validator = new ValidateIntegrityHashType({packages: mockedPackages})
+    const validator = new ValidateIntegrity({packages: mockedPackages})
 
     expect(validator.validateSingle('typescript')).toEqual(true)
   })
@@ -89,7 +89,7 @@ describe('Validator: IntegrityHashType', () => {
         integrity: 'sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg='
       }
     }
-    const validator = new ValidateIntegrityHashType({packages: mockedPackages})
+    const validator = new ValidateIntegrity({packages: mockedPackages})
 
     expect(validator.validateSingle('typescript')).toEqual(false)
   })
@@ -98,7 +98,7 @@ describe('Validator: IntegrityHashType', () => {
     const mockedPackages = {
       meow: {}
     }
-    const validator = new ValidateIntegrityHashType({packages: mockedPackages})
+    const validator = new ValidateIntegrity({packages: mockedPackages})
 
     expect(validator.validateSingle('meow')).toEqual(true)
   })

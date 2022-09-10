@@ -52,6 +52,11 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
           "validates that the resource URL specifies the same package name as that listed as the lockfile entry's key",
         implies: 'allowed-hosts'
       },
+      i: {
+        alias: ['validate-integrity'],
+        type: 'boolean',
+        describe: 'validates that the integrity hash type is sha512'
+      },
       e: {
         alias: 'empty-hostname',
         type: 'boolean',
