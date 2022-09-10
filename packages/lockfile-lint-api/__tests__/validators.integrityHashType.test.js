@@ -1,6 +1,6 @@
 const ValidateIntegrity = require('../src/validators/ValidateIntegrity')
 
-describe('Validator: IntegrityHashType', () => {
+describe('Validator: Integrity', () => {
   it('validator should throw an error when provided a string', () => {
     expect(() => new ValidateIntegrity('ss')).toThrowError()
   })
