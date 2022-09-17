@@ -43,6 +43,7 @@ const supportedValidators = new Map([
   ['allowed-hosts', 'validateHosts'],
   ['validate-https', 'validateHttps'],
   ['validate-package-names', 'ValidatePackageNames'],
+  ['validate-package-versions', 'ValidatePackageVersions'],
   ['allowed-schemes', 'validateSchemes'],
   ['allowed-urls', 'validateUrls']
 ])

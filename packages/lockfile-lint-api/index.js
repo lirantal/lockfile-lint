@@ -3,6 +3,7 @@
 const ValidateHost = require('./src/validators/ValidateHost')
 const ValidateHttps = require('./src/validators/ValidateHttps')
 const ValidatePackageNames = require('./src/validators/ValidatePackageNames')
+const ValidatePackageVersions = require('./src/validators/ValidatePackageVersions')
 const ValidateScheme = require('./src/validators/ValidateScheme')
 const ValidateUrl = require('./src/validators/ValidateUrl')
 const ParseLockfile = require('./src/ParseLockfile')
@@ -12,6 +13,7 @@ module.exports = {
   ValidateHost,
   ValidateHttps,
   ValidatePackageNames,
+  ValidatePackageVersions,
   ValidateScheme,
   ValidateUrl
 }
