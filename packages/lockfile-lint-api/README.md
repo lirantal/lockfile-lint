@@ -39,6 +39,7 @@ The following lockfile validators are supported
 | ValidateHttps        | validates the use of HTTPS as protocol schema for all resources                 | ✅          |
 | ValidateHost         | validates a whitelist of allowed hosts to be used for resources in the lockfile | ✅          |
 | ValidatePackageNames | validates that the resolved URL matches the package name                        | ✅          |
+| ValidateResolved     | validates that there is a resolved URL for every package                        | ✅          |
 | ValidateScheme       | validates a whitelist of allowed URI schemes to be used for hosts               | ✅          |
 
 **NOTE:** package entries without a `resolved` field (for example, those installed from the local filesystem) will automatically pass all url-based validators.

@@ -5,6 +5,7 @@ const {
   ParseLockfile,
   ValidateHttps,
   ValidatePackageNames,
+  ValidateResolved,
   ValidateScheme,
   ValidateUrl
 } = require('lockfile-lint-api')
@@ -14,6 +15,7 @@ module.exports = {
   ValidateHostManager,
   ValidateHttpsManager,
   ValidatePackageNamesManager,
+  ValidateResolvedManager,
   ValidateSchemeManager,
   ValidateUrlManager
 }
@@ -95,6 +97,23 @@ function ValidatePackageNamesManager ({path, type, validatorValues, validatorOpt
   const parser = new ParseLockfile(options)
   const lockfile = parser.parseSync()
   const validator = new ValidatePackageNames({packages: lockfile.object})
+
+  return validator.validate()
+}
+
+function ValidateResolvedManager ({path, type, validatorValues, validatorOptions}) {
+  debug(
+    `validate-resolved-manager invoked with validator options: ${JSON.stringify(validatorValues)}`
+  )
+
+  const options = {
+    lockfilePath: path,
+    lockfileType: type
+  }
+
+  const parser = new ParseLockfile(options)
+  const lockfile = parser.parseSync()
+  const validator = new ValidateResolved({packages: lockfile.object})
 
   return validator.validate()
 }
