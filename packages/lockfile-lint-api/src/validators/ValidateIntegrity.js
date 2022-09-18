@@ -34,7 +34,7 @@ module.exports = class ValidateIntegrity {
           })
         }
       } catch (error) {
-        // swallow error (assume that the version is correct)
+        // swallow error (assume that the integrity is valid)
       }
     }
 
