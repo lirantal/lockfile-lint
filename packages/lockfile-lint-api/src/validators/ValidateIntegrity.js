@@ -1,5 +1,9 @@
 'use strict'
 
+function isSha512 (packageMetadata) {
+  return packageMetadata.integrity.split('-')[0] === 'sha512'
+}
+
 module.exports = class ValidateIntegrity {
   constructor ({packages} = {}) {
     if (typeof packages !== 'object') {
@@ -21,8 +25,7 @@ module.exports = class ValidateIntegrity {
       }
 
       try {
-        const isPassing = packageMetadata.integrity.split('-')[0] === 'sha512'
-        if (!isPassing) {
+        if (!isSha512(packageMetadata)) {
           validationResult.errors.push({
             message: `detected invalid integrity hash type for package: ${packageName}\n    expected: sha512\n    actual: ${
               packageMetadata.integrity
@@ -49,6 +52,6 @@ module.exports = class ValidateIntegrity {
       return true
     }
 
-    return packageMetadata.integrity.split('-')[0] === 'sha512'
+    return isSha512(packageMetadata)
   }
 }

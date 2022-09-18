@@ -53,7 +53,7 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
         implies: 'allowed-hosts'
       },
       i: {
-        alias: ['validate-integrity'],
+        alias: ['validate-integrity-sha512'],
         type: 'boolean',
         describe: 'validates that the integrity hash type is sha512'
       },
