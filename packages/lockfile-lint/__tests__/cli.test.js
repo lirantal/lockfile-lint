@@ -4,7 +4,7 @@ const path = require('path')
 // eslint-disable-next-line security/detect-child-process
 const childProcess = require('child_process')
 const cliExecPath = path.join(__dirname, '../bin/lockfile-lint.js')
-const {ValidateHostManager, ValidateUrlManager} = require('../src/validators/index')
+const {ValidateHostManager, ValidateUrlManager, ValidateIntegrityManager} = require('../src/validators/index')
 
 describe('CLI tests', () => {
   test('Running without parameters should display help', done => {
@@ -329,6 +329,24 @@ describe('Validator managers:', () => {
           message:
             'detected invalid url(s) for package: ms@^2.1.1\n    expected: https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247\n    actual: https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009\n',
           package: 'ms@^2.1.1'
+        }
+      ]
+    })
+  })
+  it('Integrity manager should return errors for lock file with packages with sha1 integrity', () => {
+    const result = ValidateIntegrityManager({
+      path: '__tests__/fixtures/package-lock-sha1.json',
+      type: 'npm',
+      validatorValues: ['https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247']
+    })
+
+    expect(result).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message:
+            'detected invalid integrity hash type for package: typescript@4.8.3-4b39c20edf186cd85bb485386ba7d48590c3bf0c\n    expected: sha512\n    actual: sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg=\n',
+          package: 'typescript@4.8.3-4b39c20edf186cd85bb485386ba7d48590c3bf0c'
         }
       ]
     })
