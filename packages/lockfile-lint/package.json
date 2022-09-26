@@ -52,7 +52,7 @@
     "url": "https://github.com/lirantal/lockfile-lint.git"
   },
   "dependencies": {
-    "cosmiconfig": "^6.0.0",
+    "cosmiconfig": "^7.0.1",
     "debug": "^4.1.1",
     "lockfile-lint-api": "^5.4.2",
     "yargs": "^16.0.0"
