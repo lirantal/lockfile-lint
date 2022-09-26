@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.9.2 (2022-09-26)
+
+
+### Bug Fixes
+
+* too noisy error messages ([#139](https://github.com/lirantal/lockfile-lint/issues/139)) ([ab2ee5d](https://github.com/lirantal/lockfile-lint/commit/ab2ee5d))
+
+
+
+
+
 ## 4.9.1 (2022-09-26)
 
 **Note:** Version bump only for package lockfile-lint
