@@ -6,7 +6,8 @@ const {
   ValidateHttps,
   ValidatePackageNames,
   ValidateScheme,
-  ValidateUrl
+  ValidateUrl,
+  ValidateIntegrity
 } = require('lockfile-lint-api')
 const debug = require('debug')('lockfile-lint')
 
@@ -15,7 +16,8 @@ module.exports = {
   ValidateHttpsManager,
   ValidatePackageNamesManager,
   ValidateSchemeManager,
-  ValidateUrlManager
+  ValidateUrlManager,
+  ValidateIntegrityManager
 }
 
 function ValidateSchemeManager ({path, type, validatorValues, validatorOptions}) {
@@ -112,4 +114,21 @@ function ValidateUrlManager ({path, type, validatorValues, validatorOptions}) {
   const validator = new ValidateUrl({packages: lockfile.object})
 
   return validator.validate(validatorValues, validatorOptions)
+}
+
+function ValidateIntegrityManager ({path, type, validatorValues, validatorOptions}) {
+  debug(
+    `validate-integrity-manager invoked with validator options: ${JSON.stringify(validatorValues)}`
+  )
+
+  const options = {
+    lockfilePath: path,
+    lockfileType: type
+  }
+
+  const parser = new ParseLockfile(options)
+  const lockfile = parser.parseSync()
+  const validator = new ValidateIntegrity({packages: lockfile.object})
+
+  return validator.validate()
 }
