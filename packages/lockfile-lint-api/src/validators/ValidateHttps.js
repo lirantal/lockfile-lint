@@ -1,7 +1,5 @@
 'use strict'
 
-const {URL} = require('url')
-
 const HTTPS_PROTOCOL = 'https:'
 
 module.exports = class ValidateHttps {

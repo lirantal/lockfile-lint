@@ -13,13 +13,19 @@ describe('ParseLockfile', () => {
   it('instantiating a parser with invalid object throws an error', () => {
     expect(() => {
       new ParseLockfile()
-    }).toThrowError('Did not receive options for lockfile path or type')
+    }).toThrowError('Did not receive options for lockfile or type')
   })
 
   it('instantiating a parser with string type throws an error', () => {
     expect(() => {
       new ParseLockfile('/path/to/file')
-    }).toThrowError('Did not receive options for lockfile path or type')
+    }).toThrowError('Did not receive options for lockfile or type')
+  })
+
+  it('instantiating a parser with inadequate options object throws an error', () => {
+    expect(() => {
+      new ParseLockfile({})
+    }).toThrowError('Did not receive lockfile path or text')
   })
 
   it('using a parser with an invalid option type throws an error', () => {
