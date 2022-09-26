@@ -41,7 +41,8 @@ module.exports = class ValidateHost {
               hostValue = parsedHost.host
             }
           } catch (error) {
-            this.debug(`failed parsing a URL object from given host value so using as is: ${host}`)
+            // silently fail here, as otherwise this would be a too-noisy error
+            // this.debug(`failed parsing a URL object from given host value so using as is: ${host}`)
           }
 
           return hostValue
