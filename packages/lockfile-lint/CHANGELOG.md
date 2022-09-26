@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 4.9.0 (2022-09-26)
+
+
+### Features
+
+* **validator:** add new integrity hash type validator ([#135](https://github.com/lirantal/lockfile-lint/issues/135)) ([46d0fa7](https://github.com/lirantal/lockfile-lint/commit/46d0fa7))
+
+
+
+
+
 # 4.8.0 (2022-08-10)
 
 
