@@ -36,13 +36,16 @@ try {
   process.exit(1)
 }
 
+const isPrettyFormat = config['format'] === 'pretty'
+
 let validators = []
 const supportedValidators = new Map([
   ['allowed-hosts', 'validateHosts'],
   ['validate-https', 'validateHttps'],
   ['validate-package-names', 'ValidatePackageNames'],
   ['allowed-schemes', 'validateSchemes'],
-  ['allowed-urls', 'validateUrls']
+  ['allowed-urls', 'validateUrls'],
+  ['validate-integrity-sha512', 'validateIntegrity']
 ])
 
 for (const [commandArgument, commandValue] of Object.entries(config)) {
@@ -80,15 +83,10 @@ try {
     validators
   })
 } catch (error) {
-  console.error(
-    YELLOW,
-    `${symbols.info} ABORTING lockfile lint process due to error exceptions`,
-    '\n',
-    RESET
-  )
+  warn('ABORTING lockfile lint process due to error exceptions')
   console.error(error.message, '\n')
   console.error(error.stack, '\n')
-  console.error(RED, `${symbols.error} Error: command failed with exit code 1`, '\n', RESET)
+  error('Error: command failed with exit code 1')
   process.exit(1)
 }
 
@@ -99,8 +97,44 @@ debug(`total validator failures: ${validatorFailures}`)
 debug(`total validator successes: ${validatorSuccesses}`)
 
 if (validatorFailures !== 0) {
-  console.error(RED, `${symbols.error} Error: security issues detected!`, '\n', RESET)
+  error('Error: security issues detected!')
   process.exit(1)
 } else {
-  console.info(GREEN, `${symbols.success} No issues detected`, '\n', RESET)
+  success('No issues detected')
+}
+
+function success (message) {
+  const m = [
+    isPrettyFormat ? GREEN : '',
+    isPrettyFormat ? symbols.success : '',
+    message,
+    '\n',
+    isPrettyFormat ? RESET : ''
+  ].filter(e => !!e)
+
+  console.info(m.join(' '))
+}
+
+function warn (message) {
+  const m = [
+    isPrettyFormat ? YELLOW : '',
+    isPrettyFormat ? symbols.info : '',
+    message,
+    '\n',
+    isPrettyFormat ? RESET : ''
+  ].filter(e => !!e)
+
+  console.error(m.join(' '))
+}
+
+function error (message) {
+  const m = [
+    isPrettyFormat ? RED : '',
+    isPrettyFormat ? symbols.error : '',
+    message,
+    '\n',
+    isPrettyFormat ? RESET : ''
+  ].filter(e => !!e)
+
+  console.error(m.join(' '))
 }

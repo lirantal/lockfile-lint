@@ -1,13 +1,14 @@
+// @ts-check
 /* eslint-disable security/detect-object-injection */
 'use strict'
 
-const fs = require('fs')
 const path = require('path')
-const yarnLockfileParser = require('@yarnpkg/lockfile')
+const yarnParseSyml = require('@yarnpkg/parsers').parseSyml
 const hash = require('object-hash')
 const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
 const {
   NO_OPTIONS,
+  NO_LOCKFILE,
   NO_PARSER_FOR_PATH,
   NO_PARSER_FOR_TYPE,
   READ_FAILED,
@@ -15,10 +16,39 @@ const {
   PARSE_YARNLOCKFILE_FAILED
 } = ERROR_MESSAGES
 
+/**
+ * Checks if a sample object is a valid dependency structure
+ * @return boolean
+ */
+function checkSampleContent (lockfile) {
+  const [sampleKey, sampleValue] = Object.entries(lockfile)[0]
+  return (
+    sampleKey.match(/.*@.*/) &&
+    (sampleValue &&
+      typeof sampleValue === 'object' &&
+      sampleValue.hasOwnProperty('version') &&
+      sampleValue.hasOwnProperty('resolved'))
+  )
+}
+/**
+ * @param {string|Buffer} lockfileBuffer - the lockfile contents
+ * @return {{ type: string, object: any }}
+ */
+function yarnParseAndVerify (lockfileBuffer) {
+  const lockfile = yarnParseSyml(lockfileBuffer.toString())
+  const hasSensibleContent =
+    lockfile && typeof lockfile === 'object' && checkSampleContent(lockfile)
+  if (!hasSensibleContent) {
+    throw Error('Lockfile does not seem to contain a valid dependency list')
+  }
+  return {type: 'success', object: lockfile}
+}
 class ParseLockfile {
   /**
    * constructor
-   * @param {string} options.lockfilePath - path to the lockfile
+   * @param {object} options
+   * @param {string} [options.lockfilePath] - path to the lockfile
+   * @param {string} [options.lockfileText] - utf-8 string content of the lockfile
    * @param {string} options.lockfileType - the package manager type
    * for lockfile
    */
@@ -26,9 +56,13 @@ class ParseLockfile {
     if (!options || typeof options !== 'object') {
       throw new ParsingError(NO_OPTIONS)
     }
+    if (!options.lockfilePath && !options.lockfileText) {
+      throw new ParsingError(NO_LOCKFILE)
+    }
 
     this.options = {}
     this.options.lockfilePath = options.lockfilePath
+    this.options.lockfileText = options.lockfileText
     this.options.lockfileType = options.lockfileType
   }
 
@@ -54,11 +88,16 @@ class ParseLockfile {
     }
 
     let file
-    try {
-      // eslint-disable-next-line security/detect-non-literal-fs-filename
-      file = fs.readFileSync(this.options.lockfilePath, 'utf8')
-    } catch (error) {
-      throw new ParsingError(READ_FAILED, this.options.lockfilePath, error)
+    if (this.options.lockfileText) {
+      file = this.options.lockfileText
+    } else {
+      try {
+        const fs = require('fs')
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
+        file = fs.readFileSync(this.options.lockfilePath, 'utf-8')
+      } catch (error) {
+        throw new ParsingError(READ_FAILED, this.options.lockfilePath, error)
+      }
     }
 
     return lockfileParser.call(this, file)
@@ -99,7 +138,7 @@ class ParseLockfile {
   parseYarnLockfile (lockfileBuffer) {
     let parsedFile
     try {
-      parsedFile = yarnLockfileParser.parse(lockfileBuffer)
+      parsedFile = yarnParseAndVerify(lockfileBuffer)
     } catch (error) {
       throw new ParsingError(PARSE_YARNLOCKFILE_FAILED, this.options.lockfilePath, error)
     }

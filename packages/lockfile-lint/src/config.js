@@ -52,6 +52,11 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
           "validates that the resource URL specifies the same package name as that listed as the lockfile entry's key",
         implies: 'allowed-hosts'
       },
+      i: {
+        alias: ['validate-integrity-sha512'],
+        type: 'boolean',
+        describe: 'validates that the integrity hash type is sha512'
+      },
       e: {
         alias: 'empty-hostname',
         type: 'boolean',
@@ -74,6 +79,13 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
         alias: ['allowed-urls'],
         type: 'array',
         describe: 'validates a whitelist of allowed URLs to be used for resources in the lockfile'
+      },
+      f: {
+        alias: ['format'],
+        type: 'string',
+        description: 'format of the report output',
+        choices: ['plain', 'pretty'],
+        default: 'pretty'
       }
     })
     .example('lockfile-lint --path yarn.lock --validate-https')

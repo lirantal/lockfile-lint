@@ -1,10 +1,10 @@
 {
   "name": "lockfile-lint-api",
-  "version": "5.2.3",
+  "version": "5.4.2",
   "description": "Lint an npm or yarn lockfile to analyze and detect issues",
   "main": "index.js",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "scripts": {
     "lint": "eslint .",
@@ -48,9 +48,8 @@
     "url": "https://github.com/lirantal/lockfile-lint.git"
   },
   "dependencies": {
-    "@yarnpkg/lockfile": "^1.1.0",
-    "debug": "^4.1.1",
-    "object-hash": "^2.0.1"
+    "@yarnpkg/parsers": "^3.0.0-rc.6",
+    "object-hash": "^3.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

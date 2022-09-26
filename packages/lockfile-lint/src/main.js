@@ -6,7 +6,8 @@ const {
   ValidateHttpsManager,
   ValidatePackageNamesManager,
   ValidateSchemeManager,
-  ValidateUrlManager
+  ValidateUrlManager,
+  ValidateIntegrityManager
 } = require('../src/validators')
 
 const validatorFunctions = new Map([
@@ -14,7 +15,8 @@ const validatorFunctions = new Map([
   ['validateHttps', ValidateHttpsManager],
   ['ValidatePackageNames', ValidatePackageNamesManager],
   ['validateSchemes', ValidateSchemeManager],
-  ['validateUrls', ValidateUrlManager]
+  ['validateUrls', ValidateUrlManager],
+  ['validateIntegrity', ValidateIntegrityManager]
 ])
 
 function runValidators ({type, path, validators} = {}) {

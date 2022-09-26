@@ -3,6 +3,85 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.4.2 (2022-09-26)
+
+
+### Bug Fixes
+
+* too noisy error messages ([#139](https://github.com/lirantal/lockfile-lint/issues/139)) ([ab2ee5d](https://github.com/lirantal/lockfile-lint/commit/ab2ee5d))
+
+
+
+
+
+## 5.4.1 (2022-09-26)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
+# 5.4.0 (2022-09-26)
+
+
+### Features
+
+* **validator:** add new integrity hash type validator ([#135](https://github.com/lirantal/lockfile-lint/issues/135)) ([46d0fa7](https://github.com/lirantal/lockfile-lint/commit/46d0fa7))
+
+
+
+
+
+# 5.3.0 (2022-08-10)
+
+
+### Features
+
+* add format options for report output ([#134](https://github.com/lirantal/lockfile-lint/issues/134)) ([4667c3d](https://github.com/lirantal/lockfile-lint/commit/4667c3d))
+
+
+
+
+
+## 5.2.7 (2022-07-22)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
+## 5.2.6 (2022-07-02)
+
+
+### Bug Fixes
+
+* **lockfile-lint-api:** remove extra console.log in yarn.lock parsing ([#131](https://github.com/lirantal/lockfile-lint/issues/131)) ([75bb6d2](https://github.com/lirantal/lockfile-lint/commit/75bb6d2))
+
+
+
+
+
+## 5.2.5 (2022-06-11)
+
+
+### Bug Fixes
+
+* continues [#125](https://github.com/lirantal/lockfile-lint/issues/125) with lockfile update ([#130](https://github.com/lirantal/lockfile-lint/issues/130)) ([988347f](https://github.com/lirantal/lockfile-lint/commit/988347f))
+
+
+
+
+
+## 5.2.4 (2022-03-13)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
 ## 5.2.3 (2022-03-10)
 
 **Note:** Version bump only for package lockfile-lint-api
