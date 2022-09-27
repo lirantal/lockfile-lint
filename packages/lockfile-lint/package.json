@@ -49,7 +49,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lirantal/lockfile-lint.git"
+    "url": "https://github.com/lirantal/lockfile-lint.git",
+    "directory": "packages/lockfile-lint"
   },
   "dependencies": {
     "cosmiconfig": "^7.0.1",
