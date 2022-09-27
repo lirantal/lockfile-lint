@@ -45,7 +45,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lirantal/lockfile-lint.git"
+    "url": "https://github.com/lirantal/lockfile-lint.git",
+    "directory": "packages/lockfile-lint-api"
   },
   "dependencies": {
     "@yarnpkg/parsers": "^3.0.0-rc.6",
