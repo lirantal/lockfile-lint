@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.9.5 (2022-09-30)
+
+
+### Bug Fixes
+
+* **integrity:** rename command-line argument from `--validate-integrity-sha512` to `--validate-integrity` ([#144](https://github.com/lirantal/lockfile-lint/issues/144)) ([a29d18b](https://github.com/lirantal/lockfile-lint/commit/a29d18b))
+
+
+
+
+
 ## 4.9.4 (2022-09-27)
 
 **Note:** Version bump only for package lockfile-lint
