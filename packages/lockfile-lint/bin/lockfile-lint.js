@@ -61,19 +61,17 @@ for (const [commandArgument, commandValue] of Object.entries(config)) {
     continue
   }
 
-  if (supportedValidators.has(commandArgument)) {
+  if (commandValue && supportedValidators.has(commandArgument)) {
     const validatorItem = supportedValidators.get(commandArgument)
-    if (commandValue) {
-      validators.push({
-        name: validatorItem,
-        values: commandValue,
-        options: {
-          emptyHostname: config['empty-hostname'],
-          allowedHosts: config['allowed-hosts'],
-          allowedUrls: config['allowed-urls']
-        }
-      })
-    }
+    validators.push({
+      name: validatorItem,
+      values: commandValue,
+      options: {
+        emptyHostname: config['empty-hostname'],
+        allowedHosts: config['allowed-hosts'],
+        allowedUrls: config['allowed-urls']
+      }
+    })
   }
 }
 
