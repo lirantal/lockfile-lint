@@ -105,7 +105,8 @@ describe('CLI tests', () => {
   })
 
   test('Providing conflicting arguments should display an error', done => {
-    const process = childProcess.spawn(cliExecPath, [
+    const process = childProcess.spawn('node', [
+      cliExecPath,
       '--type',
       'yarn',
       '--path',
@@ -127,7 +128,8 @@ describe('CLI tests', () => {
   })
 
   test('Allowed hosts and allowed urls flags should work together', done => {
-    const process = childProcess.spawn(cliExecPath, [
+    const process = childProcess.spawn('node', [
+      cliExecPath,
       '--type',
       'yarn',
       '--path',
@@ -227,7 +229,7 @@ describe('CLI tests', () => {
 
   describe('cosmiconfig integration', () => {
     it('options are loaded from cosmiconfig files', done => {
-      const lintProcess = childProcess.spawn(cliExecPath, [], {
+      const lintProcess = childProcess.spawn('node', [cliExecPath], {
         cwd: path.join(__dirname, 'fixtures/valid-config')
       })
 
@@ -244,9 +246,13 @@ describe('CLI tests', () => {
     })
 
     it('command-line options take precedence', done => {
-      const lintProcess = childProcess.spawn(cliExecPath, ['-p', '../yarn-only-http.lock'], {
-        cwd: path.join(__dirname, 'fixtures/valid-config')
-      })
+      const lintProcess = childProcess.spawn(
+        'node',
+        [cliExecPath, '-p', '../yarn-only-http.lock'],
+        {
+          cwd: path.join(__dirname, 'fixtures/valid-config')
+        }
+      )
 
       lintProcess.on('close', exitCode => {
         expect(exitCode).toBe(1)
@@ -256,8 +262,8 @@ describe('CLI tests', () => {
 
     it('invalid config files are ignored', done => {
       const lintProcess = childProcess.spawn(
-        cliExecPath,
-        ['-p', '../yarn-only-https.lock', '--type', 'yarn', '--validate-https'],
+        'node',
+        [cliExecPath, '-p', '../yarn-only-https.lock', '--type', 'yarn', '--validate-https'],
         {
           cwd: path.join(__dirname, 'fixtures/invalid-config'),
           env: Object.assign({}, process.env, {DEBUG: 'lockfile-lint'})
