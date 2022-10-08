@@ -104,6 +104,78 @@ describe('CLI tests', () => {
     })
   })
 
+  test('Linting a file that has invalid integrity hash type should return exit code 1', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'npm',
+      '--path',
+      '__tests__/fixtures/package-lock-sha1.json',
+      '--validate-integrity',
+      '--allowed-hosts',
+      'npm'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.on('close', exitCode => {
+      expect(output.indexOf('detected invalid integrity hash type for package')).not.toBe(-1)
+      expect(exitCode).toBe(1)
+      done()
+    })
+  })
+
+  test('Linting should not run a validator when its flag is not set', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'npm',
+      '--path',
+      '__tests__/fixtures/package-lock-sha1.json',
+      '--allowed-hosts',
+      'npm'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.on('close', exitCode => {
+      expect(output.indexOf('detected invalid integrity hash type for package')).toBe(-1)
+      expect(exitCode).toBe(0)
+      done()
+    })
+  })
+
+  test('Linting should not run a validator when its flag is set to "false"', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'npm',
+      '--path',
+      '__tests__/fixtures/package-lock-sha1.json',
+      '--validate-integrity',
+      'false',
+      '--allowed-hosts',
+      'npm'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.on('close', exitCode => {
+      expect(output.indexOf('detected invalid integrity hash type for package')).toBe(-1)
+      expect(exitCode).toBe(0)
+      done()
+    })
+  })
+
   test('Providing conflicting arguments should display an error', done => {
     const process = childProcess.spawn('node', [
       cliExecPath,
