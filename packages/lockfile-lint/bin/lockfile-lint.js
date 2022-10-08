@@ -61,7 +61,7 @@ for (const [commandArgument, commandValue] of Object.entries(config)) {
     continue
   }
 
-  if (supportedValidators.has(commandArgument)) {
+  if (commandValue && supportedValidators.has(commandArgument)) {
     const validatorItem = supportedValidators.get(commandArgument)
     validators.push({
       name: validatorItem,
