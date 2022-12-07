@@ -20,14 +20,14 @@ const {
  * Checks if a sample object is a valid dependency structure
  * @return boolean
  */
-function checkSampleContent (lockfile) {
-  const [sampleKey, sampleValue] = Object.entries(lockfile)[0]
+function checkSampleContent (lockfile, isYarnBerry) {
+  const [sampleKey, sampleValue] = Object.entries(lockfile)[isYarnBerry ? 1 : 0]
   return (
     sampleKey.match(/.*@.*/) &&
     (sampleValue &&
       typeof sampleValue === 'object' &&
       sampleValue.hasOwnProperty('version') &&
-      sampleValue.hasOwnProperty('resolved'))
+      (sampleValue.hasOwnProperty('resolved') || sampleValue.hasOwnProperty('resolution')))
   )
 }
 /**
@@ -36,10 +36,29 @@ function checkSampleContent (lockfile) {
  */
 function yarnParseAndVerify (lockfileBuffer) {
   const lockfile = yarnParseSyml(lockfileBuffer.toString())
+  const isYarnBerry = typeof lockfile.__metadata === 'object'
   const hasSensibleContent =
-    lockfile && typeof lockfile === 'object' && checkSampleContent(lockfile)
+    lockfile && typeof lockfile === 'object' && checkSampleContent(lockfile, isYarnBerry)
   if (!hasSensibleContent) {
     throw Error('Lockfile does not seem to contain a valid dependency list')
+  }
+
+  if (isYarnBerry) {
+    const normalizedLockFile = {}
+    Object.entries(lockfile).forEach(([packageName, packageDetails]) => {
+      const resolution = packageDetails.resolution
+      if (resolution) {
+        const splitByAt = resolution.split('@')
+        let host
+        if (splitByAt.length > 2 && resolution[0] === '@') {
+          host = splitByAt[2]
+        } else {
+          host = splitByAt[1]
+        }
+        normalizedLockFile[packageName] = Object.assign({}, packageDetails, {resolved: host})
+      }
+    })
+    return {type: 'success', object: normalizedLockFile}
   }
   return {type: 'success', object: lockfile}
 }

@@ -24,6 +24,28 @@ describe('ParseLockfile Yarn', () => {
     )
   })
 
+  it('parsing a yarn berry lockfile returns an object with packages', () => {
+    const mockYarnLockfilePath = path.join(__dirname, './__fixtures__/yarnberry.lock')
+    const options = {
+      lockfilePath: mockYarnLockfilePath,
+      lockfileType: 'yarn'
+    }
+    const parser = new ParseLockfile(options)
+    const lockfile = parser.parseSync()
+
+    // console.log(lockfile)
+
+    expect(lockfile.type).toEqual('success')
+    expect(lockfile.object).toEqual(
+      expect.objectContaining({
+        'debug@npm:4.1.1': expect.any(Object),
+        'ms@npm:2.1.2': expect.any(Object),
+        'ms@npm:^2.1.1': expect.any(Object),
+        'test@workspace:.': expect.any(Object)
+      })
+    )
+  })
+
   it('providing empty content for lockfileText throws an error', () => {
     const parser = new ParseLockfile({lockfileText: '\n\n', lockfileType: 'yarn'})
     expect(() => {

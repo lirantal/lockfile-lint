@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.9.6 (2022-10-08)
+
+
+### Bug Fixes
+
+* cli parsing - handle correctly false value for validator ([#146](https://github.com/lirantal/lockfile-lint/issues/146)) ([8f7e4c7](https://github.com/lirantal/lockfile-lint/commit/8f7e4c7))
+
+
+
+
+
 ## 4.9.5 (2022-09-30)
 
 

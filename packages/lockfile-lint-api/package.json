@@ -1,6 +1,6 @@
 {
   "name": "lockfile-lint-api",
-  "version": "5.4.5",
+  "version": "5.4.6",
   "description": "Lint an npm or yarn lockfile to analyze and detect issues",
   "main": "index.js",
   "engines": {
@@ -49,7 +49,7 @@
     "directory": "packages/lockfile-lint-api"
   },
   "dependencies": {
-    "@yarnpkg/parsers": "^3.0.0-rc.6",
+    "@yarnpkg/parsers": "^3.0.0-rc.32",
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
