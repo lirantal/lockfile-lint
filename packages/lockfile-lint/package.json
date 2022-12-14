@@ -53,7 +53,7 @@
     "directory": "packages/lockfile-lint"
   },
   "dependencies": {
-    "cosmiconfig": "^7.0.1",
+    "cosmiconfig": "^8.0.0",
     "debug": "^4.1.1",
     "lockfile-lint-api": "^5.4.6",
     "yargs": "^16.0.0"
