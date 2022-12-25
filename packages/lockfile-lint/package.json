@@ -55,7 +55,7 @@
   "dependencies": {
     "cosmiconfig": "^7.0.1",
     "debug": "^4.1.1",
-    "lockfile-lint-api": "^5.4.6",
+    "lockfile-lint-api": "^5.4.5"
     "yargs": "^16.0.0"
   },
   "devDependencies": {
