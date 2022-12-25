@@ -33,7 +33,6 @@ describe('ParseLockfile Yarn', () => {
     const parser = new ParseLockfile(options)
     const lockfile = parser.parseSync()
 
-
     expect(lockfile.type).toEqual('success')
     expect(lockfile.object).toEqual(
       expect.objectContaining({
