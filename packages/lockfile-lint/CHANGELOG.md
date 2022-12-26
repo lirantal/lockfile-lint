@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 4.10.0 (2022-12-26)
+
+
+### Features
+
+* add support for yarn berry lockfiles ([#147](https://github.com/lirantal/lockfile-lint/issues/147)) ([d4cf64d](https://github.com/lirantal/lockfile-lint/commit/d4cf64d))
+
+
+
+
+
 ## 4.9.6 (2022-10-08)
 
 
