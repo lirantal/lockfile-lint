@@ -105,7 +105,7 @@ The options accepted in the configuration file are the same as the options above
 
 # Contributing
 
-Please consult [CONTIRBUTING](../../CONTRIBUTING.md) for guidelines on contributing to this project.
+Please consult [CONTRIBUTING](../../CONTRIBUTING.md) for guidelines on contributing to this project.
 
 # Author
 
