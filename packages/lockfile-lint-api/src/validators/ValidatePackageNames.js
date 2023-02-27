@@ -31,7 +31,13 @@ module.exports = class ValidatePackageNames {
           ? `@${packageName.slice(1).split('@')[0]}`
           : packageName.split('@')[0]
 
-        const expectedURLBeginning = `${packageResolvedURL.origin}/${nameOnly}`
+        let expectedURLBeginning = `${packageResolvedURL.origin}/${nameOnly}`
+        if (packageResolvedURL.origin === 'https://github.com') {
+          // Extract the github org if the package is coming from github
+          expectedURLBeginning = `${packageResolvedURL.origin}/${
+            packageResolvedURL.pathname.split('/')[1]
+          }/${nameOnly}`
+        }
 
         const isPassing = packageMetadata.resolved.startsWith(expectedURLBeginning)
         if (!isPassing) {

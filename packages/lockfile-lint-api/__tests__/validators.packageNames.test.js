@@ -51,6 +51,9 @@ describe('Validator: PackageName', () => {
       },
       '@babel/generator@3.2.1': {
         resolved: 'https://registry.npmjs.org/@babel/generator/-/generator-7.4.4.tgz'
+      },
+      avsc: {
+        resolved: 'https://github.com/Bundlr-Network/avsc#a730cc8018b79e114b6a3381bbb57760a24c6cef'
       }
     }
 
