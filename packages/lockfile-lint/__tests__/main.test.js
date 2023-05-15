@@ -185,6 +185,27 @@ describe('Main CLI logic', () => {
           .toThrow('Lockfile does not seem to contain a valid dependency list')
       )
     })
+
+    test('should fail with an empty yarn lock file', () => {
+      const lockfilePath = path.join(__dirname, '/fixtures/empty.json')
+      const lockfileType = 'yarn'
+      const validators = [
+        {
+          name: 'validateHosts',
+          values: ['npm']
+        }
+      ]
+
+      expect(() =>
+        main
+          .runValidators({
+            path: lockfilePath,
+            type: lockfileType,
+            validators
+          })
+          .toThrow('Lockfile does not seem to contain a valid dependency list')
+      )
+    })
   })
 
   describe('validateSchemes', () => {

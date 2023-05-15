@@ -21,6 +21,9 @@ const {
  * @return boolean
  */
 function checkSampleContent (lockfile, isYarnBerry) {
+  if (Object.entries(lockfile).length < (isYarnBerry ? 2 : 1)) {
+    return false
+  }
   const [sampleKey, sampleValue] = Object.entries(lockfile)[isYarnBerry ? 1 : 0]
   return (
     sampleKey.match(/.*@.*/) &&
