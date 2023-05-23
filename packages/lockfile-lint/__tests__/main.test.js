@@ -188,7 +188,7 @@ describe('Main CLI logic', () => {
 
     test('should fail with an empty yarn lock file', () => {
       const lockfilePath = path.join(__dirname, '/fixtures/empty.json')
-      const lockfileType = 'npm'
+      const lockfileType = 'yarn'
       const validators = [
         {
           name: 'validateHosts',
