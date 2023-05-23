@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.10.2 (2023-05-23)
+
+
+### Bug Fixes
+
+* error handling for empty yarn lock files ([#158](https://github.com/lirantal/lockfile-lint/issues/158)) ([#159](https://github.com/lirantal/lockfile-lint/issues/159)) ([bb96f4c](https://github.com/lirantal/lockfile-lint/commit/bb96f4c))
+
+
+
+
+
 ## 4.10.1 (2023-02-13)
 
 **Note:** Version bump only for package lockfile-lint
