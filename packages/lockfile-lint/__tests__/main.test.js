@@ -171,7 +171,7 @@ describe('Main CLI logic', () => {
       const validators = [
         {
           name: 'validateHosts',
-          values: ['yarn']
+          values: ['npm']
         }
       ]
 
