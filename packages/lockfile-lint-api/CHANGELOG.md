@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.5.3 (2023-05-24)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
 ## 5.5.2 (2023-05-23)
 
 
