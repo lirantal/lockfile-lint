@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.10.5 (2023-05-24)
+
+
+### Bug Fixes
+
+* error variable was shadowed by function ([#162](https://github.com/lirantal/lockfile-lint/issues/162)) ([17fe528](https://github.com/lirantal/lockfile-lint/commit/17fe528))
+
+
+
+
+
 ## 4.10.4 (2023-05-24)
 
 **Note:** Version bump only for package lockfile-lint
