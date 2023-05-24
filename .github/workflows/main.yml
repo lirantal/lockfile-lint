@@ -9,8 +9,8 @@ jobs:
     name: Node v${{matrix.node}} ((${{matrix.platform}}))
     runs-on: ${{matrix.platform}}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{matrix.node}}
       - run: yarn install --ignore-engines --frozen-lockfile
@@ -31,8 +31,8 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: test
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
       - name: install dependencies
