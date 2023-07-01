@@ -4,7 +4,7 @@ jobs:
   test:
     strategy:
       matrix:
-        node: ["14.x", "16.x", "18.x"]
+        node: ["16.x", "18.x"]
         platform: [ubuntu-latest]
     name: Node v${{matrix.node}} ((${{matrix.platform}}))
     runs-on: ${{matrix.platform}}
