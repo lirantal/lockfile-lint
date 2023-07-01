@@ -4,7 +4,11 @@ const path = require('path')
 // eslint-disable-next-line security/detect-child-process
 const childProcess = require('child_process')
 const cliExecPath = path.join(__dirname, '../bin/lockfile-lint.js')
-const {ValidateHostManager, ValidateUrlManager, ValidateIntegrityManager} = require('../src/validators/index')
+const {
+  ValidateHostManager,
+  ValidateUrlManager,
+  ValidateIntegrityManager
+} = require('../src/validators/index')
 
 describe('CLI tests', () => {
   test('Running without parameters should display help', done => {
@@ -194,7 +198,9 @@ describe('CLI tests', () => {
     })
 
     process.stderr.on('close', _ => {
-      expect(output.indexOf('Arguments o and validate-https are mutually exclusive')).not.toBe(-1)
+      expect(
+        output.indexOf('Arguments allowed-schemes and validate-https are mutually exclusive')
+      ).not.toBe(-1)
       done()
     })
   })

@@ -45,7 +45,7 @@ describe('config', () => {
   })
 
   test('providing conflicting arguments should display an error', () => {
-    const errorMessageExpression = /arguments o and validate-https are mutually exclusive/i
+    const errorMessageExpression = /Arguments allowed-schemes and validate-https are mutually exclusive/i
 
     expect(() =>
       loadConfig(
