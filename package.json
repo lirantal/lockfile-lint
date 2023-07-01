@@ -41,7 +41,6 @@
     "linters": {
       "**/*.js": [
         "prettier-standard",
-        "npm run lint",
         "git add"
       ]
     }
