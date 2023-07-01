@@ -26,30 +26,3 @@ jobs:
           verbose: false
         env:
           CI: true
-  # publish:
-  #   name: publishing the module
-  #   runs-on: 'ubuntu-latest'
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-  #   needs: test
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '18.x'
-  #     - name: install dependencies
-  #       run: yarn install --ignore-engines
-  #     - name: Configure Git User
-  #       run: |
-  #         git config user.name github-actions
-  #         git config user.email github-actions@github.com        
-  #     - name: publish
-  #       run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-  #       env:
-  #         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-  #     - run: yarn lerna publish --no-verify-access
-
-
-  
-
-
-      
