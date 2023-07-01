@@ -21,7 +21,6 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^3.14.1",
     "@commitlint/cli": "8.0.0",
     "@commitlint/config-conventional": "8.0.0",
     "commitizen": "3.1.1",
