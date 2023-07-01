@@ -8,9 +8,8 @@
     "url": "https://github.com/lirantal"
   },
   "scripts": {
-    "lint": "lerna exec yarn lint",
-    "test": "lerna exec yarn test",
-    "lerna": "lerna"
+    "lint": "npx turbo lint",
+    "test": "npx turbo test"
   },
   "license": "Apache-2.0",
   "repository": {
@@ -32,15 +31,15 @@
     "hooks": {
       "commit-msg": "commitlint --env HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged",
-      "post-merge": "yarn install",
-      "pre-push": "lerna run lint && lerna run test"
+      "post-merge": "npm ci",
+      "pre-push": "npm run lint && npm run test"
     }
   },
   "lint-staged": {
     "linters": {
       "**/*.js": [
         "prettier-standard",
-        "lerna run lint",
+        "npm run lint",
         "git add"
       ]
     }
