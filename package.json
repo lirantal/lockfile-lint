@@ -9,7 +9,9 @@
   },
   "scripts": {
     "lint": "npx turbo lint",
-    "test": "npx turbo test"
+    "test": "npx turbo test",
+    "version": "changeset version",
+    "release": "changeset publish"
   },
   "license": "Apache-2.0",
   "repository": {
