@@ -54,5 +54,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "turbo": "^1.10.7"
   }
 }
