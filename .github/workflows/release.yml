@@ -28,6 +28,8 @@ jobs:
         with:
           publish: npm run release
           version: npm run version
+          commit: "chore: new release"
+          title: "chore: new release candidate"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
