@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/lirantal/lockfile-lint/actions/workflows/main.yml/badge.svg?branch=master" alt="main">
+  <img src="https://github.com/lirantal/lockfile-lint/actions/workflows/main.yml/badge.svg?branch=main" alt="main">
   <a href="https://codecov.io/gh/lirantal/lockfile-lint"><img src="https://badgen.net/codecov/c/github/lirantal/lockfile-lint" alt="codecov"/></a>
   <a href="https://www.npmjs.org/package/lockfile-lint-api"><img src="https://badgen.net/npm/license/lockfile-lint-api" alt="license"/></a>
   <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Security Responsible Disclosure" /></a>
@@ -47,12 +47,12 @@ If lockfile-lint detects exceptions to the policies it will report them:
 
 ![carbon](https://user-images.githubusercontent.com/316371/59755684-09923200-9291-11e9-9add-6886dfc6689a.png)
 
-Refer to [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint) for more details on the CLI usage.
+Refer to [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/main/packages/lockfile-lint) for more details on the CLI usage.
 
 You can use `lockfile-lint` as a standalone CLI tool, or as an API library using the following npm packages:
 
-- [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint) - a CLI tool that can be easily integrated as a pre-commit hook or part of a CI/build
-- [lockfile-lint-api](https://github.com/lirantal/lockfile-lint/tree/master/packages/lockfile-lint-api) - a library providing a programmatic API
+- [lockfile-lint](https://github.com/lirantal/lockfile-lint/tree/main/packages/lockfile-lint) - a CLI tool that can be easily integrated as a pre-commit hook or part of a CI/build
+- [lockfile-lint-api](https://github.com/lirantal/lockfile-lint/tree/main/packages/lockfile-lint-api) - a library providing a programmatic API
 
 ## Security Disclaimer
 
