@@ -29,59 +29,59 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
     .help('help')
     .alias('help', 'h')
     .options({
-      p: {
-        alias: ['path'],
+      path: {
+        alias: ['p'],
         type: 'string',
         describe: 'path to the lockfile',
         demandOption: true
       },
-      t: {
-        alias: ['type'],
+      type: {
+        alias: ['t'],
         type: 'string',
         describe: 'lockfile type, options are "npm" or "yarn"'
       },
-      s: {
-        alias: ['validate-https'],
+      'validate-https': {
+        alias: ['s'],
         type: 'boolean',
         describe: 'validates the use of HTTPS as protocol schema for all resources'
       },
-      n: {
-        alias: ['validate-package-names'],
+      'validate-package-names': {
+        alias: ['n'],
         type: 'boolean',
         describe:
           "validates that the resource URL specifies the same package name as that listed as the lockfile entry's key",
         implies: 'allowed-hosts'
       },
-      i: {
-        alias: ['validate-integrity'],
+      'validate-integrity': {
+        alias: ['i'],
         type: 'boolean',
         describe: 'validates that the integrity hash type is sha512'
       },
-      e: {
-        alias: 'empty-hostname',
+      'empty-hostname': {
+        alias: 'e',
         type: 'boolean',
         default: true,
         describe: 'allows empty hostnames, or set to false if you wish for a stricter policy'
       },
-      a: {
-        alias: ['allowed-hosts'],
+      'allowed-hosts': {
+        alias: ['a'],
         type: 'array',
         describe: 'validates a whitelist of allowed hosts to be used for resources in the lockfile'
       },
-      o: {
-        alias: ['allowed-schemes'],
+      'allowed-schemes': {
+        alias: ['o'],
         type: 'array',
         describe:
           'validates a whitelist of allowed schemes to be used for resources in the lockfile',
         conflicts: ['validate-https', 's']
       },
-      u: {
-        alias: ['allowed-urls'],
+      'allowed-urls': {
+        alias: ['u'],
         type: 'array',
         describe: 'validates a whitelist of allowed URLs to be used for resources in the lockfile'
       },
-      f: {
-        alias: ['format'],
+      format: {
+        alias: ['f'],
         type: 'string',
         description: 'format of the report output',
         choices: ['plain', 'pretty'],

@@ -31,8 +31,8 @@ let config
 try {
   config = require('../src/config')(process.argv)
   debug(`parsed the following options: ${JSON.stringify(config)}`)
-} catch (err) {
-  debug(`error loading options from CLI arguments/files: ${err}`)
+} catch (errorPayload) {
+  debug(`error loading options from CLI arguments/files: ${errorPayload}`)
   process.exit(1)
 }
 
@@ -82,10 +82,10 @@ try {
     type: config['type'],
     validators
   })
-} catch (error) {
+} catch (errorPayload) {
   warn('ABORTING lockfile lint process due to error exceptions')
-  console.error(error.message, '\n')
-  console.error(error.stack, '\n')
+  console.error(errorPayload.message, '\n')
+  console.error(errorPayload.stack, '\n')
   error('Error: command failed with exit code 1')
   process.exit(1)
 }

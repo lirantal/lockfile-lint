@@ -3,6 +3,63 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 5.5.5 (2023-05-24)
+
+
+### Bug Fixes
+
+* error variable was shadowed by function ([#162](https://github.com/lirantal/lockfile-lint/issues/162)) ([17fe528](https://github.com/lirantal/lockfile-lint/commit/17fe528))
+
+
+
+
+
+## 5.5.4 (2023-05-24)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
+## 5.5.3 (2023-05-24)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
+## 5.5.2 (2023-05-23)
+
+
+### Bug Fixes
+
+* error handling for empty yarn lock files ([#158](https://github.com/lirantal/lockfile-lint/issues/158)) ([#159](https://github.com/lirantal/lockfile-lint/issues/159)) ([bb96f4c](https://github.com/lirantal/lockfile-lint/commit/bb96f4c))
+
+
+
+
+
+## 5.5.1 (2023-02-13)
+
+**Note:** Version bump only for package lockfile-lint-api
+
+
+
+
+
+# 5.5.0 (2022-12-26)
+
+
+### Features
+
+* add support for yarn berry lockfiles ([#147](https://github.com/lirantal/lockfile-lint/issues/147)) ([d4cf64d](https://github.com/lirantal/lockfile-lint/commit/d4cf64d))
+
+
+
+
+
 ## 5.4.6 (2022-10-08)
 
 

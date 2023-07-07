@@ -8,9 +8,10 @@
     "url": "https://github.com/lirantal"
   },
   "scripts": {
-    "lint": "lerna exec yarn lint",
-    "test": "lerna exec yarn test",
-    "lerna": "lerna"
+    "lint": "npx turbo lint",
+    "test": "npx turbo test",
+    "version": "changeset version",
+    "release": "changeset publish"
   },
   "license": "Apache-2.0",
   "repository": {
@@ -21,7 +22,6 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^3.14.1",
     "@commitlint/cli": "8.0.0",
     "@commitlint/config-conventional": "8.0.0",
     "commitizen": "3.1.1",
@@ -33,15 +33,14 @@
     "hooks": {
       "commit-msg": "commitlint --env HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged",
-      "post-merge": "yarn install",
-      "pre-push": "lerna run lint && lerna run test"
+      "post-merge": "npm ci",
+      "pre-push": "npm run lint && npm run test"
     }
   },
   "lint-staged": {
     "linters": {
       "**/*.js": [
         "prettier-standard",
-        "lerna run lint",
         "git add"
       ]
     }
@@ -55,5 +54,10 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.2",
+    "turbo": "^1.10.7"
   }
 }

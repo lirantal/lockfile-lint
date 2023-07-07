@@ -1,0 +1,29 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        node: ["16.x", "18.x"]
+        platform: [ubuntu-latest]
+    name: Node v${{matrix.node}} ((${{matrix.platform}}))
+    runs-on: ${{matrix.platform}}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{matrix.node}}
+      - name: install dependencies
+        run: npm install
+      - name: lint code
+        run: npx turbo lint
+      - name: run tests
+        run: npx turbo test
+      - name: coverage
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          verbose: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          CI: true
