@@ -24,5 +24,6 @@ jobs:
         with:
           fail_ci_if_error: true
           verbose: false
+          token: ${{ secrets.CODECOV_TOKEN }}
         env:
           CI: true
