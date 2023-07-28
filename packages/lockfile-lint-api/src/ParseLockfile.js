@@ -27,10 +27,10 @@ function checkSampleContent (lockfile, isYarnBerry) {
   const [sampleKey, sampleValue] = Object.entries(lockfile)[isYarnBerry ? 1 : 0]
   return (
     sampleKey.match(/.*@.*/) &&
-    (sampleValue &&
-      typeof sampleValue === 'object' &&
-      sampleValue.hasOwnProperty('version') &&
-      (sampleValue.hasOwnProperty('resolved') || sampleValue.hasOwnProperty('resolution')))
+    sampleValue &&
+    typeof sampleValue === 'object' &&
+    sampleValue.hasOwnProperty('version') &&
+    (sampleValue.hasOwnProperty('resolved') || sampleValue.hasOwnProperty('resolution'))
   )
 }
 /**
@@ -174,7 +174,20 @@ class ParseLockfile {
 
       // transform original format of npm's package-json to match yarns
       // so we have a unified format to validate against
-      const npmDepsTree = packageJsonParsed.dependencies
+      // const npmDepsTree = packageJsonParsed.dependencies
+      let npmDepsTree = null
+
+      if (
+        packageJsonParsed.dependencies &&
+        Object.keys(packageJsonParsed.dependencies).length > 0
+      ) {
+        npmDepsTree = packageJsonParsed.dependencies
+      }
+
+      if (packageJsonParsed.packages && Object.keys(packageJsonParsed.packages).length > 0) {
+        npmDepsTree = packageJsonParsed.packages
+      }
+
       flattenedDepTree = npmDepsTree ? this._flattenNpmDepsTree(npmDepsTree) : {}
     } catch (error) {
       throw new ParsingError(PARSE_NPMLOCKFILE_FAILED, this.options.lockfilePath, error)
@@ -188,24 +201,60 @@ class ParseLockfile {
 
   _flattenNpmDepsTree (npmDepsTree, npmDepMap = {}) {
     for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
-      const depMetadataShortend = {
-        version: depMetadata.version,
-        resolved: depMetadata.resolved ? depMetadata.resolved : depMetadata.version,
-        integrity: depMetadata.integrity,
-        requires: depMetadata.requires
-      }
-      const hashedDepValues = hash(depMetadataShortend)
+      // only evaluate dependency metadata if it's an object with actual metadata
+      // @TODO potentially, this entry can be just a dependency name and version
+      // which would inject a new dependency on npm install - warn based on diff?
+      if (typeof depMetadata === 'object' && depName.length > 0) {
+        const depMetadataShortend = {
+          version: depMetadata.version,
+          resolved: depMetadata.resolved ? depMetadata.resolved : depMetadata.version,
+          integrity: depMetadata.integrity,
+          requires: depMetadata.requires
+        }
+        const hashedDepValues = hash(depMetadataShortend)
 
-      npmDepMap[`${depName}@${depMetadata.version}-${hashedDepValues}`] = depMetadataShortend
+        // @TODO should we implement a clean package name
+        // or stay aligned with npm's lockfile reporting of full package path on disk?
+        // it has advantages in monorepos, such as reporting something like:
+        //   packages/lockfile-lint/node_modules/yargs-parser
+        // instead of just
+        //   yargs-parser
+        //
+        // npm package-lock.json v3 has depName set to path on disk, i.e:
+        // "node_modules/@babel/compat-data": {
+        //  "version": "7.22.5",
+        //  ..}
+        // we strip off the 'node_modules/' suffix to print pretty package name
+        // let depNameClean = depName
+        // if (depName.indexOf('node_modules/') === 0) {
+        //   depNameClean = depName.substring('node_modules/'.length)
+        // }
+        const depNameClean = this.extractedPackageName(depName)
 
-      const nestedDepsTree = depMetadata.dependencies
+        npmDepMap[`${depNameClean}@${depMetadata.version}-${hashedDepValues}`] = depMetadataShortend
 
-      if (nestedDepsTree && Object.keys(nestedDepsTree).length !== 0) {
-        this._flattenNpmDepsTree(nestedDepsTree, npmDepMap)
+        const nestedDepsTree = depMetadata.dependencies
+
+        if (nestedDepsTree && Object.keys(nestedDepsTree).length !== 0) {
+          this._flattenNpmDepsTree(nestedDepsTree, npmDepMap)
+        }
       }
     }
 
     return npmDepMap
+  }
+
+  extractedPackageName (packageName) {
+    const parts = packageName.split('/')
+    const lastIndex = parts.lastIndexOf('node_modules')
+
+    if (lastIndex === -1) {
+      // If "node_modules" is not found, return the last part of the input
+      return parts[parts.length - 1]
+    } else {
+      // If "node_modules" is found, return the part after it
+      return parts.slice(lastIndex + 1).join('/')
+    }
   }
 }
 
