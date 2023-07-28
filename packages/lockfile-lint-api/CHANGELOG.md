@@ -1,5 +1,11 @@
 # Change Log
 
+## 5.7.0
+
+### Minor Changes
+
+- [#172](https://github.com/lirantal/lockfile-lint/pull/172) [`ebe0637`](https://github.com/lirantal/lockfile-lint/commit/ebe06370b52d7eac0b297097e7c093719b9bace1) Thanks [@lirantal](https://github.com/lirantal)! - Add verbose information in debug
+
 ## 5.6.0
 
 ### Minor Changes
