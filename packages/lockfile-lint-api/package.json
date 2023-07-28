@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@yarnpkg/parsers": "^3.0.0-rc.32",
+    "debug": "^4.3.4",
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
