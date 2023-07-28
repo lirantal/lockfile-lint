@@ -229,8 +229,9 @@ class ParseLockfile {
         // if (depName.indexOf('node_modules/') === 0) {
         //   depNameClean = depName.substring('node_modules/'.length)
         // }
+        const depNameClean = this.extractedPackageName(depName)
 
-        npmDepMap[`${depName}@${depMetadata.version}-${hashedDepValues}`] = depMetadataShortend
+        npmDepMap[`${depNameClean}@${depMetadata.version}-${hashedDepValues}`] = depMetadataShortend
 
         const nestedDepsTree = depMetadata.dependencies
 
@@ -241,6 +242,19 @@ class ParseLockfile {
     }
 
     return npmDepMap
+  }
+
+  extractedPackageName (packageName) {
+    const parts = packageName.split('/')
+    const lastIndex = parts.lastIndexOf('node_modules')
+
+    if (lastIndex === -1) {
+      // If "node_modules" is not found, return the last part of the input
+      return parts[parts.length - 1]
+    } else {
+      // If "node_modules" is found, return the part after it
+      return parts.slice(lastIndex + 1).join('/')
+    }
   }
 }
 
