@@ -1,5 +1,6 @@
 'use strict'
 
+const debug = require('debug')('lockfile-lint')
 const {REGISTRY} = require('../common/constants')
 
 module.exports = class ValidatePackageNames {
@@ -28,6 +29,11 @@ module.exports = class ValidatePackageNames {
         // Only handle package name validation matching per registry URL
         // when the registry is one of the official public registries:
         if (!Object.values(REGISTRY).includes(packageResolvedURL.host)) {
+          debug(
+            `skipping package name '${packageName}' validation for non-official registry '${
+              packageResolvedURL.origin
+            }'`
+          )
           continue
         }
 
