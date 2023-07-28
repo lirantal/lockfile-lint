@@ -78,4 +78,20 @@ describe('Validator: PackageName', () => {
       errors: []
     })
   })
+
+  it('validator should skip if it doesnt recognize the official public registries', () => {
+    const mockedPackages = {
+      '@cxui/cypress-util@1.0.10': {
+        version: '1.0.10',
+        resolved:
+          'https://checkmarx.jfrog.io/artifactory/api/npm/team-npm/@cxui/cypress-util/-/@cxui/cypress-util-1.0.10.tgz#3134312351eb248c1c4561d393afc6d8c23b2943'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
 })

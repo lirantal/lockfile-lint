@@ -1,5 +1,7 @@
 'use strict'
 
+const {REGISTRY} = require('../common/constants')
+
 module.exports = class ValidatePackageNames {
   constructor ({packages} = {}) {
     if (typeof packages !== 'object') {
@@ -22,6 +24,13 @@ module.exports = class ValidatePackageNames {
 
       try {
         const packageResolvedURL = new URL(packageMetadata.resolved)
+
+        // Only handle package name validation matching per registry URL
+        // when the registry is one of the official public registries:
+        if (!Object.values(REGISTRY).includes(packageResolvedURL.host)) {
+          continue
+        }
+
         const path = packageResolvedURL.pathname
         const packageNameFromResolved = path.split('/-/')[0].slice(1)
 
