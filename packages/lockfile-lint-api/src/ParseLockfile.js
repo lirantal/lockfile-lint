@@ -2,6 +2,8 @@
 /* eslint-disable security/detect-object-injection */
 'use strict'
 
+const debug = require('debug')('lockfile-lint')
+
 const path = require('path')
 const yarnParseSyml = require('@yarnpkg/parsers').parseSyml
 const hash = require('object-hash')
@@ -229,6 +231,8 @@ class ParseLockfile {
         // if (depName.indexOf('node_modules/') === 0) {
         //   depNameClean = depName.substring('node_modules/'.length)
         // }
+
+        debug(`dependency full name: ${depName}`)
         const depNameClean = this.extractedPackageName(depName)
 
         npmDepMap[`${depNameClean}@${depMetadata.version}-${hashedDepValues}`] = depMetadataShortend
