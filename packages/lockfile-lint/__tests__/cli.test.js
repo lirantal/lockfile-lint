@@ -363,7 +363,7 @@ describe('CLI tests', () => {
   })
 
   describe('cosmiconfig integration', () => {
-    it('options are loaded from cosmiconfig files', done => {
+    test('options are loaded from cosmiconfig files', done => {
       const lintProcess = childProcess.spawn('node', [cliExecPath], {
         cwd: path.join(__dirname, 'fixtures/valid-config')
       })
@@ -374,7 +374,7 @@ describe('CLI tests', () => {
       })
     })
 
-    it('command-line options take precedence', done => {
+    test('command-line options take precedence', done => {
       const lintProcess = childProcess.spawn(
         'node',
         [cliExecPath, '-p', '../yarn-only-http.lock'],
@@ -389,7 +389,7 @@ describe('CLI tests', () => {
       })
     })
 
-    it('invalid config files are ignored', done => {
+    test('invalid config files are ignored', done => {
       const lintProcess = childProcess.spawn(
         'node',
         [cliExecPath, '-p', '../yarn-only-https.lock', '--type', 'yarn', '--validate-https'],
@@ -416,7 +416,7 @@ describe('CLI tests', () => {
 })
 
 describe('Validator managers:', () => {
-  it('Host manager should work together with URL manager', () => {
+  test('Host manager should work together with URL manager', () => {
     const result = ValidateHostManager({
       path: '__tests__/fixtures/yarn-and-github-url.lock',
       type: 'yarn',
@@ -431,7 +431,7 @@ describe('Validator managers:', () => {
     })
   })
 
-  it('Host manager should return errors for lock file with packages on other hosts', () => {
+  test('Host manager should return errors for lock file with packages on other hosts', () => {
     const result = ValidateHostManager({
       path: '__tests__/fixtures/yarn-and-github-url.lock',
       type: 'yarn',
@@ -450,7 +450,7 @@ describe('Validator managers:', () => {
     })
   })
 
-  it('URL manager should return errors for lock file with packages on other URLs', () => {
+  test('URL manager should return errors for lock file with packages on other URLs', () => {
     const result = ValidateUrlManager({
       path: '__tests__/fixtures/yarn-and-github-url.lock',
       type: 'yarn',
@@ -468,7 +468,8 @@ describe('Validator managers:', () => {
       ]
     })
   })
-  it('Integrity manager should return errors for lock file with packages with sha1 integrity', () => {
+
+  test('Integrity manager should return errors for lock file with packages with sha1 integrity', () => {
     const result = ValidateIntegrityManager({
       path: '__tests__/fixtures/package-lock-sha1.json',
       type: 'npm',
@@ -487,7 +488,7 @@ describe('Validator managers:', () => {
     })
   })
 
-  it('Package name validator should error if aliases are used and not added as trusted policy', () => {
+  test('Package name validator should error if aliases are used and not added as trusted policy', () => {
     const result = ValidatePackageNamesManager({
       path: '__tests__/fixtures/package-lock-v3-package-name-aliases.json',
       type: 'npm',
