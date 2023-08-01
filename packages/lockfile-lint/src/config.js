@@ -80,6 +80,11 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
         type: 'array',
         describe: 'validates a whitelist of allowed URLs to be used for resources in the lockfile'
       },
+      'allowed-package-name-aliases': {
+        alias: ['l'],
+        type: 'array',
+        describe: 'validates an alias of package names to be used for resources in the lockfile'
+      },
       format: {
         alias: ['f'],
         type: 'string',
