@@ -7,7 +7,8 @@ const cliExecPath = path.join(__dirname, '../bin/lockfile-lint.js')
 const {
   ValidateHostManager,
   ValidateUrlManager,
-  ValidateIntegrityManager
+  ValidateIntegrityManager,
+  ValidatePackageNamesManager
 } = require('../src/validators/index')
 
 describe('CLI tests', () => {
@@ -305,6 +306,67 @@ describe('CLI tests', () => {
     })
   })
 
+  test('Package lock which has aliases to other packages should detect that and return errors', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'npm',
+      '--path',
+      '__tests__/fixtures/package-lock-v3-package-name-aliases.json',
+      '--validate-package-names',
+      '--allowed-hosts',
+      'npm'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.on('close', exitCode => {
+      expect(output).toMatch(
+        /detected resolved URL for package with a different name: string-width-cjs/
+      )
+      expect(output).toMatch(
+        /detected resolved URL for package with a different name: strip-ansi-cjs/
+      )
+      expect(output).toMatch(
+        /detected resolved URL for package with a different name: wrap-ansi-cjs/
+      )
+      expect(output).toMatch(/Error: security issues detected!/)
+      expect(exitCode).toBe(1)
+      done()
+    })
+  })
+
+  test('Package lock which has aliases to other packages should allow passing when aliases are provided', done => {
+    const process = childProcess.spawn('node', [
+      cliExecPath,
+      '--type',
+      'npm',
+      '--path',
+      '__tests__/fixtures/package-lock-v3-package-name-aliases.json',
+      '--validate-package-names',
+      '--allowed-package-name-aliases',
+      'string-width-cjs:string-width',
+      'wrap-ansi-cjs:wrap-ansi',
+      'strip-ansi-cjs:strip-ansi',
+      '--allowed-hosts',
+      'npm'
+    ])
+
+    let output = ''
+    process.stderr.on('data', chunk => {
+      output += chunk
+    })
+
+    process.on('close', exitCode => {
+      // No error should be thrown
+      expect(exitCode).toBe(0)
+      done()
+    })
+  })
+
   describe('cosmiconfig integration', () => {
     it('options are loaded from cosmiconfig files', done => {
       const lintProcess = childProcess.spawn('node', [cliExecPath], {
@@ -317,7 +379,6 @@ describe('CLI tests', () => {
       })
 
       lintProcess.on('close', exitCode => {
-        console.log(output)
         expect(exitCode).toBe(0)
         done()
       })
@@ -431,6 +492,35 @@ describe('Validator managers:', () => {
           message:
             'detected invalid integrity hash type for package: typescript@4.8.3-4b39c20edf186cd85bb485386ba7d48590c3bf0c\n    expected: sha512\n    actual: sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg=\n',
           package: 'typescript@4.8.3-4b39c20edf186cd85bb485386ba7d48590c3bf0c'
+        }
+      ]
+    })
+  })
+
+  it('Package name validator should error if aliases are used and not added as trusted policy', () => {
+    const result = ValidatePackageNamesManager({
+      path: '__tests__/fixtures/package-lock-v3-package-name-aliases.json',
+      type: 'npm',
+      validatorValues: []
+    })
+
+    expect(result).toEqual({
+      type: 'error',
+      errors: [
+        {
+          message:
+            'detected resolved URL for package with a different name: string-width-cjs\n    expected: string-width-cjs\n    actual: string-width\n',
+          package: 'string-width-cjs'
+        },
+        {
+          message:
+            'detected resolved URL for package with a different name: strip-ansi-cjs\n    expected: strip-ansi-cjs\n    actual: strip-ansi\n',
+          package: 'strip-ansi-cjs'
+        },
+        {
+          message:
+            'detected resolved URL for package with a different name: wrap-ansi-cjs\n    expected: wrap-ansi-cjs\n    actual: wrap-ansi\n',
+          package: 'wrap-ansi-cjs'
         }
       ]
     })

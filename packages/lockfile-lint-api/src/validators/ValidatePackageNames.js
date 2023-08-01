@@ -12,14 +12,25 @@ module.exports = class ValidatePackageNames {
     this.packages = packages
   }
 
-  validate () {
+  validate (packageNameAliases) {
     let validationResult = {
       type: 'success',
       errors: []
     }
 
+    const packageNameAliasPairs = this._getPackageNameAliasPairs(packageNameAliases)
+
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
       if (!('resolved' in packageMetadata)) {
+        continue
+      }
+
+      if (Object.hasOwn(packageNameAliasPairs, this._getPackageNameOnly(packageName))) {
+        debug(
+          `skipping package name validation for aliased package name: ${packageName} resolving to: ${
+            packageNameAliasPairs[packageName]
+          }}`
+        )
         continue
       }
 
@@ -40,19 +51,15 @@ module.exports = class ValidatePackageNames {
         const path = packageResolvedURL.pathname
         const packageNameFromResolved = path.split('/-/')[0].slice(1)
 
-        // Remove versioning info from packageName. The @ sign is the delimiter, but could also be the
-        // first character of a scoped package name. We handle this edge-case here.
-        const nameOnly = packageName.startsWith('@')
-          ? `@${packageName.slice(1).split('@')[0]}`
-          : packageName.split('@')[0]
+        const packageNameOnly = this._getPackageNameOnly(packageName)
 
-        const expectedURLBeginning = `${packageResolvedURL.origin}/${nameOnly}`
+        const expectedURLBeginning = `${packageResolvedURL.origin}/${packageNameOnly}`
 
         const isPassing = packageMetadata.resolved.startsWith(expectedURLBeginning)
         if (!isPassing) {
           validationResult.errors.push({
-            message: `detected resolved URL for package with a different name: ${nameOnly}\n    expected: ${nameOnly}\n    actual: ${packageNameFromResolved}\n`,
-            package: nameOnly
+            message: `detected resolved URL for package with a different name: ${packageNameOnly}\n    expected: ${packageNameOnly}\n    actual: ${packageNameFromResolved}\n`,
+            package: packageNameOnly
           })
         }
       } catch (error) {
@@ -65,5 +72,29 @@ module.exports = class ValidatePackageNames {
     }
 
     return validationResult
+  }
+
+  _getPackageNameOnly (packageName) {
+    // Remove versioning info from packageName. The @ sign is the delimiter, but could also be the
+    // first character of a scoped package name. We handle this edge-case here.
+    const packageNameOnly = packageName.startsWith('@')
+      ? `@${packageName.slice(1).split('@')[0]}`
+      : packageName.split('@')[0]
+
+    return packageNameOnly
+  }
+
+  _getPackageNameAliasPairs (packageNameAliases) {
+    if (!packageNameAliases || !Array.isArray(packageNameAliases)) {
+      return {}
+    }
+
+    const packageNameAliasPairs = {}
+    for (const packageNameAlias of packageNameAliases) {
+      const [packageName, aliasedPackageName] = packageNameAlias.split(':')
+      packageNameAliasPairs[packageName] = aliasedPackageName
+    }
+
+    return packageNameAliasPairs
   }
 }

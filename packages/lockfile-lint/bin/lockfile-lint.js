@@ -69,7 +69,8 @@ for (const [commandArgument, commandValue] of Object.entries(config)) {
       options: {
         emptyHostname: config['empty-hostname'],
         allowedHosts: config['allowed-hosts'],
-        allowedUrls: config['allowed-urls']
+        allowedUrls: config['allowed-urls'],
+        allowedPackageNameAliases: config['allowed-package-name-aliases']
       }
     })
   }
