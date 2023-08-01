@@ -58,7 +58,7 @@ describe('ParseLockfile Yarn', () => {
     }).toThrowError('Unable to parse yarn lockfile ""')
   })
   it('providing garbled content for lockfileText throws an error', () => {
-    const parser = new ParseLockfile({lockfileText: `# yarn lockfile v1`, lockfileType: 'yarn'})
+    const parser = new ParseLockfile({lockfileText: '# yarn lockfile v1', lockfileType: 'yarn'})
     expect(() => {
       parser.parseSync()
     }).toThrowError('Unable to parse yarn lockfile ""')

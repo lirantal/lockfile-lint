@@ -14,7 +14,7 @@ module.exports = class ValidateIntegrity {
   }
 
   validate () {
-    let validationResult = {
+    const validationResult = {
       type: 'success',
       errors: []
     }

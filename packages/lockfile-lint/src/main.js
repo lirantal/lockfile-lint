@@ -19,7 +19,7 @@ const validatorFunctions = new Map([
   ['validateIntegrity', ValidateIntegrityManager]
 ])
 
-function runValidators ({type, path, validators} = {}) {
+function runValidators({type, path, validators} = {}) {
   let validatorCount = 0
   let validatorFailures = 0
   let validatorSuccesses = 0
@@ -28,7 +28,7 @@ function runValidators ({type, path, validators} = {}) {
     throw new Error('provided object must have a validators array list')
   }
 
-  validators.forEach(validator => {
+  validators.forEach((validator) => {
     const validatorFunction = validatorFunctions.get(validator.name)
     if (!validatorFunction) {
       return false
@@ -38,7 +38,7 @@ function runValidators ({type, path, validators} = {}) {
     debug(`invoking validator for: ${validator.name}`)
 
     // eslint-disable-next-line security/detect-object-injection
-    let validationResult = validatorFunction({
+    const validationResult = validatorFunction({
       path,
       type,
       validatorValues: validator.values,
@@ -46,7 +46,7 @@ function runValidators ({type, path, validators} = {}) {
     })
 
     if (validationResult.type === 'error') {
-      validationResult.errors.forEach(validationError => {
+      validationResult.errors.forEach((validationError) => {
         console.error(validationError.message)
         validatorFailures++
       })

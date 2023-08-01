@@ -36,9 +36,9 @@ try {
   process.exit(1)
 }
 
-const isPrettyFormat = config['format'] === 'pretty'
+const isPrettyFormat = config.format === 'pretty'
 
-let validators = []
+const validators = []
 const supportedValidators = new Map([
   ['allowed-hosts', 'validateHosts'],
   ['validate-https', 'validateHttps'],
@@ -79,8 +79,8 @@ for (const [commandArgument, commandValue] of Object.entries(config)) {
 let result
 try {
   result = main.runValidators({
-    path: config['path'],
-    type: config['type'],
+    path: config.path,
+    type: config.type,
     validators
   })
 } catch (errorPayload) {
@@ -104,38 +104,38 @@ if (validatorFailures !== 0) {
   success('No issues detected')
 }
 
-function success (message) {
+function success(message) {
   const m = [
     isPrettyFormat ? GREEN : '',
     isPrettyFormat ? symbols.success : '',
     message,
     '\n',
     isPrettyFormat ? RESET : ''
-  ].filter(e => !!e)
+  ].filter((e) => !!e)
 
   console.info(m.join(' '))
 }
 
-function warn (message) {
+function warn(message) {
   const m = [
     isPrettyFormat ? YELLOW : '',
     isPrettyFormat ? symbols.info : '',
     message,
     '\n',
     isPrettyFormat ? RESET : ''
-  ].filter(e => !!e)
+  ].filter((e) => !!e)
 
   console.error(m.join(' '))
 }
 
-function error (message) {
+function error(message) {
   const m = [
     isPrettyFormat ? RED : '',
     isPrettyFormat ? symbols.error : '',
     message,
     '\n',
     isPrettyFormat ? RESET : ''
-  ].filter(e => !!e)
+  ].filter((e) => !!e)
 
   console.error(m.join(' '))
 }

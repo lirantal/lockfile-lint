@@ -12,7 +12,7 @@ module.exports = class ValidateHttps {
   }
 
   validate () {
-    let validationResult = {
+    const validationResult = {
       type: 'success',
       errors: []
     }

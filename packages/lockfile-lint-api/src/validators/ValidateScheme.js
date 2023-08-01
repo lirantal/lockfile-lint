@@ -14,7 +14,7 @@ module.exports = class ValidateProtocol {
       throw new Error('validate method requires an array')
     }
 
-    let validationResult = {
+    const validationResult = {
       type: 'success',
       errors: []
     }
