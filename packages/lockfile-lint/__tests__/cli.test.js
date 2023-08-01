@@ -355,11 +355,6 @@ describe('CLI tests', () => {
       'npm'
     ])
 
-    let output = ''
-    process.stderr.on('data', chunk => {
-      output += chunk
-    })
-
     process.on('close', exitCode => {
       // No error should be thrown
       expect(exitCode).toBe(0)
@@ -371,11 +366,6 @@ describe('CLI tests', () => {
     it('options are loaded from cosmiconfig files', done => {
       const lintProcess = childProcess.spawn('node', [cliExecPath], {
         cwd: path.join(__dirname, 'fixtures/valid-config')
-      })
-
-      let output = ''
-      lintProcess.stderr.on('data', chunk => {
-        output += chunk
       })
 
       lintProcess.on('close', exitCode => {
