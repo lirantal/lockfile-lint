@@ -18,7 +18,7 @@ module.exports = class ValidateHost {
       throw new Error('validate method requires an array')
     }
 
-    let validationResult = {
+    const validationResult = {
       type: 'success',
       errors: []
     }
@@ -51,7 +51,7 @@ module.exports = class ValidateHost {
         const isPassing = allowedHosts.includes(packageResolvedURL.host)
         if (!isPassing) {
           if (!packageResolvedURL.host && options && options.emptyHostname) {
-            this.debug(`detected empty hostname but allowing because emptyHostname is not false`)
+            this.debug('detected empty hostname but allowing because emptyHostname is not false')
           } else {
             validationResult.errors.push({
               message: `detected invalid host(s) for package: ${packageName}\n    expected: ${allowedHosts}\n    actual: ${

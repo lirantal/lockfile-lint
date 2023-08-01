@@ -18,7 +18,7 @@ describe('Validator: Protocol', () => {
       }
     }
     const validator = new ValidatorScheme({packages: mockedPackages})
-    expect(() => validator.validate()).toThrow(`validate method requires an array`)
+    expect(() => validator.validate()).toThrow('validate method requires an array')
   })
 
   it('validator should fail if finding a non-https resource', () => {

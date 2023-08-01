@@ -29,7 +29,7 @@ describe('Validator: Url', () => {
       type: 'error',
       errors: [
         {
-          message: `detected invalid url(s) for package: bolt11\n    expected: https://registry.npmjs.org\n    actual: https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247\n`,
+          message: 'detected invalid url(s) for package: bolt11\n    expected: https://registry.npmjs.org\n    actual: https://github.com/LN-Zap/bolt11#0492874ea9ced4ab49bf0f59a62368687f147247\n',
           package: 'bolt11'
         }
       ]
@@ -78,7 +78,7 @@ describe('Validator: Url', () => {
     const validator = new ValidatorUrl({packages: mockedPackages})
     expect(() => {
       validator.validate(null)
-    }).toThrowError(`validate method requires an array`)
+    }).toThrowError('validate method requires an array')
   })
 
   it('validator should not fail even if one of the packages has no `resolved` field', () => {

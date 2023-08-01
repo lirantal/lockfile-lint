@@ -13,7 +13,7 @@ module.exports = class ValidatePackageNames {
   }
 
   validate (packageNameAliases) {
-    let validationResult = {
+    const validationResult = {
       type: 'success',
       errors: []
     }

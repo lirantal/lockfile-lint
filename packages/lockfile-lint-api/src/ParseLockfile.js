@@ -22,7 +22,7 @@ const {
  * Checks if a sample object is a valid dependency structure
  * @return boolean
  */
-function checkSampleContent (lockfile, isYarnBerry) {
+function checkSampleContent(lockfile, isYarnBerry) {
   if (Object.entries(lockfile).length < (isYarnBerry ? 2 : 1)) {
     return false
   }
@@ -31,15 +31,15 @@ function checkSampleContent (lockfile, isYarnBerry) {
     sampleKey.match(/.*@.*/) &&
     sampleValue &&
     typeof sampleValue === 'object' &&
-    sampleValue.hasOwnProperty('version') &&
-    (sampleValue.hasOwnProperty('resolved') || sampleValue.hasOwnProperty('resolution'))
+    Object.hasOwn(sampleValue, 'version') &&
+    (Object.hasOwn(sampleValue, 'resolved') || Object.hasOwn(sampleValue, 'resolution'))
   )
 }
 /**
  * @param {string|Buffer} lockfileBuffer - the lockfile contents
  * @return {{ type: string, object: any }}
  */
-function yarnParseAndVerify (lockfileBuffer) {
+function yarnParseAndVerify(lockfileBuffer) {
   const lockfile = yarnParseSyml(lockfileBuffer.toString())
   const isYarnBerry = typeof lockfile.__metadata === 'object'
   const hasSensibleContent =
@@ -76,7 +76,7 @@ class ParseLockfile {
    * @param {string} options.lockfileType - the package manager type
    * for lockfile
    */
-  constructor (options) {
+  constructor(options) {
     if (!options || typeof options !== 'object') {
       throw new ParsingError(NO_OPTIONS)
     }
@@ -94,7 +94,7 @@ class ParseLockfile {
    * Checks if lockfile type option was provided
    * @return boolean
    */
-  isLockfileTypeGiven () {
+  isLockfileTypeGiven() {
     return typeof this.options.lockfileType === 'string' && this.options.lockfileType
   }
 
@@ -102,7 +102,7 @@ class ParseLockfile {
    * Synchronously parses a lockfile
    * @return {object} parsed file
    */
-  parseSync () {
+  parseSync() {
     const lockfileParser = this.resolvePkgMgrForLockfile()
     if (!lockfileParser) {
       if (this.isLockfileTypeGiven()) {
@@ -127,7 +127,7 @@ class ParseLockfile {
     return lockfileParser.call(this, file)
   }
 
-  resolvePkgMgrForLockfile () {
+  resolvePkgMgrForLockfile() {
     const lockfileResolversByPackageManager = {
       npm: this.parseNpmLockfile,
       npmjs: this.parseNpmLockfile,
@@ -147,7 +147,7 @@ class ParseLockfile {
     return resolver
   }
 
-  resolvePkgMgrByFilename () {
+  resolvePkgMgrByFilename() {
     const lockfileResolverByFilename = {
       'package-lock.json': this.parseNpmLockfile,
       'yarn.lock': this.parseYarnLockfile
@@ -159,7 +159,7 @@ class ParseLockfile {
     return lockfileResolverByFilename[baseFilename]
   }
 
-  parseYarnLockfile (lockfileBuffer) {
+  parseYarnLockfile(lockfileBuffer) {
     let parsedFile
     try {
       parsedFile = yarnParseAndVerify(lockfileBuffer)
@@ -169,7 +169,7 @@ class ParseLockfile {
     return parsedFile
   }
 
-  parseNpmLockfile (lockfileBuffer) {
+  parseNpmLockfile(lockfileBuffer) {
     let flattenedDepTree
     try {
       const packageJsonParsed = JSON.parse(lockfileBuffer)
@@ -201,7 +201,7 @@ class ParseLockfile {
     }
   }
 
-  _flattenNpmDepsTree (npmDepsTree, npmDepMap = {}) {
+  _flattenNpmDepsTree(npmDepsTree, npmDepMap = {}) {
     for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
       // only evaluate dependency metadata if it's an object with actual metadata
       // @TODO potentially, this entry can be just a dependency name and version
@@ -248,7 +248,7 @@ class ParseLockfile {
     return npmDepMap
   }
 
-  extractedPackageName (packageName) {
+  extractedPackageName(packageName) {
     const parts = packageName.split('/')
     const lastIndex = parts.lastIndexOf('node_modules')
 

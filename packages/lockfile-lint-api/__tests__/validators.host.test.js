@@ -35,7 +35,7 @@ describe('Validator: Host', () => {
       type: 'error',
       errors: [
         {
-          message: `detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org\n    actual: registry.yarnpkg.com\n`,
+          message: 'detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org\n    actual: registry.yarnpkg.com\n',
           package: '@babel/code-frame'
         }
       ]
@@ -138,7 +138,7 @@ describe('Validator: Host', () => {
     const validator = new ValidatorHost({packages: mockedPackages})
     expect(() => {
       validator.validate(null)
-    }).toThrowError(`validate method requires an array`)
+    }).toThrowError('validate method requires an array')
   })
 
   it('validator should allow for git-based URLs', () => {
@@ -159,7 +159,7 @@ describe('Validator: Host', () => {
       type: 'error',
       errors: [
         {
-          message: `detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org,github.com\n    actual: registry.yarnpkg.com\n`,
+          message: 'detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org,github.com\n    actual: registry.yarnpkg.com\n',
           package: '@babel/code-frame'
         }
       ]
@@ -200,7 +200,7 @@ describe('Validator: Host', () => {
       type: 'error',
       errors: [
         {
-          message: `detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org\n    actual: \n`,
+          message: 'detected invalid host(s) for package: @babel/code-frame\n    expected: registry.npmjs.org\n    actual: \n',
           package: '@babel/code-frame'
         }
       ]

@@ -29,7 +29,7 @@ describe('Validator: Integrity', () => {
       type: 'error',
       errors: [
         {
-          message: `detected invalid integrity hash type for package: bolt11\n    expected: sha512\n    actual: sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg=\n`,
+          message: 'detected invalid integrity hash type for package: bolt11\n    expected: sha512\n    actual: sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg=\n',
           package: 'bolt11'
         }
       ]
