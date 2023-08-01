@@ -1,5 +1,16 @@
 # Change Log
 
+## 4.11.0
+
+### Minor Changes
+
+- [#178](https://github.com/lirantal/lockfile-lint/pull/178) [`acf87b8`](https://github.com/lirantal/lockfile-lint/commit/acf87b8047a0a457fff269ee80b90a570926be04) Thanks [@lirantal](https://github.com/lirantal)! - New CLI flag to add package name and aliases as trusted policy
+
+### Patch Changes
+
+- Updated dependencies [[`acf87b8`](https://github.com/lirantal/lockfile-lint/commit/acf87b8047a0a457fff269ee80b90a570926be04)]:
+  - lockfile-lint-api@5.8.0
+
 ## 4.10.6
 
 ### Patch Changes
