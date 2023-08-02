@@ -2,6 +2,7 @@
 'use strict'
 
 const debug = require('debug')('lockfile-lint')
+const glob = require('fast-glob')
 const main = require('../src/main')
 
 const isSupported =
@@ -48,60 +49,68 @@ const supportedValidators = new Map([
   ['validate-integrity', 'validateIntegrity']
 ])
 
-for (const [commandArgument, commandValue] of Object.entries(config)) {
-  /**
-   * If we have both --allowed-urls and --allowed-hosts flags active
-   * then we can skip doing the work for allowed urls as the validator
-   * for allowed hosts will check for both.
-   *
-   * We only need to run the check for allowed urls if the user does not
-   * specify allowed hosts.
-   */
-  if (commandArgument === 'allowed-urls' && config['allowed-hosts']) {
-    continue
+const lockfilesList = glob.sync(config.path)
+
+for (const lockfilePath of lockfilesList) {
+  if (lockfilesList.length > 1) {
+    console.log(`\nlockfile-lint scanning: ${lockfilePath}\n`)
   }
 
-  if (commandValue && supportedValidators.has(commandArgument)) {
-    const validatorItem = supportedValidators.get(commandArgument)
-    validators.push({
-      name: validatorItem,
-      values: commandValue,
-      options: {
-        emptyHostname: config['empty-hostname'],
-        allowedHosts: config['allowed-hosts'],
-        allowedUrls: config['allowed-urls'],
-        allowedPackageNameAliases: config['allowed-package-name-aliases']
-      }
+  for (const [commandArgument, commandValue] of Object.entries(config)) {
+    /**
+     * If we have both --allowed-urls and --allowed-hosts flags active
+     * then we can skip doing the work for allowed urls as the validator
+     * for allowed hosts will check for both.
+     *
+     * We only need to run the check for allowed urls if the user does not
+     * specify allowed hosts.
+     */
+    if (commandArgument === 'allowed-urls' && config['allowed-hosts']) {
+      continue
+    }
+
+    if (commandValue && supportedValidators.has(commandArgument)) {
+      const validatorItem = supportedValidators.get(commandArgument)
+      validators.push({
+        name: validatorItem,
+        values: commandValue,
+        options: {
+          emptyHostname: config['empty-hostname'],
+          allowedHosts: config['allowed-hosts'],
+          allowedUrls: config['allowed-urls'],
+          allowedPackageNameAliases: config['allowed-package-name-aliases']
+        }
+      })
+    }
+  }
+
+  let result
+  try {
+    result = main.runValidators({
+      path: lockfilePath,
+      type: config.type,
+      validators
     })
+  } catch (errorPayload) {
+    warn('ABORTING lockfile lint process due to error exceptions')
+    console.error(errorPayload.message, '\n')
+    console.error(errorPayload.stack, '\n')
+    error('Error: command failed with exit code 1')
+    process.exit(1)
   }
-}
 
-let result
-try {
-  result = main.runValidators({
-    path: config.path,
-    type: config.type,
-    validators
-  })
-} catch (errorPayload) {
-  warn('ABORTING lockfile lint process due to error exceptions')
-  console.error(errorPayload.message, '\n')
-  console.error(errorPayload.stack, '\n')
-  error('Error: command failed with exit code 1')
-  process.exit(1)
-}
+  const {validatorCount, validatorFailures, validatorSuccesses} = result
 
-const {validatorCount, validatorFailures, validatorSuccesses} = result
+  debug(`total validators invoked: ${validatorCount}`)
+  debug(`total validator failures: ${validatorFailures}`)
+  debug(`total validator successes: ${validatorSuccesses}`)
 
-debug(`total validators invoked: ${validatorCount}`)
-debug(`total validator failures: ${validatorFailures}`)
-debug(`total validator successes: ${validatorSuccesses}`)
-
-if (validatorFailures !== 0) {
-  error('Error: security issues detected!')
-  process.exit(1)
-} else {
-  success('No issues detected')
+  if (validatorFailures !== 0) {
+    error('Error: security issues detected!')
+    process.exit(1)
+  } else {
+    success('No issues detected')
+  }
 }
 
 function success(message) {
