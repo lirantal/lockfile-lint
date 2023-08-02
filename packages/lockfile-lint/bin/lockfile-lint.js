@@ -49,7 +49,7 @@ const supportedValidators = new Map([
   ['validate-integrity', 'validateIntegrity']
 ])
 
-const lockfilesList = glob.sync(config['path'])
+const lockfilesList = glob.sync(config.path)
 
 for (const lockfilePath of lockfilesList) {
   if (lockfilesList.length > 1) {
