@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.12.0
+
+### Minor Changes
+
+- [#182](https://github.com/lirantal/lockfile-lint/pull/182) [`8e0294a`](https://github.com/lirantal/lockfile-lint/commit/8e0294aea9996a3cbce30810475b4a829a91828c) Thanks [@lirantal](https://github.com/lirantal)! - Add support for glob matching multiple lockfiles
+
 ## 4.11.0
 
 ### Minor Changes
