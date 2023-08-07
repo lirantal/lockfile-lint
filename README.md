@@ -60,12 +60,23 @@ Please be advised of the following security disclaimers that are outside of the 
 
 When you whitelist all hosts from npmjs, yarnpkg, github or other registries you implicitly convey that you trust all the packages originating from these sources. As such, a malicious package can exist in a registry source that you whitelist. Direct dependencies that you should add to a project should be well vetted before adding such as using a tool like [npq](https://github.com/lirantal/npq).
 
-
 # References
 
 - [Secure Nodejs Guidelines section on Lockfile Attack](https://securenodejsguidelines.ulisesgascon.com/attacks/lockfile-posioned)
 - [pnpm's lockfile injection #4361](https://github.com/pnpm/pnpm/issues/4361)
 - [yarn's lockfile injection #4136](https://github.com/yarnpkg/berry/discussions/4136)
+
+# FAQ
+
+## What about pnpm support?
+
+pnpm doesn't maintain the tarball source of an npm package so unlike yarn, and npm, there's no way to inject an attacker-controlled malicious source file in `pnpm-lock.yaml`. Other vectors that were explored were to inject new packages into the lockfile (that aren't in `package.json`) yet pnpm isn't prone to these malicious attempts and would not install them.
+
+If you have witnessed a possible attack vector on pnpm's lockfile, please open an issue with reproducible steps.
+
+## How is this different from `npm audit`?
+
+`npm audit` is a tool to audit your dependencies for known vulnerabilities. However, it doesn't address the issue of malicious packages being injected into your lockfile. `lockfile-lint` is a tool that is designed to address this issue.
 
 # Author
 
