@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.12.1
+
+### Patch Changes
+
+- [`745aa65`](https://github.com/lirantal/lockfile-lint/commit/745aa65346204a7a74531feef1a4f73c7718820d) Thanks [@lirantal](https://github.com/lirantal)! - fix: --version command-line was throwing an error related to glob matching
+
 ## 4.12.0
 
 ### Minor Changes
