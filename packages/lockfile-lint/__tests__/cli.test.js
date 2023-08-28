@@ -1,5 +1,6 @@
 'use strict'
 
+const semver = require('semver')
 const path = require('path')
 // eslint-disable-next-line security/detect-child-process
 const childProcess = require('child_process')
@@ -38,6 +39,21 @@ describe('CLI tests', () => {
 
     process.stdout.on('close', () => {
       expect(output).toContain('Missing required argument: p')
+      done()
+    })
+  })
+
+  test('Checking for version number should be semver compatible and exit with no errors', done => {
+    const process = childProcess.spawn('node', [cliExecPath, '--version'])
+
+    let output = ''
+    process.stdout.on('data', chunk => {
+      output += chunk
+    })
+
+    process.on('close', exit => {
+      expect(semver.valid(output.trim())).toBeTruthy()
+      expect(exit).toBe(0)
       done()
     })
   })

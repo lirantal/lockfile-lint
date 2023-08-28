@@ -76,7 +76,8 @@
     "eslint-plugin-standard": "^4.1.0",
     "jest": "29.6.2",
     "open-cli": "^7.2.0",
-    "prettier-standard": "16.4.1"
+    "prettier-standard": "16.4.1",
+    "semver": "^7.5.4"
   },
   "jest": {
     "testEnvironment": "node",
