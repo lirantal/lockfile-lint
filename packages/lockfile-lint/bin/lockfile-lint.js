@@ -49,7 +49,10 @@ const supportedValidators = new Map([
   ['validate-integrity', 'validateIntegrity']
 ])
 
-const lockfilesList = glob.sync(config.path)
+let lockfilesList = []
+if (config.path) {
+  lockfilesList = glob.sync(config.path)
+}
 
 for (const lockfilePath of lockfilesList) {
   if (lockfilesList.length > 1) {
@@ -113,38 +116,38 @@ for (const lockfilePath of lockfilesList) {
   }
 }
 
-function success(message) {
+function success (message) {
   const m = [
     isPrettyFormat ? GREEN : '',
     isPrettyFormat ? symbols.success : '',
     message,
     '\n',
     isPrettyFormat ? RESET : ''
-  ].filter((e) => !!e)
+  ].filter(e => !!e)
 
   console.info(m.join(' '))
 }
 
-function warn(message) {
+function warn (message) {
   const m = [
     isPrettyFormat ? YELLOW : '',
     isPrettyFormat ? symbols.info : '',
     message,
     '\n',
     isPrettyFormat ? RESET : ''
-  ].filter((e) => !!e)
+  ].filter(e => !!e)
 
   console.error(m.join(' '))
 }
 
-function error(message) {
+function error (message) {
   const m = [
     isPrettyFormat ? RED : '',
     isPrettyFormat ? symbols.error : '',
     message,
     '\n',
     isPrettyFormat ? RESET : ''
-  ].filter((e) => !!e)
+  ].filter(e => !!e)
 
   console.error(m.join(' '))
 }
