@@ -17,6 +17,15 @@ describe('Validator: Integrity', () => {
     expect(() => new ValidateIntegrity()).toThrowError()
   })
 
+  it('validator should throw an error when excludedPackages is not an array', () => {
+    const options = {
+      integrityExclude: 'not-an-array'
+    }
+
+    const validator = new ValidateIntegrity({packages: {}})
+    expect(() => validator.validate(options)).toThrowError()
+  })
+
   it('validator should fail if not allowed hash type is used for a resource', () => {
     const mockedPackages = {
       bolt11: {
@@ -29,7 +38,8 @@ describe('Validator: Integrity', () => {
       type: 'error',
       errors: [
         {
-          message: 'detected invalid integrity hash type for package: bolt11\n    expected: sha512\n    actual: sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg=\n',
+          message:
+            'detected invalid integrity hash type for package: bolt11\n    expected: sha512\n    actual: sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg=\n',
           package: 'bolt11'
         }
       ]
@@ -66,6 +76,23 @@ describe('Validator: Integrity', () => {
     const validator = new ValidateIntegrity({packages: mockedPackages})
 
     expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should not fail if an excluded package has an invalid integrity hash type', () => {
+    const mockedPackages = {
+      typescript: {
+        integrity: 'sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg='
+      }
+    }
+    const options = {
+      integrityExclude: ['typescript']
+    }
+
+    const validator = new ValidateIntegrity({packages: mockedPackages})
+    expect(validator.validate(options)).toEqual({
       type: 'success',
       errors: []
     })
