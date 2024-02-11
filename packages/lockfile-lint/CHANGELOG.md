@@ -1,5 +1,16 @@
 # Change Log
 
+## 4.13.0
+
+### Minor Changes
+
+- [`ff74c61`](https://github.com/lirantal/lockfile-lint/commit/ff74c61f92cabcb9e71f824e2022eb9b2bb96ead) Thanks [@lirantal](https://github.com/lirantal)! - add --integrity-exclude CLI option
+
+### Patch Changes
+
+- Updated dependencies [[`ff74c61`](https://github.com/lirantal/lockfile-lint/commit/ff74c61f92cabcb9e71f824e2022eb9b2bb96ead)]:
+  - lockfile-lint-api@5.9.0
+
 ## 4.12.1
 
 ### Patch Changes
