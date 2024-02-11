@@ -134,5 +134,5 @@ function ValidateIntegrityManager ({path, type, validatorValues, validatorOption
   const lockfile = parser.parseSync()
   const validator = new ValidateIntegrity({packages: lockfile.object})
 
-  return validator.validate()
+  return validator.validate(validatorOptions)
 }

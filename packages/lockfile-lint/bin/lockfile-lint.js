@@ -81,7 +81,8 @@ for (const lockfilePath of lockfilesList) {
           emptyHostname: config['empty-hostname'],
           allowedHosts: config['allowed-hosts'],
           allowedUrls: config['allowed-urls'],
-          allowedPackageNameAliases: config['allowed-package-name-aliases']
+          allowedPackageNameAliases: config['allowed-package-name-aliases'],
+          integrityExclude: config['integrity-exclude']
         }
       })
     }

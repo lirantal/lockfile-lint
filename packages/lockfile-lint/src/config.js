@@ -85,6 +85,10 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
         type: 'array',
         describe: 'validates an alias of package names to be used for resources in the lockfile'
       },
+      'integrity-exclude': {
+        type: 'array',
+        describe: 'do not validate integrity for these package'
+      },
       format: {
         alias: ['f'],
         type: 'string',

@@ -13,7 +13,12 @@ module.exports = class ValidateIntegrity {
     this.packages = packages
   }
 
-  validate () {
+  validate (options) {
+    const excludedPackages = options && options.integrityExclude ? options.integrityExclude : []
+    if (!Array.isArray(excludedPackages)) {
+      throw new Error('excluded packages must be an array')
+    }
+
     const validationResult = {
       type: 'success',
       errors: []
@@ -24,12 +29,14 @@ module.exports = class ValidateIntegrity {
         continue
       }
 
+      if (excludedPackages.includes(packageName)) {
+        continue
+      }
+
       try {
         if (!isSha512(packageMetadata)) {
           validationResult.errors.push({
-            message: `detected invalid integrity hash type for package: ${packageName}\n    expected: sha512\n    actual: ${
-              packageMetadata.integrity
-            }\n`,
+            message: `detected invalid integrity hash type for package: ${packageName}\n    expected: sha512\n    actual: ${packageMetadata.integrity}\n`,
             package: packageName
           })
         }
