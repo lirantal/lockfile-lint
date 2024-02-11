@@ -1,6 +1,6 @@
 {
   "name": "lockfile-lint",
-  "version": "4.12.1",
+  "version": "4.13.0",
   "description": "A CLI to lint a lockfile for security policies",
   "bin": {
     "lockfile-lint": "./bin/lockfile-lint.js"
@@ -55,7 +55,7 @@
     "cosmiconfig": "^8.2.0",
     "debug": "^4.3.4",
     "fast-glob": "^3.3.1",
-    "lockfile-lint-api": "^5.8.0",
+    "lockfile-lint-api": "^5.9.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
