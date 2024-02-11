@@ -29,7 +29,7 @@ module.exports = class ValidateIntegrity {
         continue
       }
 
-      if (excludedPackages.includes(packageName)) {
+      if (excludedPackages.find(name => packageName.startsWith(`${name}@`))) {
         continue
       }
 
