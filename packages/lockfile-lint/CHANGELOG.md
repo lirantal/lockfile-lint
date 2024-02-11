@@ -1,5 +1,14 @@
 # Change Log
 
+## 4.13.1
+
+### Patch Changes
+
+- [`2f7a477`](https://github.com/lirantal/lockfile-lint/commit/2f7a477ced649eb54d94f2572dda5f2daf26e5f0) Thanks [@lirantal](https://github.com/lirantal)! - fix: support for validatio integrity exception
+
+- Updated dependencies [[`2f7a477`](https://github.com/lirantal/lockfile-lint/commit/2f7a477ced649eb54d94f2572dda5f2daf26e5f0)]:
+  - lockfile-lint-api@5.9.1
+
 ## 4.13.0
 
 ### Minor Changes
