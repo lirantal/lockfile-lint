@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.13.2
+
+### Patch Changes
+
+- [`889c016`](https://github.com/lirantal/lockfile-lint/commit/889c016ea3ed338eede27e5e4c4a81587375e996) Thanks [@lirantal](https://github.com/lirantal)! - docs: update instructions for working with cosmiconfig files
+
 ## 4.13.1
 
 ### Patch Changes
