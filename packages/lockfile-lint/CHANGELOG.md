@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.14.0
+
+### Minor Changes
+
+- [`e0739b8829f158ba6f739759fcb41f03f3b60142`](https://github.com/lirantal/lockfile-lint/commit/e0739b8829f158ba6f739759fcb41f03f3b60142) Thanks [@lirantal](https://github.com/lirantal)! - fix: cosmiconfig dependency upgrade for better lockfile-lint config file support
+
 ## 4.13.2
 
 ### Patch Changes
