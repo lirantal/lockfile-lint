@@ -97,8 +97,7 @@ Lockfile-lint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) f
 
 - A "lockfile-lint" key in your package.json file.
 - A .lockfile-lintrc file, written in JSON or YAML, with optional extensions: .json/.yaml/.yml (without extension takes precedence).
-- A .lockfile-lint.js or lockfile-lint.config.js file that exports an object.
-- A .lockfile-lint.toml file, written in TOML (the .toml extension is required).
+- A .lockfile-lintrc.js or lockfile-lint.config.js file that exports an object.
 
 The configuration file will be resolved starting from the current working directory, and searching up the file tree until a config file is (or isn't) found. Command-line options take precedence over any file-based configuration.
 
