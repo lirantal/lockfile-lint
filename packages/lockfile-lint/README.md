@@ -103,6 +103,11 @@ The configuration file will be resolved starting from the current working direct
 
 The options accepted in the configuration file are the same as the options above in camelcase (e.g. "path", "allowedHosts").
 
+# References
+
+- [This package aliasing article](https://snyk.io/blog/exploring-extensions-of-dependency-confusion-attacks-via-npm-package-aliasing/) explains the rational for error reporting on package aliases in lockfiles.
+- [Why npm lockfiles can be a security blindspot for injecting malicious modules](https://snyk.io/blog/why-npm-lockfiles-can-be-a-security-blindspot-for-injecting-malicious-modules/)
+
 # Contributing
 
 Please consult [CONTRIBUTING](../../CONTRIBUTING.md) for guidelines on contributing to this project.
