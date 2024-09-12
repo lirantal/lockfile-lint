@@ -28,6 +28,22 @@ Lint your lockfiles to ensure they adhere to pre-defined security policies and m
 
 **Why is this important?** read: [Why npm lockfiles can be a security blindspot for injecting malicious modules](https://snyk.io/blog/why-npm-lockfiles-can-be-a-security-blindspot-for-injecting-malicious-modules/)
 
+# Learn Node.js Security
+
+<div align="center">
+  <p>
+    <a href="https://nodejs-security.com">
+      <img alt="Node.js Security" align="center" src="https://img.shields.io/badge/%F0%9F%A6%84-Learn%20Node.js%20Security%E2%86%92-gray.svg?colorA=5734F5&colorB=5734F5&style=flat" />
+    </a>
+  </p>
+  
+  ![Screenshot 2024-09-12 at 20 08 07](https://github.com/user-attachments/assets/970a97fd-16bd-4b3c-b535-ae7445b52d4c)
+
+  <p>
+    Learn Node.js Secure Coding techniques and best practices from <a href="https://www.lirantal.com">Liran Tal</a>
+  </p>
+</div>
+
 # Usage
 
 Easily invoked with npx on any project and lint it:
