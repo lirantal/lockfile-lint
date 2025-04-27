@@ -1,5 +1,14 @@
 # Change Log
 
+## 4.14.1
+
+### Patch Changes
+
+- [`d91813411898315e8e064f616b698e129af40495`](https://github.com/lirantal/lockfile-lint/commit/d91813411898315e8e064f616b698e129af40495) Thanks [@lirantal](https://github.com/lirantal)! - fix: trailing slash catch in policy test
+
+- Updated dependencies [[`d91813411898315e8e064f616b698e129af40495`](https://github.com/lirantal/lockfile-lint/commit/d91813411898315e8e064f616b698e129af40495)]:
+  - lockfile-lint-api@5.9.2
+
 ## 4.14.0
 
 ### Minor Changes
