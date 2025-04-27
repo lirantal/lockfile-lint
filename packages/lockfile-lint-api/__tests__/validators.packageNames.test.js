@@ -15,7 +15,7 @@ describe('Validator: PackageName', () => {
 
   it('validator should fail if a resolved URL for a different package is found', () => {
     const failedPackage = 'meow'
-    const maliciousPackage = 'malicious'
+    const maliciousPackage = 'meowlicious'
     const mockedPackages = {
       '@babel/code-frame@^0.16.0': {
         resolved: 'https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0.tgz'
