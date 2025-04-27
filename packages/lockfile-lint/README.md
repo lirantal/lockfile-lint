@@ -97,12 +97,16 @@ Lockfile-lint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) f
 
 - A "lockfile-lint" key in your package.json file.
 - A .lockfile-lintrc file, written in JSON or YAML, with optional extensions: .json/.yaml/.yml (without extension takes precedence).
-- A .lockfile-lint.js or lockfile-lint.config.js file that exports an object.
-- A .lockfile-lint.toml file, written in TOML (the .toml extension is required).
+- A .lockfile-lintrc.js or lockfile-lint.config.js file that exports an object.
 
 The configuration file will be resolved starting from the current working directory, and searching up the file tree until a config file is (or isn't) found. Command-line options take precedence over any file-based configuration.
 
 The options accepted in the configuration file are the same as the options above in camelcase (e.g. "path", "allowedHosts").
+
+# References
+
+- [This package aliasing article](https://snyk.io/blog/exploring-extensions-of-dependency-confusion-attacks-via-npm-package-aliasing/) explains the rational for error reporting on package aliases in lockfiles.
+- [Why npm lockfiles can be a security blindspot for injecting malicious modules](https://snyk.io/blog/why-npm-lockfiles-can-be-a-security-blindspot-for-injecting-malicious-modules/)
 
 # Contributing
 

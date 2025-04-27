@@ -53,7 +53,7 @@ module.exports = class ValidatePackageNames {
 
         const packageNameOnly = this._getPackageNameOnly(packageName)
 
-        const expectedURLBeginning = `${packageResolvedURL.origin}/${packageNameOnly}`
+        const expectedURLBeginning = `${packageResolvedURL.origin}/${packageNameOnly}/`
 
         const isPassing = packageMetadata.resolved.startsWith(expectedURLBeginning)
         if (!isPassing) {

@@ -7,12 +7,13 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/lirantal/lockfile-lint/actions/workflows/main.yml/badge.svg?branch=main" alt="main">
-  <a href="https://codecov.io/gh/lirantal/lockfile-lint"><img src="https://badgen.net/codecov/c/github/lirantal/lockfile-lint" alt="codecov"/></a>
+  <img src="https://github.com/lirantal/lockfile-lint/actions/workflows/ci.yml/badge.svg" alt="lockfile-lint main CI">
+  <a href="https://codecov.io/gh/lirantal/lockfile-lint" > 
+   <img src="https://codecov.io/gh/lirantal/lockfile-lint/graph/badge.svg?token=P36VJa7ksa"/> 
+   </a>
   <a href="https://www.npmjs.org/package/lockfile-lint-api"><img src="https://badgen.net/npm/license/lockfile-lint-api" alt="license"/></a>
   <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Security Responsible Disclosure" /></a>
-  <a href="https://twitter.com/liran_tal/" alt="follow liran_tal twitter"><img src="https://badgen.net/twitter/follow/liran_tal" /></a>
-     <a href="https://github.com/lirantal/lockfile-lint#usage"><img src="https://badgen.net/badge/npx/lockfile-lint%20--path%20yarn.lock%20--type%20yarn%20--validate-https%20--allowed-hosts%20npm/blue?icon=npm" alt="npx lockfile-lint" /></a>
+  <a href="https://github.com/lirantal/lockfile-lint#usage"><img src="https://badgen.net/badge/npx/lockfile-lint%20--path%20yarn.lock%20--type%20yarn%20--validate-https%20--allowed-hosts%20npm/blue?icon=npm" alt="npx lockfile-lint" /></a>
 </p>
 
 # About
@@ -26,6 +27,22 @@ Exactly!
 Lint your lockfiles to ensure they adhere to pre-defined security policies and mitigate this vector of attack.
 
 **Why is this important?** read: [Why npm lockfiles can be a security blindspot for injecting malicious modules](https://snyk.io/blog/why-npm-lockfiles-can-be-a-security-blindspot-for-injecting-malicious-modules/)
+
+# Learn Node.js Security
+
+<div align="center">
+  <p>
+    <a href="https://nodejs-security.com">
+      <img alt="Node.js Security" align="center" src="https://img.shields.io/badge/%F0%9F%A6%84-Learn%20Node.js%20Security%E2%86%92-gray.svg?colorA=5734F5&colorB=5734F5&style=flat" />
+    </a>
+  </p>
+  
+  ![Screenshot 2024-09-12 at 20 08 07](https://github.com/user-attachments/assets/970a97fd-16bd-4b3c-b535-ae7445b52d4c)
+
+  <p>
+    Learn Node.js Secure Coding techniques and best practices from <a href="https://www.lirantal.com">Liran Tal</a>
+  </p>
+</div>
 
 # Usage
 
