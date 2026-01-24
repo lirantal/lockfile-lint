@@ -1,0 +1,5 @@
+export default {
+  path: '../yarn-only-https.lock',
+  type: 'yarn',
+  validateHttps: true
+}

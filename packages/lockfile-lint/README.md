@@ -97,7 +97,19 @@ Lockfile-lint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) f
 
 - A "lockfile-lint" key in your package.json file.
 - A .lockfile-lintrc file, written in JSON or YAML, with optional extensions: .json/.yaml/.yml (without extension takes precedence).
-- A .lockfile-lintrc.js or lockfile-lint.config.js file that exports an object.
+- A .lockfile-lintrc.js, .lockfile-lintrc.cjs, or .lockfile-lintrc.mjs file that exports an object.
+- A lockfile-lint.config.js, lockfile-lint.config.cjs, or lockfile-lint.config.mjs file that exports an object.
+
+ESM syntax is supported in `.mjs` files. For example:
+
+```javascript
+export default {
+  path: 'yarn.lock',
+  type: 'yarn',
+  allowedHosts: ['npm', 'yarn'],
+  validateHttps: true
+}
+```
 
 The configuration file will be resolved starting from the current working directory, and searching up the file tree until a config file is (or isn't) found. Command-line options take precedence over any file-based configuration.
 
