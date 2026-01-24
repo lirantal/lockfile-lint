@@ -39,9 +39,7 @@ describe('config', () => {
   test('running without parameters should display a requirement for the p option', async () => {
     const errorMessageExpression = /missing required argument: p/i
 
-    await expect(() => loadConfig(['lockfile-lint.js'], false)).rejects.toThrow(
-      errorMessageExpression
-    )
+    await expect(loadConfig(['lockfile-lint.js'], false)).rejects.toThrow(errorMessageExpression)
 
     expect(console.error).toHaveBeenCalledWith(expect.stringMatching(errorMessageExpression))
   })
@@ -49,7 +47,7 @@ describe('config', () => {
   test('providing conflicting arguments should display an error', async () => {
     const errorMessageExpression = /Arguments allowed-schemes and validate-https are mutually exclusive/i
 
-    await expect(() =>
+    await expect(
       loadConfig(
         [
           'lockfile-lint.js',
