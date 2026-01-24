@@ -2,12 +2,27 @@
 
 const debug = require('debug')('lockfile-lint')
 const yargs = require('yargs')
-const {cosmiconfigSync} = require('cosmiconfig')
+const {cosmiconfig} = require('cosmiconfig')
 
-module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
+module.exports = async (argv, exitProcess = false, searchFrom = process.cwd()) => {
   let cosmiconfigResult
   try {
-    cosmiconfigResult = cosmiconfigSync('lockfile-lint').search(searchFrom)
+    const explorer = cosmiconfig('lockfile-lint', {
+      searchPlaces: [
+        'package.json',
+        '.lockfile-lintrc',
+        '.lockfile-lintrc.json',
+        '.lockfile-lintrc.yaml',
+        '.lockfile-lintrc.yml',
+        '.lockfile-lintrc.js',
+        '.lockfile-lintrc.cjs',
+        '.lockfile-lintrc.mjs',
+        'lockfile-lint.config.js',
+        'lockfile-lint.config.cjs',
+        'lockfile-lint.config.mjs'
+      ]
+    })
+    cosmiconfigResult = await explorer.search(searchFrom)
   } catch (err) {
     debug(`error encountered while loading configuration: ${err}`)
   }
@@ -104,5 +119,6 @@ module.exports = (argv, exitProcess = false, searchFrom = process.cwd()) => {
     )
     .epilogue('curated by Liran Tal at https://github.com/lirantal/lockfile-lint')
     .detectLocale(false)
-    .exitProcess(exitProcess).argv
+    .exitProcess(exitProcess)
+    .parse()
 }
