@@ -14,6 +14,8 @@ jobs:
       contents: write       # to create release (changesets/action)
       issues: write         # to post issue comments (changesets/action)
       pull-requests: write  # to create pull request (changesets/action)
+      id-token: write       # to create release (changesets/action)
+      packages: write       # to publish to npm (changesets/action)
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -32,4 +34,4 @@ jobs:
           title: "chore: new release candidate"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
