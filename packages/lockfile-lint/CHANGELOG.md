@@ -1,5 +1,11 @@
 # Change Log
 
+## 5.0.0
+
+### Major Changes
+
+- [`00f595c7b9cad499b86cbc33c3e6492c3b131849`](https://github.com/lirantal/lockfile-lint/commit/00f595c7b9cad499b86cbc33c3e6492c3b131849) Thanks [@lirantal](https://github.com/lirantal)! - feat: support loading of ESM cosmiconfig files
+
 ## 4.14.1
 
 ### Patch Changes
