@@ -1,77 +1,74 @@
 # Contributing
 
-:+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
+Thanks for taking the time to contribute! Issues, ideas, and PRs are all welcome.
+The notes below are guidelines to help your contribution land smoothly. If in doubt, open the thing anyway and we'll figure it out together.
 
-The following is a set of guidelines for contributing to lockfile-lint.
-These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+## Opening an issue
 
-## Code of Conduct
+A good issue gives us enough to reproduce or understand the ask. Useful things to include:
 
-This project and everyone participating in it is governed by a [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+- **For bugs:** what you expected, what actually happened, and the shortest repro you can manage. Versions (runtime, OS, package) and stack traces help.
+- **For features:** the problem you're trying to solve, not just the solution you have in mind. A concrete example of how you'd use it is gold.
 
-## How to contribute to lockfile-lint
+A quick search of existing issues helps avoid duplicates, but don't agonize over it.
 
-<!-- TODO -->
+## Proposing a PR
 
-### Tests
+PRs are expected to meet a few baseline requirements before review:
 
-Make sure you the code you're contributing has decent test coverage.
+- **Tests are required** for any behavior change — new features need new tests, bug fixes need a regression test that fails without the fix.
+- **Existing tests must pass** locally and in CI. Don't disable or skip tests to make a PR green.
+- **Coverage should not regress.** If your change drops coverage meaningfully, add tests or explain why in the PR description.
+- **Linters and type checks must pass.** Run them locally before pushing; CI will reject otherwise.
+- **One logical change per PR.** Refactors, formatting churn, and unrelated fixes belong in separate PRs, it makes review and revert sane.
+- **Describe what and why.** A PR title and a few lines of context go a long way, reviewers shouldn't have to reverse-engineer your intent from the diff.
+- **Link the issue you're closing.** If your PR resolves an open issue, include a `Related issues` section in the description with `Fixes: #<issue-number>` (or `Closes: #<issue-number>`) so GitHub auto-closes it on merge.
+- **Breaking changes need a heads-up** in the PR description, plus a migration note for users.
 
-Running project tests and coverage from the root of the project:
+Large or speculative changes: open an issue first to align on direction before investing time.
 
-```bash
-npm run test
+## Commit guidelines
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/). The format is:
+
+```
+<type>(<optional scope>): <short summary>
 ```
 
-Then make sure that also linting is passing:
+Common types:
 
-```bash
-npm run lint
+- `feat:` — a new feature
+- `fix:` — a bug fix
+- `docs:` — documentation only
+- `refactor:` — code change that neither fixes a bug nor adds a feature
+- `test:` — adding or fixing tests
+- `chore:` — tooling, build, dependencies
+- `perf:` — performance improvement
+
+Examples:
+
+```
+feat: support multiple input files
+fix(parser): handle empty input gracefully
+docs: clarify install instructions
 ```
 
-Running tests per each of the sub-packages also works:
+Breaking changes: add `!` after the type (`feat!: ...`) and explain the break in the commit body.
 
-```bash
-cd packages/lockfile-lint
-npm run test
-```
+This format drives changelog generation and release automation, so it matters more than the average commit-style guide.
 
-### Commit Guidelines
+## Local development
 
-The project uses the commitizen tool for standardizing changelog style commit
-messages so you should follow it as so:
+1. Fork and clone the repository.
+2. Install dependencies using the project's package manager (see `package.json`, or equivalent).
+3. Run the test suite to confirm a clean baseline before making changes.
+4. Run the linter and type checker (if configured) the same way.
+5. Make your change on a feature branch, commit using the format above, and open a PR.
 
-```bash
-git add .           # add files to staging
-npm run commit      # use the wizard for the commit message
-```
+If any of the above doesn't work on a fresh checkout, that's a bug, please open an issue.
 
-### Contribution Process
+## For automated agents
 
-Open a new pull request with the changes made. Make sure to follow the guidelines above.
+If you are an AI coding agent or automated bot opening a PR, please add 🤖🤖🤖 to the end of the PR title. This helps maintainers triage agent-authored contributions and is a baseline expectation for this repo — PRs without the marker that turn out to be automated may be closed without review.
 
-Merging the PR will trigger the CI/CD pipeline to run tests, but it won't automatically publish any new versions because that is a separate process that is triggered manually.
-
-### Version Release Process
-
-We use Changesets to manage the versioning of the project. To release a new version, you need to create a new changeset.
-
-From the root of the project, run the following command:
-
-```bash
-npx changeset
-```
-
-This will guide you through an interactive prompt on the CLI to create a new changeset. Once you've created the changeset, you can commit it to the repository.
-
-```bash
-git add .changeset/<whatever-file-was-created>.md
-```
-
-And push the changes to the repository (can be done on the main branch):
-
-```bash
-git push
-```
-
-From this point, the CI/CD pipeline will automatically detect a new changeset file was added and will open a new Pull Request to propose the new version changes to be made and published.
+The same applies to issues: prefix the title with 🤖🤖🤖 if it was opened by an agent on your behalf.
