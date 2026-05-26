@@ -8,8 +8,8 @@
     "url": "https://github.com/lirantal"
   },
   "scripts": {
-    "lint": "npx turbo lint",
-    "test": "npx turbo test",
+    "lint": "turbo lint",
+    "test": "turbo test",
     "version": "changeset version",
     "release": "changeset publish",
     "prepare": "husky install"
@@ -29,7 +29,8 @@
     "cz-conventional-changelog": "3.3.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
-    "node-notifier": "^10.0.1"
+    "node-notifier": "^10.0.1",
+    "turbo": "1.10.12"
   },
   "lint-staged": {
     "**/*.js": [
@@ -48,7 +49,6 @@
   },
   "dependencies": {
     "@changesets/changelog-github": "^0.4.8",
-    "@changesets/cli": "^2.27.5",
-    "turbo": "^1.10.12"
+    "@changesets/cli": "^2.27.5"
   }
 }
