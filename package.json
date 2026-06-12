@@ -50,5 +50,9 @@
   "dependencies": {
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.27.5"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.10.0"
   }
 }
