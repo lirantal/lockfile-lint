@@ -7,6 +7,20 @@ Use the command that matches the repository's package manager:
 - npm: `npx @changesets/cli`
 - pnpm: `pnpx @changesets/cli`
 
+## Release tooling
+
+This project uses the [Changesets](https://github.com/changesets/changesets)
+tool to manage semantic versioning and release notes.
+
+## Pre-requisites
+
+Permit GitHub Actions to create and approve pull requests:
+
+1. Go to Actions -> General in the repository settings: (`https://github.com/<user>/<repo>/settings/actions`)
+2. In `Workflow permissions` enable the toggle for
+`Allow GitHub Actions to create and approve pull requests` (it is not required
+to also toggle the `Read and write permission` option)
+
 ## Add a changeset interactively
 
 Run the Changesets CLI and follow the prompts:
