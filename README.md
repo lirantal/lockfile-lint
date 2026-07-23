@@ -95,6 +95,10 @@ If you have witnessed a possible attack vector on pnpm's lockfile, please open a
 
 `npm audit` is a tool to audit your dependencies for known vulnerabilities. However, it doesn't address the issue of malicious packages being injected into your lockfile. `lockfile-lint` is a tool that is designed to address this issue.
 
+## Documentation
+
+- [Project documentation](./docs/README.md) - development, testing, architecture, and conventions.
+
 ## Contributing
 
 Please consult [CONTRIBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.
