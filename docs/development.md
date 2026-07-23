@@ -13,7 +13,7 @@ npm install
 
 ## Common Commands
 
-- `pnpm lint` - runs lint checks.
+- `npm run lint` - runs lint checks.
 - `pnpm test` - runs the test suite.
 
 ## Repository Notes
