@@ -2,7 +2,7 @@
 'use strict'
 
 const debug = require('debug')('lockfile-lint')
-const glob = require('fast-glob')
+const {globSync} = require('tinyglobby')
 const main = require('../src/main')
 
 const isSupported =
@@ -52,7 +52,7 @@ async function run () {
 
   let lockfilesList = []
   if (config.path) {
-    lockfilesList = glob.sync(config.path)
+    lockfilesList = globSync(config.path)
   }
 
   for (const lockfilePath of lockfilesList) {
