@@ -378,8 +378,8 @@ describe('CLI tests', () => {
     })
   })
 
-  describe('cosmiconfig integration', () => {
-    test('options are loaded from cosmiconfig files', done => {
+  describe('config file integration', () => {
+    test('options are loaded from config files', done => {
       const lintProcess = childProcess.spawn('node', [cliExecPath], {
         cwd: path.join(__dirname, 'fixtures/valid-config')
       })
