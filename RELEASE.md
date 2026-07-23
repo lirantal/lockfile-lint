@@ -51,10 +51,13 @@ git push origin HEAD --no-verify
 
 The Changesets CLI is mostly interactive when creating a normal changeset. If a TTY is not available, write the changeset file directly.
 
-First, read the package name from `package.json` instead of hard-coding it:
+This is a monorepo. Set `PACKAGE_NAME` to the name of the workspace package being changed — **not** the root `package.json`, which is private and not versioned by Changesets:
 
 ```sh
-PACKAGE_NAME=$(node -p "require('./package.json').name")
+# Read the name from the relevant workspace package
+PACKAGE_NAME=$(node -p "require('./packages/lockfile-lint/package.json').name")
+# or for the API package:
+# PACKAGE_NAME=$(node -p "require('./packages/lockfile-lint-api/package.json').name")
 ```
 
 Create a changeset file under `.changeset/`:
