@@ -1,5 +1,11 @@
 # Change Log
 
+## 5.0.1
+
+### Patch Changes
+
+- [`6ca1c1871c861888744c314652dd0e59da17fad2`](https://github.com/lirantal/lockfile-lint/commit/6ca1c1871c861888744c314652dd0e59da17fad2) Thanks [@lirantal](https://github.com/lirantal)! - chore: release patch for security fix
+
 ## 5.0.0
 
 ### Major Changes
