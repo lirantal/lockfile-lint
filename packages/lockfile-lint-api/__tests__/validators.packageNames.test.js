@@ -94,4 +94,55 @@ describe('Validator: PackageName', () => {
       errors: []
     })
   })
+
+  // Security regression tests for GHSA-f2p3-vh47-jhg6: path traversal bypass
+  it('validator should fail for dot-segment traversal in resolved URL (meow/../evil)', () => {
+    const mockedPackages = {
+      'meow@1.0.0': {
+        resolved: 'https://registry.npmjs.org/meow/../evil/-/evil-1.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    const result = validator.validate()
+    expect(result.type).toBe('error')
+    expect(result.errors).toHaveLength(1)
+    expect(result.errors[0].package).toBe('meow')
+  })
+
+  it('validator should pass for a valid non-malicious npm URL', () => {
+    const mockedPackages = {
+      'meow@1.0.0': {
+        resolved: 'https://registry.npmjs.org/meow/-/meow-1.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    expect(validator.validate()).toEqual({type: 'success', errors: []})
+  })
+
+  it('validator should pass for a valid scoped package URL', () => {
+    const mockedPackages = {
+      '@scope/pkg@1.0.0': {
+        resolved: 'https://registry.npmjs.org/@scope/pkg/-/pkg-1.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    expect(validator.validate()).toEqual({type: 'success', errors: []})
+  })
+
+  it('validator should fail for dot-segment traversal in scoped package resolved URL', () => {
+    const mockedPackages = {
+      '@scope/pkg@1.0.0': {
+        resolved: 'https://registry.npmjs.org/@scope/pkg/../../evil/-/evil-1.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    const result = validator.validate()
+    expect(result.type).toBe('error')
+    expect(result.errors).toHaveLength(1)
+    expect(result.errors[0].package).toBe('@scope/pkg')
+  })
 })
