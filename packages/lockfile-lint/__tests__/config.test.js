@@ -109,8 +109,8 @@ describe('config', () => {
     })
   })
 
-  describe('cosmiconfig integration', () => {
-    it('options are loaded from cosmiconfig files', async () => {
+  describe('config file integration', () => {
+    it('options are loaded from config files', async () => {
       expect(
         await loadConfig(['lockfile-lint.js'], false, path.join(__dirname, 'fixtures/valid-config'))
       ).toEqual(
