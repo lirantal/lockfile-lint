@@ -72,6 +72,11 @@ module.exports = async (argv, exitProcess = false, searchFrom = process.cwd()) =
         type: 'boolean',
         describe: 'validates that the integrity hash type is sha512'
       },
+      'validate-integrity-strict': {
+        type: 'boolean',
+        describe:
+          'requires a complete sha512 integrity hash, except for Git, local directory, linked and bundled dependencies'
+      },
       'empty-hostname': {
         alias: 'e',
         type: 'boolean',

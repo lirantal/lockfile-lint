@@ -32,6 +32,26 @@ npm install --save lockfile-lint-api
 
 ## Validators
 
+`ValidateIntegrity.validate({integrityStrict: true})` requires a complete
+base64-encoded SHA-512 digest for dependencies in npm v1-v3 and Yarn Classic
+lockfiles. The default validation still only checks the hash type when present.
+For example:
+
+```js
+const {ParseLockfile, ValidateIntegrity} = require('lockfile-lint-api')
+const {object: packages} = new ParseLockfile({lockfilePath: 'package-lock.json'}).parseSync()
+const result = new ValidateIntegrity({packages}).validate({integrityStrict: true})
+```
+
+Strict mode exempts Git dependencies, local directories, workspace links and
+bundled dependencies. The parser retains `link` and `inBundle` metadata for this
+purpose. Local `.tgz`/`.tar.gz` files and HTTP(S) tarballs still require integrity.
+An SRI list is accepted if it contains a complete SHA-512 digest. Package
+exclusions use `integrityExclude` as in the default mode. You can also pass
+`{integrityStrict: true}` as the second argument to `validateSingle(packageName)`.
+This checks metadata without fetching package contents, and does not support
+Yarn Berry's different checksum format.
+
 The following lockfile validators are supported
 
 | Validator API        | description                                                                     | implemented |

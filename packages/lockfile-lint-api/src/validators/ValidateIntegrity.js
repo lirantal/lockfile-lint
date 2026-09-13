@@ -4,6 +4,43 @@ function isSha512 (packageMetadata) {
   return packageMetadata.integrity.split('-')[0] === 'sha512'
 }
 
+function isIntegrityExempt (packageMetadata) {
+  if (
+    packageMetadata.link === true ||
+    packageMetadata.bundled === true ||
+    packageMetadata.inBundle === true
+  ) {
+    return true
+  }
+
+  const source = packageMetadata.resolved || packageMetadata.version
+  if (typeof source !== 'string') return false
+  if (
+    ['git:', 'github:', 'gitlab:', 'bitbucket:', 'ssh:', 'git@'].some(prefix =>
+      source.startsWith(prefix)
+    ) ||
+    /^git\+[^:]+:/.test(source)
+  ) {
+    return true
+  }
+
+  // Local tarballs have integrity; local directories do not.
+  return source.startsWith('file:') && !/\.(tgz|tar\.gz)([?#]|$)/i.test(source)
+}
+
+function hasStrictIntegrity (packageMetadata) {
+  if (typeof packageMetadata.integrity !== 'string') return false
+  return packageMetadata.integrity
+    .trim()
+    .split(/\s+/)
+    .some(value => {
+      if (!value.startsWith('sha512-')) return false
+      const digest = value.slice('sha512-'.length)
+      const decoded = Buffer.from(digest, 'base64')
+      return decoded.length === 64 && decoded.toString('base64') === digest
+    })
+}
+
 module.exports = class ValidateIntegrity {
   constructor ({packages} = {}) {
     if (typeof packages !== 'object') {
@@ -25,6 +62,26 @@ module.exports = class ValidateIntegrity {
     }
 
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
+      if (options && options.integrityStrict) {
+        if (
+          excludedPackages.some(name => packageName.startsWith(`${name}@`)) ||
+          isIntegrityExempt(packageMetadata)
+        ) {
+          continue
+        }
+        if (!hasStrictIntegrity(packageMetadata)) {
+          const reason =
+            packageMetadata.integrity == null || packageMetadata.integrity === ''
+              ? 'missing integrity'
+              : 'invalid integrity'
+          validationResult.errors.push({
+            message: `detected ${reason} for package: ${packageName}\n    expected: a complete sha512 integrity hash\n`,
+            package: packageName
+          })
+        }
+        continue
+      }
+
       if (!('integrity' in packageMetadata)) {
         continue
       }
@@ -52,9 +109,12 @@ module.exports = class ValidateIntegrity {
     return validationResult
   }
 
-  validateSingle (packageName) {
+  validateSingle (packageName, options) {
     // eslint-disable-next-line security/detect-object-injection
     const packageMetadata = this.packages[packageName]
+    if (options && options.integrityStrict) {
+      return isIntegrityExempt(packageMetadata) || hasStrictIntegrity(packageMetadata)
+    }
     if (!('integrity' in packageMetadata)) {
       return true
     }

@@ -190,7 +190,9 @@ class ParseLockfile {
         npmDepsTree = packageJsonParsed.packages
       }
 
-      flattenedDepTree = npmDepsTree ? this._flattenNpmDepsTree(npmDepsTree) : {}
+      flattenedDepTree = npmDepsTree
+        ? this._flattenNpmDepsTree(npmDepsTree, {}, npmDepsTree === packageJsonParsed.packages)
+        : {}
     } catch (error) {
       throw new ParsingError(PARSE_NPMLOCKFILE_FAILED, this.options.lockfilePath, error)
     }
@@ -201,7 +203,7 @@ class ParseLockfile {
     }
   }
 
-  _flattenNpmDepsTree(npmDepsTree, npmDepMap = {}) {
+  _flattenNpmDepsTree(npmDepsTree, npmDepMap = {}, isPackageTable = false) {
     for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
       // only evaluate dependency metadata if it's an object with actual metadata
       // @TODO potentially, this entry can be just a dependency name and version
@@ -212,6 +214,17 @@ class ParseLockfile {
           resolved: depMetadata.resolved ? depMetadata.resolved : depMetadata.version,
           integrity: depMetadata.integrity,
           requires: depMetadata.requires
+        }
+        // Preserve source exceptions for integrity policies. Workspace package
+        // entries describe local directories rather than downloaded artifacts.
+        if (
+          depMetadata.link === true ||
+          (isPackageTable && !depName.split('/').includes('node_modules'))
+        ) {
+          depMetadataShortend.link = true
+        }
+        if (depMetadata.bundled === true || depMetadata.inBundle === true) {
+          depMetadataShortend.inBundle = true
         }
         const hashedDepValues = hash(depMetadataShortend)
 

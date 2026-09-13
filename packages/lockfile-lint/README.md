@@ -88,8 +88,35 @@ lockfile-lint --path yarn.lock --allowed-hosts yarn --allowed-urls https://githu
 | `--empty-hostname`, `-e`         | allow empty hostnames, or set to false if you wish for a stricter policy                                                                                                                                                                                                              | ✅            |
 | `--validate-package-names`, `-n` | validates that the resolved URL matches the package name                                                                                                                                                                                                                              | ✅            |
 | `--validate-integrity`, `-i`     | validates the integrity field is a sha512 hash                                                                                                                                                                                                                                        | ✅            |
+| `--validate-integrity-strict` | requires complete SHA-512 integrity, with exceptions for Git, local directory, linked and bundled dependencies | ✅ |
 | `--allowed-package-name-aliases`, `-l` | allow package name aliases to be used by specifying package name and their alias as pairs (e.g: `string-width-cjs:string-width`)                                                                                                                                                | ✅            |
 | `--integrity-exclude`            | exclude packages from the `--validate-integrity` check                                                                                                                                                                                                                                | ✅            |
+
+# Strict integrity validation
+
+Use `--validate-integrity-strict` to require a complete, base64-encoded SHA-512
+digest for each dependency in npm lockfiles (versions 1, 2 and 3) or Yarn Classic
+lockfiles:
+
+```bash
+lockfile-lint --path package-lock.json --validate-integrity-strict
+```
+
+The flag works on its own and takes precedence over `--validate-integrity` when
+both are passed. The existing `--validate-integrity` behavior is unchanged.
+`--integrity-exclude` applies to either mode.
+
+Git dependencies, local directories (`file:`), workspace links and bundled
+dependencies are exempt because they may not have an integrity field. Local
+tarballs (`.tgz` or `.tar.gz`) and HTTP(S) tarballs still require integrity,
+including tarballs hosted on GitHub. Registry entries missing both `resolved`
+and `integrity` are also reported.
+
+This validates the recorded hash's presence and format; it does not download
+packages or establish that their contents are trustworthy. Yarn Berry uses a
+different checksum format and is not supported by this SHA-512 integrity policy.
+
+In a configuration file, set `validateIntegrityStrict: true`.
 
 # File-Based Configuration
 
