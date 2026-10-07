@@ -243,6 +243,63 @@ describe('maintainer security regressions', () => {
     }
   )
 
+  test.each([
+    ' https://example.com/x.tgz',
+    '\t\r\nhttp://example.com/x.tgz ',
+    '\u0000https://example.com/x.tgz',
+    'ht\ttps://example.com/x.tgz',
+    'file:../x.tgz',
+    'file:../x.tar.gz',
+    ' \tfile:../x.tgz?download=1',
+    'file:../x.tar.gz#fragment'
+  ])('does not allow metadata flags to exempt tarball source %p', source => {
+    for (const flag of [{link: true}, {bundled: true}, {inBundle: true}]) {
+      for (const metadata of [{resolved: source}, {version: source}]) {
+        const validator = new ValidateIntegrity({
+          packages: {example: Object.assign({}, metadata, flag)}
+        })
+        expect(validator.validate(strict).type).toBe('error')
+        expect(validator.validateSingle('example', strict)).toBe(false)
+        expect(validatePackage(Object.assign({}, metadata, flag, {integrity})).type).toBe('success')
+      }
+    }
+  })
+
+  test.each([1, 2, 3])('rejects flagged tarballs after parsing npm v%i', lockfileVersion => {
+    const remote = {version: '1.0.0', resolved: ' \thttps://example.com/x.tgz', link: true}
+    const local = {version: 'file:../x.tar.gz', bundled: true, inBundle: true}
+    const linkedTarball = {resolved: 'file:../x.tgz', link: true}
+    const lockfile =
+      lockfileVersion === 1
+        ? {
+            lockfileVersion,
+            dependencies: {
+              remote,
+              linkedTarball,
+              parent: {version: '1.0.0', integrity, dependencies: {local}}
+            }
+          }
+        : {
+            lockfileVersion,
+            packages: {
+              'node_modules/remote': remote,
+              'node_modules/linkedTarball': linkedTarball,
+              'node_modules/parent/node_modules/local': local
+            }
+          }
+    const parsed = new ParseLockfile({
+      lockfileText: JSON.stringify(lockfile),
+      lockfileType: 'npm'
+    }).parseSync()
+    const result = new ValidateIntegrity({packages: parsed.object}).validate(strict)
+    expect(result.type).toBe('error')
+    expect(result.errors.map(error => error.package.split('@')[0]).sort()).toEqual([
+      'linkedTarball',
+      'local',
+      'remote'
+    ])
+  })
+
   const sha = '1c6264b795492e8fdecbc82cb8802fcfbfc08d26'
   const codeload = `https://codeload.github.com/vercel/ms/tar.gz/${sha}`
   test('accepts a commit-pinned Yarn Classic codeload dependency', () => {
@@ -276,7 +333,23 @@ describe('maintainer security regressions', () => {
     expect(result.errors).toHaveLength(1)
     expect(result.errors[0].message).toContain('does not support Yarn Berry')
     expect(validator.validate().type).toBe('success')
+    const packageName = Object.keys(parsed.object)[0]
+    expect(() => validator.validateSingle(packageName, strict)).toThrow(result.errors[0].message)
+    expect(validator.validateSingle(packageName)).toBe(true)
   })
+
+  test.each([{}, {integrity}, {link: true}])(
+    'rejects strict single-package Yarn Berry validation regardless of metadata: %p',
+    metadata => {
+      const validator = new ValidateIntegrity({
+        packages: {example: metadata},
+        format: 'yarn-berry'
+      })
+      expect(() => validator.validateSingle('example', strict)).toThrow(
+        'does not support Yarn Berry'
+      )
+    }
+  )
 })
 
 test('strict validation accepts an empty npm lockfile', () => {

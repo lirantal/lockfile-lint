@@ -1,7 +1,21 @@
 'use strict'
 
+const YARN_BERRY_STRICT_ERROR =
+  '--validate-integrity-strict does not support Yarn Berry lockfiles (which use "checksum" instead of "integrity").'
+
 function isSha512 (packageMetadata) {
   return packageMetadata.integrity.split('-')[0] === 'sha512'
+}
+
+function normalizeSource (source) {
+  if (typeof source !== 'string') return ''
+  try {
+    // Classify the same URL that a consumer sees, including ignored whitespace.
+    return new URL(source).href
+  } catch (error) {
+    // Semver versions and relative workspace paths are not absolute URLs.
+    return source.trim()
+  }
 }
 
 function isHttpsGitRemote (source) {
@@ -40,10 +54,12 @@ function isPinnedCodeload (source) {
 }
 
 function isIntegrityExempt (packageMetadata) {
-  const remoteResolved =
-    typeof packageMetadata.resolved === 'string' && /^https?:/i.test(packageMetadata.resolved)
+  const source = normalizeSource(packageMetadata.resolved || packageMetadata.version)
+  const remoteSource = /^https?:/i.test(source)
+  const localTarball = /^file:.*\.(tgz|tar\.gz)([?#]|$)/i.test(source)
   if (
-    !remoteResolved &&
+    !remoteSource &&
+    !localTarball &&
     (packageMetadata.link === true ||
       packageMetadata.bundled === true ||
       packageMetadata.inBundle === true)
@@ -51,8 +67,6 @@ function isIntegrityExempt (packageMetadata) {
     return true
   }
 
-  const source = packageMetadata.resolved || packageMetadata.version
-  if (typeof source !== 'string') return false
   if (
     ['git:', 'github:', 'gitlab:', 'bitbucket:', 'ssh:', 'git@'].some(prefix =>
       source.startsWith(prefix)
@@ -65,7 +79,7 @@ function isIntegrityExempt (packageMetadata) {
   }
 
   // Local tarballs have integrity; local directories do not.
-  return source.startsWith('file:') && !/\.(tgz|tar\.gz)([?#]|$)/i.test(source)
+  return source.startsWith('file:') && !localTarball
 }
 
 function hasStrictIntegrity (packageMetadata) {
@@ -98,12 +112,7 @@ module.exports = class ValidateIntegrity {
     if (options && options.integrityStrict && this.format === 'yarn-berry') {
       return {
         type: 'error',
-        errors: [
-          {
-            message:
-              '--validate-integrity-strict does not support Yarn Berry lockfiles (which use "checksum" instead of "integrity").'
-          }
-        ]
+        errors: [{message: YARN_BERRY_STRICT_ERROR}]
       }
     }
     const excludedPackages = options && options.integrityExclude ? options.integrityExclude : []
@@ -168,6 +177,9 @@ module.exports = class ValidateIntegrity {
     // eslint-disable-next-line security/detect-object-injection
     const packageMetadata = this.packages[packageName]
     if (options && options.integrityStrict) {
+      if (this.format === 'yarn-berry') {
+        throw new Error(YARN_BERRY_STRICT_ERROR)
+      }
       return isIntegrityExempt(packageMetadata) || hasStrictIntegrity(packageMetadata)
     }
     if (!('integrity' in packageMetadata)) {

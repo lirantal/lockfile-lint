@@ -52,16 +52,25 @@ exclusions use `integrityExclude` as in the default mode. You can also pass
 This checks metadata without fetching package contents, and does not support
 Yarn Berry's different checksum format.
 
-Strict-mode source exceptions are limited: bundled entries must have no HTTP(S)
-`resolved` URL and must be nested beneath another dependency in npm lockfiles.
-A `link: true` entry with an HTTP(S) `resolved` URL is not exempt.
+Strict-mode source exceptions are limited: bundled entries must be nested
+beneath another dependency in npm lockfiles. Flags such as `link`, `bundled` and
+`inBundle` do not exempt HTTP(S) sources or local `.tgz`/`.tar.gz` files; the Git
+source exceptions below still apply.
+
 Yarn Classic GitHub sources are also exempt when the URL is exactly
 `https://codeload.github.com/<owner>/<repo>/tar.gz/<40-hex-commit-sha>`,
-without a query string or fragment. Tags, branches, short SHAs and archive URLs
-that do not match this shape still require integrity.
+without a query string or fragment. Codeload URLs using tags, branches or short
+SHAs, and archive URLs that do not match this shape, still require integrity.
 
-Strict mode rejects Yarn Berry with one unsupported-format error, rather than
-reporting missing integrity for each package. The CLI exits non-zero.
+HTTPS GitHub, GitLab and Bitbucket repository URLs of the form
+`https://<host>/<owner>/<repo>#<commit>` are exempt when the commit is 7-40
+hexadecimal characters and there is no query string. This separate Git-remote
+exception accepts abbreviated commits; archive/download paths remain subject
+to the tarball rules above.
+
+For Yarn Berry, strict `validate()` returns one unsupported-format error and the
+CLI exits non-zero. Strict `validateSingle()` throws an `Error` with the same
+message. For supported formats, `validateSingle()` returns a boolean.
 
 API consumers should pass the parser result's `format` alongside `packages` to
 `ValidateIntegrity` so unsupported Yarn Berry input is identified.
