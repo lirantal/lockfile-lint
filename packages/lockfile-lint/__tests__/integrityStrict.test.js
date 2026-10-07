@@ -56,3 +56,23 @@ describe('strict integrity CLI', () => {
     expect(config['validate-integrity-strict']).toBe(true)
   })
 })
+
+test('strict CLI reports a single unsupported-format error for Yarn Berry', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      path.join(__dirname, '../bin/lockfile-lint.js'),
+      '--type',
+      'yarn',
+      '--path',
+      '../lockfile-lint-api/__tests__/__fixtures__/yarnberry.lock',
+      '--validate-integrity-strict',
+      '--format',
+      'plain'
+    ],
+    {encoding: 'utf8', cwd: path.join(__dirname, '..')}
+  )
+  expect(result.status).toBe(1)
+  expect(result.stderr.match(/does not support Yarn Berry/g)).toHaveLength(1)
+  expect(result.stderr).not.toContain('missing integrity')
+})

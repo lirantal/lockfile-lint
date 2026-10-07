@@ -118,6 +118,17 @@ different checksum format and is not supported by this SHA-512 integrity policy.
 
 In a configuration file, set `validateIntegrityStrict: true`.
 
+Strict-mode source exceptions are limited: bundled entries must have no HTTP(S)
+`resolved` URL and must be nested beneath another dependency in npm lockfiles.
+A `link: true` entry with an HTTP(S) `resolved` URL is not exempt.
+Yarn Classic GitHub sources are also exempt when the URL is exactly
+`https://codeload.github.com/<owner>/<repo>/tar.gz/<40-hex-commit-sha>`,
+without a query string or fragment. Tags, branches, short SHAs and archive URLs
+that do not match this shape still require integrity.
+
+Strict mode rejects Yarn Berry with one unsupported-format error, rather than
+reporting missing integrity for each package. The CLI exits non-zero.
+
 # File-Based Configuration
 
 Lockfile-lint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) for configuration file support. This means you can configure the above options via (in order of precedence):

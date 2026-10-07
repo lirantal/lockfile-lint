@@ -95,7 +95,7 @@ describe('strict integrity validation', () => {
                 missing,
                 valid,
                 git,
-                bundled: {version: '1.0.0', bundled: true},
+
                 local: {version: 'file:../local'},
                 parent: Object.assign({}, valid, {dependencies: {nested: missing}})
               }
@@ -107,7 +107,7 @@ describe('strict integrity validation', () => {
                 'node_modules/missing': missing,
                 'node_modules/valid': valid,
                 'node_modules/git': git,
-                'node_modules/bundled': {version: '1.0.0', inBundle: true},
+                'node_modules/parent/node_modules/bundled': {version: '1.0.0', inBundle: true},
                 'node_modules/local': {resolved: 'packages/local', link: true},
                 'packages/local': {name: 'local', version: '1.0.0'},
                 'packages/local/node_modules/nested': missing
@@ -166,8 +166,123 @@ describe('strict integrity review regressions', () => {
 
   test('accepts unpadded SHA-512 without accepting decoder-ignored garbage', () => {
     expect(validatePackage({integrity: integrity.replace(/=+$/, '')}).type).toBe('success')
-    expect(validatePackage({integrity: integrity.replace('sha512-', 'sha512-!')}).type).toBe('error')
+    expect(validatePackage({integrity: integrity.replace('sha512-', 'sha512-!')}).type).toBe(
+      'error'
+    )
     expect(validatePackage({integrity: integrity + '==='}).type).toBe('error')
-    expect(validatePackage({integrity: 'sha512-' + Buffer.alloc(63).toString('base64')}).type).toBe('error')
+    expect(validatePackage({integrity: 'sha512-' + Buffer.alloc(63).toString('base64')}).type).toBe(
+      'error'
+    )
+  })
+})
+
+describe('maintainer security regressions', () => {
+  test.each([1, 2, 3])(
+    'requires integrity for forged bundled/link entries in npm v%i',
+    lockfileVersion => {
+      const remote = 'https://registry.npmjs.org/ms/-/ms-2.0.0.tgz'
+      const cases = [
+        {
+          metadata: {version: '2.1.3', resolved: remote, bundled: true, inBundle: true},
+          nested: false,
+          expected: 'error'
+        },
+        {
+          metadata: {version: '2.1.3', bundled: true, inBundle: true},
+          nested: true,
+          expected: 'success'
+        },
+        {
+          metadata: {version: '2.1.3', bundled: true, inBundle: true},
+          nested: false,
+          expected: 'error'
+        },
+        {
+          metadata: {version: '2.1.3', resolved: remote, bundled: true, inBundle: true},
+          nested: true,
+          expected: 'error'
+        },
+        {
+          metadata: {version: '2.1.3', resolved: remote, link: true},
+          nested: false,
+          expected: 'error'
+        }
+      ]
+      for (const {metadata, nested, expected} of cases) {
+        const lockfile =
+          lockfileVersion === 1
+            ? {
+                lockfileVersion,
+                dependencies: nested
+                  ? {parent: {version: '1.0.0', integrity, dependencies: {x: metadata}}}
+                  : {x: metadata}
+              }
+            : {
+                lockfileVersion,
+                packages: nested
+                  ? {'node_modules/@scope/parent/node_modules/x': metadata}
+                  : {'node_modules/x': metadata}
+              }
+        const parsed = new ParseLockfile({
+          lockfileText: JSON.stringify(lockfile),
+          lockfileType: 'npm'
+        }).parseSync()
+        expect(new ValidateIntegrity({packages: parsed.object}).validate(strict).type).toBe(
+          expected
+        )
+      }
+    }
+  )
+
+  test.each(['http://example.com/x.tgz', 'https://example.com/x.tgz'])(
+    'does not trust bundled or link flags with remote resolved %s',
+    resolved => {
+      for (const metadata of [{bundled: true}, {inBundle: true}, {link: true}]) {
+        expect(validatePackage(Object.assign({resolved}, metadata)).type).toBe('error')
+      }
+    }
+  )
+
+  const sha = '1c6264b795492e8fdecbc82cb8802fcfbfc08d26'
+  const codeload = `https://codeload.github.com/vercel/ms/tar.gz/${sha}`
+  test('accepts a commit-pinned Yarn Classic codeload dependency', () => {
+    const lockfileText = `# yarn lockfile v1\n\n"ms-git@github:vercel/ms#2.1.3":\n  version "2.1.3"\n  resolved "${codeload}"\n`
+    const parsed = new ParseLockfile({lockfileText, lockfileType: 'yarn'}).parseSync()
+    expect(new ValidateIntegrity({packages: parsed.object}).validate(strict).type).toBe('success')
+  })
+
+  test.each([
+    `http://codeload.github.com/vercel/ms/tar.gz/${sha}`,
+    `https://codeload.github.com.evil.test/vercel/ms/tar.gz/${sha}`,
+    'https://codeload.github.com/vercel/ms/tar.gz/main',
+    'https://codeload.github.com/vercel/ms/tar.gz/abcdef0',
+    `https://codeload.github.com/vercel/ms/tar.gz/${'z'.repeat(40)}`,
+    `${codeload}/extra`,
+    `${codeload}?download=1`,
+    `${codeload}#fragment`
+  ])('rejects codeload lookalikes and unpinned downloads: %s', resolved => {
+    expect(validatePackage({resolved}).type).toBe('error')
+  })
+
+  test('reports one format error for Yarn Berry in strict mode only', () => {
+    const path = require('path')
+    const parsed = new ParseLockfile({
+      lockfilePath: path.join(__dirname, '__fixtures__/yarnberry.lock'),
+      lockfileType: 'yarn'
+    }).parseSync()
+    const validator = new ValidateIntegrity({packages: parsed.object, format: parsed.format})
+    const result = validator.validate(strict)
+    expect(result.type).toBe('error')
+    expect(result.errors).toHaveLength(1)
+    expect(result.errors[0].message).toContain('does not support Yarn Berry')
+    expect(validator.validate().type).toBe('success')
+  })
+})
+
+test('strict validation accepts an empty npm lockfile', () => {
+  const parsed = new ParseLockfile({lockfileText: '{}', lockfileType: 'npm'}).parseSync()
+  expect(new ValidateIntegrity({packages: parsed.object}).validate(strict)).toEqual({
+    type: 'success',
+    errors: []
   })
 })

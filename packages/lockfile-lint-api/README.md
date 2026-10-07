@@ -39,8 +39,8 @@ For example:
 
 ```js
 const {ParseLockfile, ValidateIntegrity} = require('lockfile-lint-api')
-const {object: packages} = new ParseLockfile({lockfilePath: 'package-lock.json'}).parseSync()
-const result = new ValidateIntegrity({packages}).validate({integrityStrict: true})
+const {object: packages, format} = new ParseLockfile({lockfilePath: 'package-lock.json'}).parseSync()
+const result = new ValidateIntegrity({packages, format}).validate({integrityStrict: true})
 ```
 
 Strict mode exempts Git dependencies, local directories, workspace links and
@@ -51,6 +51,20 @@ exclusions use `integrityExclude` as in the default mode. You can also pass
 `{integrityStrict: true}` as the second argument to `validateSingle(packageName)`.
 This checks metadata without fetching package contents, and does not support
 Yarn Berry's different checksum format.
+
+Strict-mode source exceptions are limited: bundled entries must have no HTTP(S)
+`resolved` URL and must be nested beneath another dependency in npm lockfiles.
+A `link: true` entry with an HTTP(S) `resolved` URL is not exempt.
+Yarn Classic GitHub sources are also exempt when the URL is exactly
+`https://codeload.github.com/<owner>/<repo>/tar.gz/<40-hex-commit-sha>`,
+without a query string or fragment. Tags, branches, short SHAs and archive URLs
+that do not match this shape still require integrity.
+
+Strict mode rejects Yarn Berry with one unsupported-format error, rather than
+reporting missing integrity for each package. The CLI exits non-zero.
+
+API consumers should pass the parser result's `format` alongside `packages` to
+`ValidateIntegrity` so unsupported Yarn Berry input is identified.
 
 The following lockfile validators are supported
 

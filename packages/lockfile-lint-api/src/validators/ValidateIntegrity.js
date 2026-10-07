@@ -8,20 +8,45 @@ function isHttpsGitRemote (source) {
   try {
     const url = new URL(source)
     const parts = url.pathname.split('/').filter(Boolean)
-    return url.protocol === 'https:' &&
+    return (
+      url.protocol === 'https:' &&
       ['github.com', 'gitlab.com', 'bitbucket.org'].includes(url.hostname) &&
-      parts.length === 2 && !/\.(tgz|tar|gz|zip)$/i.test(parts[1]) &&
-      !url.search && /^#[a-f0-9]{7,40}$/i.test(url.hash)
+      parts.length === 2 &&
+      !/\.(tgz|tar|gz|zip)$/i.test(parts[1]) &&
+      !url.search &&
+      /^#[a-f0-9]{7,40}$/i.test(url.hash)
+    )
+  } catch (error) {
+    return false
+  }
+}
+
+function isPinnedCodeload (source) {
+  try {
+    const url = new URL(source)
+    return (
+      url.protocol === 'https:' &&
+      url.hostname === 'codeload.github.com' &&
+      !url.search &&
+      !url.hash &&
+      !url.username &&
+      !url.password &&
+      !url.port &&
+      /^\/[^/]+\/[^/]+\/tar\.gz\/[a-f0-9]{40}$/i.test(url.pathname)
+    )
   } catch (error) {
     return false
   }
 }
 
 function isIntegrityExempt (packageMetadata) {
+  const remoteResolved =
+    typeof packageMetadata.resolved === 'string' && /^https?:/i.test(packageMetadata.resolved)
   if (
-    packageMetadata.link === true ||
-    packageMetadata.bundled === true ||
-    packageMetadata.inBundle === true
+    !remoteResolved &&
+    (packageMetadata.link === true ||
+      packageMetadata.bundled === true ||
+      packageMetadata.inBundle === true)
   ) {
     return true
   }
@@ -32,7 +57,9 @@ function isIntegrityExempt (packageMetadata) {
     ['git:', 'github:', 'gitlab:', 'bitbucket:', 'ssh:', 'git@'].some(prefix =>
       source.startsWith(prefix)
     ) ||
-    /^git\+[^:]+:/.test(source) || isHttpsGitRemote(source)
+    /^git\+[^:]+:/.test(source) ||
+    isHttpsGitRemote(source) ||
+    isPinnedCodeload(source)
   ) {
     return true
   }
@@ -50,20 +77,35 @@ function hasStrictIntegrity (packageMetadata) {
       if (!value.startsWith('sha512-')) return false
       const digest = value.slice('sha512-'.length)
       const decoded = Buffer.from(digest, 'base64')
-      return decoded.length === 64 && decoded.toString('base64').replace(/=+$/, '') === digest.replace(/={1,2}$/, '')
+      return (
+        decoded.length === 64 &&
+        decoded.toString('base64').replace(/=+$/, '') === digest.replace(/={1,2}$/, '')
+      )
     })
 }
 
 module.exports = class ValidateIntegrity {
-  constructor ({packages} = {}) {
+  constructor ({packages, format} = {}) {
     if (typeof packages !== 'object') {
       throw new Error('expecting an object passed to validator constructor')
     }
 
     this.packages = packages
+    this.format = format
   }
 
   validate (options) {
+    if (options && options.integrityStrict && this.format === 'yarn-berry') {
+      return {
+        type: 'error',
+        errors: [
+          {
+            message:
+              '--validate-integrity-strict does not support Yarn Berry lockfiles (which use "checksum" instead of "integrity").'
+          }
+        ]
+      }
+    }
     const excludedPackages = options && options.integrityExclude ? options.integrityExclude : []
     if (!Array.isArray(excludedPackages)) {
       throw new Error('excluded packages must be an array')
