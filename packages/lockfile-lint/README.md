@@ -109,8 +109,8 @@ both are passed. The existing `--validate-integrity` behavior is unchanged.
 Git dependencies, local directories (`file:`), workspace links and bundled
 dependencies are exempt because they may not have an integrity field. Local
 tarballs (`.tgz` or `.tar.gz`) and HTTP(S) tarballs still require integrity,
-including tarballs hosted on GitHub. Registry entries missing both `resolved`
-and `integrity` are also reported.
+including tarballs hosted on GitHub. Registry entries require complete `integrity` regardless of whether `resolved`
+is present. Missing or incomplete integrity is reported in either case.
 
 This validates the recorded hash's presence and format; it does not download
 packages or establish that their contents are trustworthy. Yarn Berry uses a

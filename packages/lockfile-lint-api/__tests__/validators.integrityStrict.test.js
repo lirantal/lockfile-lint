@@ -141,3 +141,33 @@ describe('strict integrity validation', () => {
     ).toBe('success')
   })
 })
+
+describe('strict integrity review regressions', () => {
+  test.each([
+    'https://github.com/LN-Zap/bolt11#0123456789abcdef0123456789abcdef01234567',
+    'https://github.com/example/repo.git#abcdef0',
+    'https://gitlab.com/example/repo#abcdef0',
+    'https://bitbucket.org/example/repo#abcdef0'
+  ])('exempts pinned hosted Git repositories: %s', resolved => {
+    expect(validatePackage({resolved}).type).toBe('success')
+  })
+
+  test.each([
+    'https://github.com/example/repo/archive/abcdef0.tar.gz#abcdef0',
+    'https://github.com/example/repo.tgz#abcdef0',
+    'https://example.com/example/repo#abcdef0',
+    'https://github.com.evil.test/example/repo#abcdef0',
+    'https://github.com/example/repo?download=1#abcdef0',
+    'https://github.com/example/repo',
+    'https://registry.npmjs.org/example/-/example-1.0.0.tgz#abcdef0'
+  ])('does not exempt download URLs: %s', resolved => {
+    expect(validatePackage({resolved}).type).toBe('error')
+  })
+
+  test('accepts unpadded SHA-512 without accepting decoder-ignored garbage', () => {
+    expect(validatePackage({integrity: integrity.replace(/=+$/, '')}).type).toBe('success')
+    expect(validatePackage({integrity: integrity.replace('sha512-', 'sha512-!')}).type).toBe('error')
+    expect(validatePackage({integrity: integrity + '==='}).type).toBe('error')
+    expect(validatePackage({integrity: 'sha512-' + Buffer.alloc(63).toString('base64')}).type).toBe('error')
+  })
+})

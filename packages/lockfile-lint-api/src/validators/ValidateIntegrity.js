@@ -4,6 +4,19 @@ function isSha512 (packageMetadata) {
   return packageMetadata.integrity.split('-')[0] === 'sha512'
 }
 
+function isHttpsGitRemote (source) {
+  try {
+    const url = new URL(source)
+    const parts = url.pathname.split('/').filter(Boolean)
+    return url.protocol === 'https:' &&
+      ['github.com', 'gitlab.com', 'bitbucket.org'].includes(url.hostname) &&
+      parts.length === 2 && !/\.(tgz|tar|gz|zip)$/i.test(parts[1]) &&
+      !url.search && /^#[a-f0-9]{7,40}$/i.test(url.hash)
+  } catch (error) {
+    return false
+  }
+}
+
 function isIntegrityExempt (packageMetadata) {
   if (
     packageMetadata.link === true ||
@@ -19,7 +32,7 @@ function isIntegrityExempt (packageMetadata) {
     ['git:', 'github:', 'gitlab:', 'bitbucket:', 'ssh:', 'git@'].some(prefix =>
       source.startsWith(prefix)
     ) ||
-    /^git\+[^:]+:/.test(source)
+    /^git\+[^:]+:/.test(source) || isHttpsGitRemote(source)
   ) {
     return true
   }
@@ -37,7 +50,7 @@ function hasStrictIntegrity (packageMetadata) {
       if (!value.startsWith('sha512-')) return false
       const digest = value.slice('sha512-'.length)
       const decoded = Buffer.from(digest, 'base64')
-      return decoded.length === 64 && decoded.toString('base64') === digest
+      return decoded.length === 64 && decoded.toString('base64').replace(/=+$/, '') === digest.replace(/={1,2}$/, '')
     })
 }
 
