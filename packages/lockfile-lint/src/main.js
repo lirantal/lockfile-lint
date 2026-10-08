@@ -19,16 +19,17 @@ const validatorFunctions = new Map([
   ['validateIntegrity', ValidateIntegrityManager]
 ])
 
-function runValidators({type, path, validators} = {}) {
+function runValidators ({type, path, validators} = {}) {
   let validatorCount = 0
   let validatorFailures = 0
   let validatorSuccesses = 0
+  let unsupportedFormatFailures = 0
 
   if (!Array.isArray(validators)) {
     throw new Error('provided object must have a validators array list')
   }
 
-  validators.forEach((validator) => {
+  validators.forEach(validator => {
     const validatorFunction = validatorFunctions.get(validator.name)
     if (!validatorFunction) {
       return false
@@ -46,9 +47,10 @@ function runValidators({type, path, validators} = {}) {
     })
 
     if (validationResult.type === 'error') {
-      validationResult.errors.forEach((validationError) => {
+      validationResult.errors.forEach(validationError => {
         console.error(validationError.message)
         validatorFailures++
+        if (validationError.unsupportedFormat === true) unsupportedFormatFailures++
       })
     } else {
       debug(`validator ${validator.name} reported no issues`)
@@ -59,7 +61,8 @@ function runValidators({type, path, validators} = {}) {
   return {
     validatorCount,
     validatorFailures,
-    validatorSuccesses
+    validatorSuccesses,
+    unsupportedFormatFailures
   }
 }
 

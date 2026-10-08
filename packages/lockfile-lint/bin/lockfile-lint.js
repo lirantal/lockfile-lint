@@ -110,14 +110,23 @@ async function run () {
       process.exit(1)
     }
 
-    const {validatorCount, validatorFailures, validatorSuccesses} = result
+    const {
+      validatorCount,
+      validatorFailures,
+      validatorSuccesses,
+      unsupportedFormatFailures
+    } = result
 
     debug(`total validators invoked: ${validatorCount}`)
     debug(`total validator failures: ${validatorFailures}`)
     debug(`total validator successes: ${validatorSuccesses}`)
 
     if (validatorFailures !== 0) {
-      error('Error: security issues detected!')
+      error(
+        validatorFailures === unsupportedFormatFailures
+          ? 'Error: unsupported lockfile format for --validate-integrity-strict'
+          : 'Error: security issues detected!'
+      )
       process.exit(1)
     } else {
       success('No issues detected')

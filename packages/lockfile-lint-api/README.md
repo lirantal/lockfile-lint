@@ -44,18 +44,31 @@ const result = new ValidateIntegrity({packages, format}).validate({integrityStri
 ```
 
 Strict mode exempts Git dependencies, local directories, workspace links and
-bundled dependencies. The parser retains `link` and `inBundle` metadata for this
-purpose. Local `.tgz`/`.tar.gz` files and HTTP(S) tarballs still require integrity.
+bundled dependencies. The parser resolves bundle ancestry before flattening and
+records verified bundle provenance for validation. Local `.tgz`/`.tar.gz` files
+and HTTP(S) tarballs still require integrity.
 An SRI list is accepted if it contains a complete SHA-512 digest. Package
 exclusions use `integrityExclude` as in the default mode. You can also pass
 `{integrityStrict: true}` as the second argument to `validateSingle(packageName)`.
 This checks metadata without fetching package contents, and does not support
 Yarn Berry's different checksum format.
 
-Strict-mode source exceptions are limited: bundled entries must be nested
-beneath another dependency in npm lockfiles. Flags such as `link`, `bundled` and
-`inBundle` do not exempt HTTP(S) sources or local `.tgz`/`.tar.gz` files; the Git
-source exceptions below still apply.
+For npm v2/v3, bundled entries require a verified bundler ancestor. The parser
+walks up the package path, skipping ancestors marked `inBundle`/`bundled`, to the
+nearest non-bundled ancestor. That ancestor must exist and declare
+`bundleDependencies` as a non-empty array or `true`. It must also have a complete
+SHA-512 integrity value or qualify independently as a commit-pinned Git source,
+local directory or workspace link. Transitive bundled dependencies are covered
+even when their names are absent from the declaration.
+
+For npm v1, the nearest enclosing non-bundled ancestor must meet the same
+integrity/source requirement. The v1 dependency tree does not record the parent's
+`bundleDependencies`, so the parser cannot confirm the declaration itself.
+Missing or unverified ancestors leave children subject to the integrity check;
+excluding a parent from validation does not verify its bundle.
+
+Raw `link`, `bundled` or `inBundle` flags do not exempt HTTP(S) sources or local
+`.tgz`/`.tar.gz` files; the Git source exceptions below still apply.
 
 Yarn Classic GitHub sources are also exempt when the URL is exactly
 `https://codeload.github.com/<owner>/<repo>/tar.gz/<40-hex-commit-sha>`,
@@ -68,12 +81,32 @@ hexadecimal characters and there is no query string. This separate Git-remote
 exception accepts abbreviated commits; archive/download paths remain subject
 to the tarball rules above.
 
-For Yarn Berry, strict `validate()` returns one unsupported-format error and the
-CLI exits non-zero. Strict `validateSingle()` throws an `Error` with the same
-message. For supported formats, `validateSingle()` returns a boolean.
+For Yarn Berry, strict `validate()` returns one unsupported-format error without
+a `package` field:
+
+```json
+{
+  "type": "error",
+  "errors": [
+    {
+      "message": "--validate-integrity-strict does not support Yarn Berry lockfiles (which use \"checksum\" instead of \"integrity\").",
+      "unsupportedFormat": true
+    }
+  ]
+}
+```
+
+Consumers can inspect `unsupportedFormat` without matching message text. Strict
+`validateSingle()` throws an `Error` with the same message and
+`unsupportedFormat: true`; for supported formats it returns a boolean.
+The CLI exits non-zero with an unsupported-format summary. It prints
+"security issues detected!" only if other validators report security findings.
 
 API consumers should pass the parser result's `format` alongside `packages` to
-`ValidateIntegrity` so unsupported Yarn Berry input is identified.
+`ValidateIntegrity` so unsupported Yarn Berry input is identified. Pass the
+parsed package objects directly to preserve the parser's internal bundle
+provenance; raw bundle flags or JSON-serialized copies alone do not establish
+verified ancestry.
 
 The following lockfile validators are supported
 

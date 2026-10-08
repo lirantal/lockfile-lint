@@ -35,9 +35,7 @@ describe('strict integrity validation', () => {
     {version: 'github:example/pkg#abc'},
     {version: 'file:../local-package'},
     {resolved: 'file:packages/local'},
-    {link: true},
-    {bundled: true},
-    {inBundle: true}
+    {link: true}
   ])('allows sources which do not require integrity: %p', metadata => {
     expect(validatePackage(metadata).type).toBe('success')
   })
@@ -107,6 +105,7 @@ describe('strict integrity validation', () => {
                 'node_modules/missing': missing,
                 'node_modules/valid': valid,
                 'node_modules/git': git,
+                'node_modules/parent': Object.assign({}, valid, {bundleDependencies: ['bundled']}),
                 'node_modules/parent/node_modules/bundled': {version: '1.0.0', inBundle: true},
                 'node_modules/local': {resolved: 'packages/local', link: true},
                 'packages/local': {name: 'local', version: '1.0.0'},
@@ -220,7 +219,14 @@ describe('maintainer security regressions', () => {
             : {
                 lockfileVersion,
                 packages: nested
-                  ? {'node_modules/@scope/parent/node_modules/x': metadata}
+                  ? {
+                      'node_modules/@scope/parent': {
+                        version: '1.0.0',
+                        integrity,
+                        bundleDependencies: ['x']
+                      },
+                      'node_modules/@scope/parent/node_modules/x': metadata
+                    }
                   : {'node_modules/x': metadata}
               }
         const parsed = new ParseLockfile({
@@ -332,6 +338,8 @@ describe('maintainer security regressions', () => {
     expect(result.type).toBe('error')
     expect(result.errors).toHaveLength(1)
     expect(result.errors[0].message).toContain('does not support Yarn Berry')
+    expect(result.errors[0].unsupportedFormat).toBe(true)
+    expect(result.errors[0]).not.toHaveProperty('package')
     expect(validator.validate().type).toBe('success')
     const packageName = Object.keys(parsed.object)[0]
     expect(() => validator.validateSingle(packageName, strict)).toThrow(result.errors[0].message)
@@ -348,6 +356,9 @@ describe('maintainer security regressions', () => {
       expect(() => validator.validateSingle('example', strict)).toThrow(
         'does not support Yarn Berry'
       )
+      expect(() => validator.validateSingle('example', strict)).toThrow(
+        expect.objectContaining({unsupportedFormat: true})
+      )
     }
   )
 })
@@ -357,5 +368,22 @@ test('strict validation accepts an empty npm lockfile', () => {
   expect(new ValidateIntegrity({packages: parsed.object}).validate(strict)).toEqual({
     type: 'success',
     errors: []
+  })
+})
+
+test('identifies Berry format for a scoped package resolution', () => {
+  const parsed = new ParseLockfile({
+    lockfileText:
+      '__metadata:\n  version: 4\n\n"@scope/pkg@npm:^1.0.0":\n  version: 1.0.0\n  resolution: "@scope/pkg@npm:1.0.0"\n  checksum: abc\n',
+    lockfileType: 'yarn'
+  }).parseSync()
+  expect(parsed.object['@scope/pkg@npm:^1.0.0'].resolved).toBe('npm:1.0.0')
+  expect(
+    new ValidateIntegrity({packages: parsed.object, format: parsed.format}).validate(strict)
+  ).toEqual({
+    type: 'error',
+    errors: [
+      {message: expect.stringContaining('does not support Yarn Berry'), unsupportedFormat: true}
+    ]
   })
 })

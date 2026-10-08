@@ -118,10 +118,22 @@ different checksum format and is not supported by this SHA-512 integrity policy.
 
 In a configuration file, set `validateIntegrityStrict: true`.
 
-Strict-mode source exceptions are limited: bundled entries must be nested
-beneath another dependency in npm lockfiles. Flags such as `link`, `bundled` and
-`inBundle` do not exempt HTTP(S) sources or local `.tgz`/`.tar.gz` files; the Git
-source exceptions below still apply.
+For npm v2/v3, bundled entries require a verified bundler ancestor. The parser
+walks up the package path, skipping ancestors marked `inBundle`/`bundled`, to the
+nearest non-bundled ancestor. That ancestor must exist and declare
+`bundleDependencies` as a non-empty array or `true`. It must also have a complete
+SHA-512 integrity value or qualify independently as a commit-pinned Git source,
+local directory or workspace link. Transitive bundled dependencies are covered
+even when their names are absent from the declaration.
+
+For npm v1, the nearest enclosing non-bundled ancestor must meet the same
+integrity/source requirement. The v1 dependency tree does not record the parent's
+`bundleDependencies`, so the parser cannot confirm the declaration itself.
+Missing or unverified ancestors leave children subject to the integrity check;
+excluding a parent from validation does not verify its bundle.
+
+Raw `link`, `bundled` or `inBundle` flags do not exempt HTTP(S) sources or local
+`.tgz`/`.tar.gz` files; the Git source exceptions below still apply.
 
 Yarn Classic GitHub sources are also exempt when the URL is exactly
 `https://codeload.github.com/<owner>/<repo>/tar.gz/<40-hex-commit-sha>`,
@@ -134,8 +146,12 @@ hexadecimal characters and there is no query string. This separate Git-remote
 exception accepts abbreviated commits; archive/download paths remain subject
 to the tarball rules above.
 
-Strict mode rejects Yarn Berry with one unsupported-format error, rather than
-reporting missing integrity for each package. The CLI exits non-zero.
+Strict mode rejects Yarn Berry with one unsupported-format message and exits
+non-zero. When this is the only failure, the CLI reports
+`Error: unsupported lockfile format for --validate-integrity-strict` without
+claiming security issues. If other validators also fail (for example,
+`--validate-https`), it retains `Error: security issues detected!` for those
+findings. This applies to both plain and pretty output.
 
 # File-Based Configuration
 

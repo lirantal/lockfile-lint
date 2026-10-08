@@ -7,6 +7,7 @@ const debug = require('debug')('lockfile-lint')
 const path = require('path')
 const yarnParseSyml = require('@yarnpkg/parsers').parseSyml
 const hash = require('object-hash')
+const {VERIFIED_BUNDLE, hasStrictIntegrity, isIntegrityExempt} = require('./common/IntegrityPolicy')
 const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
 const {
   NO_OPTIONS,
@@ -17,6 +18,18 @@ const {
   PARSE_NPMLOCKFILE_FAILED,
   PARSE_YARNLOCKFILE_FAILED
 } = ERROR_MESSAGES
+
+function isBundled (metadata) {
+  return metadata.inBundle === true || metadata.bundled === true
+}
+
+function isVerifiedBundler (metadata) {
+  // Check the ancestor on its own merits, without a bundled exemption or exclusions.
+  return (
+    hasStrictIntegrity(metadata) ||
+    isIntegrityExempt(metadata, {allowBundle: false, requirePinnedGit: true})
+  )
+}
 
 /**
  * Checks if a sample object is a valid dependency structure
@@ -203,7 +216,26 @@ class ParseLockfile {
     }
   }
 
-  _flattenNpmDepsTree (npmDepsTree, npmDepMap = {}, isPackageTable = false, depth = 0) {
+  _hasVerifiedBundler (packagePath, packages) {
+    let ancestorPath = packagePath
+    while (ancestorPath.includes('/node_modules/')) {
+      ancestorPath = ancestorPath.slice(0, ancestorPath.lastIndexOf('/node_modules/'))
+      const ancestor = packages[ancestorPath]
+      if (!ancestor || typeof ancestor !== 'object') return false
+      if (isBundled(ancestor)) continue
+
+      const declaration = ancestor.bundleDependencies
+      const declaresBundle =
+        declaration === true || (Array.isArray(declaration) && declaration.length > 0)
+      const bundler = Object.assign({}, ancestor, {
+        link: ancestor.link === true || !ancestorPath.split('/').includes('node_modules')
+      })
+      return declaresBundle && isVerifiedBundler(bundler)
+    }
+    return false
+  }
+
+  _flattenNpmDepsTree (npmDepsTree, npmDepMap, isPackageTable, bundler) {
     for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
       // only evaluate dependency metadata if it's an object with actual metadata
       // @TODO potentially, this entry can be just a dependency name and version
@@ -223,11 +255,15 @@ class ParseLockfile {
         ) {
           depMetadataShortend.link = true
         }
-        const isNested = isPackageTable
-          ? depName.split('/').filter(part => part === 'node_modules').length > 1
-          : depth > 0
-        if (isNested && (depMetadata.bundled === true || depMetadata.inBundle === true)) {
+        const verifiedBundle =
+          isBundled(depMetadata) &&
+          (isPackageTable
+            ? this._hasVerifiedBundler(depName, npmDepsTree)
+            : bundler && isVerifiedBundler(bundler))
+        if (verifiedBundle) {
           depMetadataShortend.inBundle = true
+          // A lockfile cannot forge this marker with an inBundle/bundled field.
+          depMetadataShortend[VERIFIED_BUNDLE] = true
         }
         const hashedDepValues = hash(depMetadataShortend)
 
@@ -256,7 +292,12 @@ class ParseLockfile {
         const nestedDepsTree = depMetadata.dependencies
 
         if (nestedDepsTree && Object.keys(nestedDepsTree).length !== 0) {
-          this._flattenNpmDepsTree(nestedDepsTree, npmDepMap, false, depth + 1)
+          this._flattenNpmDepsTree(
+            nestedDepsTree,
+            npmDepMap,
+            false,
+            isBundled(depMetadata) ? bundler : depMetadataShortend
+          )
         }
       }
     }

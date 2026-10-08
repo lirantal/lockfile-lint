@@ -57,22 +57,55 @@ describe('strict integrity CLI', () => {
   })
 })
 
-test('strict CLI reports a single unsupported-format error for Yarn Berry', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      path.join(__dirname, '../bin/lockfile-lint.js'),
-      '--type',
-      'yarn',
-      '--path',
-      '../lockfile-lint-api/__tests__/__fixtures__/yarnberry.lock',
-      '--validate-integrity-strict',
-      '--format',
-      'plain'
-    ],
-    {encoding: 'utf8', cwd: path.join(__dirname, '..')}
-  )
-  expect(result.status).toBe(1)
-  expect(result.stderr.match(/does not support Yarn Berry/g)).toHaveLength(1)
-  expect(result.stderr).not.toContain('missing integrity')
-})
+test.each(['plain', 'pretty'])(
+  'strict CLI reports unsupported Yarn Berry without security findings in %s format',
+  format => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join(__dirname, '../bin/lockfile-lint.js'),
+        '--type',
+        'yarn',
+        '--path',
+        '../lockfile-lint-api/__tests__/__fixtures__/yarnberry.lock',
+        '--validate-integrity-strict',
+        '--format',
+        format
+      ],
+      {encoding: 'utf8', cwd: path.join(__dirname, '..')}
+    )
+    expect(result.status).toBe(1)
+    expect(result.stderr.match(/does not support Yarn Berry/g)).toHaveLength(1)
+    expect(result.stderr).not.toContain('missing integrity')
+    expect(result.stderr).toContain(
+      'Error: unsupported lockfile format for --validate-integrity-strict'
+    )
+    expect(result.stderr).not.toContain('security issues detected!')
+  }
+)
+
+test.each(['plain', 'pretty'])(
+  'strict CLI retains other security findings for Yarn Berry in %s format',
+  format => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join(__dirname, '../bin/lockfile-lint.js'),
+        '--type',
+        'yarn',
+        '--path',
+        '../lockfile-lint-api/__tests__/__fixtures__/yarnberry.lock',
+        '--validate-integrity-strict',
+        '--validate-https',
+        '--format',
+        format
+      ],
+      {encoding: 'utf8', cwd: path.join(__dirname, '..')}
+    )
+    expect(result.status).toBe(1)
+    expect(result.stderr.match(/does not support Yarn Berry/g)).toHaveLength(1)
+    expect(result.stderr).toContain('detected invalid protocol')
+    expect(result.stderr).toContain('Error: security issues detected!')
+    expect(result.stderr).not.toContain('Error: unsupported lockfile format for')
+  }
+)
