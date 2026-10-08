@@ -1,19 +1,31 @@
 'use strict'
 
+const YARN_BERRY_STRICT_ERROR =
+  '--validate-integrity-strict does not support Yarn Berry lockfiles (which use "checksum" instead of "integrity").'
+
 function isSha512 (packageMetadata) {
   return packageMetadata.integrity.split('-')[0] === 'sha512'
 }
 
+const {isIntegrityExempt, hasStrictIntegrity} = require('../common/IntegrityPolicy')
+
 module.exports = class ValidateIntegrity {
-  constructor ({packages} = {}) {
+  constructor ({packages, format} = {}) {
     if (typeof packages !== 'object') {
       throw new Error('expecting an object passed to validator constructor')
     }
 
     this.packages = packages
+    this.format = format
   }
 
   validate (options) {
+    if (options && options.integrityStrict && this.format === 'yarn-berry') {
+      return {
+        type: 'error',
+        errors: [{message: YARN_BERRY_STRICT_ERROR, unsupportedFormat: true}]
+      }
+    }
     const excludedPackages = options && options.integrityExclude ? options.integrityExclude : []
     if (!Array.isArray(excludedPackages)) {
       throw new Error('excluded packages must be an array')
@@ -25,6 +37,26 @@ module.exports = class ValidateIntegrity {
     }
 
     for (const [packageName, packageMetadata] of Object.entries(this.packages)) {
+      if (options && options.integrityStrict) {
+        if (
+          excludedPackages.some(name => packageName.startsWith(`${name}@`)) ||
+          isIntegrityExempt(packageMetadata)
+        ) {
+          continue
+        }
+        if (!hasStrictIntegrity(packageMetadata)) {
+          const reason =
+            packageMetadata.integrity == null || packageMetadata.integrity === ''
+              ? 'missing integrity'
+              : 'invalid integrity'
+          validationResult.errors.push({
+            message: `detected ${reason} for package: ${packageName}\n    expected: a complete sha512 integrity hash\n`,
+            package: packageName
+          })
+        }
+        continue
+      }
+
       if (!('integrity' in packageMetadata)) {
         continue
       }
@@ -52,9 +84,15 @@ module.exports = class ValidateIntegrity {
     return validationResult
   }
 
-  validateSingle (packageName) {
+  validateSingle (packageName, options) {
     // eslint-disable-next-line security/detect-object-injection
     const packageMetadata = this.packages[packageName]
+    if (options && options.integrityStrict) {
+      if (this.format === 'yarn-berry') {
+        throw Object.assign(new Error(YARN_BERRY_STRICT_ERROR), {unsupportedFormat: true})
+      }
+      return isIntegrityExempt(packageMetadata) || hasStrictIntegrity(packageMetadata)
+    }
     if (!('integrity' in packageMetadata)) {
       return true
     }

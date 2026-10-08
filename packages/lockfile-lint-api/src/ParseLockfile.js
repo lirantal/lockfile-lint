@@ -7,6 +7,7 @@ const debug = require('debug')('lockfile-lint')
 const path = require('path')
 const yarnParseSyml = require('@yarnpkg/parsers').parseSyml
 const hash = require('object-hash')
+const {VERIFIED_BUNDLE, hasStrictIntegrity, isIntegrityExempt} = require('./common/IntegrityPolicy')
 const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
 const {
   NO_OPTIONS,
@@ -18,11 +19,20 @@ const {
   PARSE_YARNLOCKFILE_FAILED
 } = ERROR_MESSAGES
 
+function isBundled (metadata) {
+  return metadata.inBundle === true || metadata.bundled === true
+}
+
+function isVerifiedBundler (metadata) {
+  // Check the ancestor on its own merits, without a bundled exemption or exclusions.
+  return hasStrictIntegrity(metadata) || isIntegrityExempt(metadata, {allowBundle: false})
+}
+
 /**
  * Checks if a sample object is a valid dependency structure
  * @return boolean
  */
-function checkSampleContent(lockfile, isYarnBerry) {
+function checkSampleContent (lockfile, isYarnBerry) {
   if (Object.entries(lockfile).length < (isYarnBerry ? 2 : 1)) {
     return false
   }
@@ -39,7 +49,7 @@ function checkSampleContent(lockfile, isYarnBerry) {
  * @param {string|Buffer} lockfileBuffer - the lockfile contents
  * @return {{ type: string, object: any }}
  */
-function yarnParseAndVerify(lockfileBuffer) {
+function yarnParseAndVerify (lockfileBuffer) {
   const lockfile = yarnParseSyml(lockfileBuffer.toString())
   const isYarnBerry = typeof lockfile.__metadata === 'object'
   const hasSensibleContent =
@@ -63,7 +73,7 @@ function yarnParseAndVerify(lockfileBuffer) {
         normalizedLockFile[packageName] = Object.assign({}, packageDetails, {resolved: host})
       }
     })
-    return {type: 'success', object: normalizedLockFile}
+    return {type: 'success', object: normalizedLockFile, format: 'yarn-berry'}
   }
   return {type: 'success', object: lockfile}
 }
@@ -76,7 +86,7 @@ class ParseLockfile {
    * @param {string} options.lockfileType - the package manager type
    * for lockfile
    */
-  constructor(options) {
+  constructor (options) {
     if (!options || typeof options !== 'object') {
       throw new ParsingError(NO_OPTIONS)
     }
@@ -94,7 +104,7 @@ class ParseLockfile {
    * Checks if lockfile type option was provided
    * @return boolean
    */
-  isLockfileTypeGiven() {
+  isLockfileTypeGiven () {
     return typeof this.options.lockfileType === 'string' && this.options.lockfileType
   }
 
@@ -102,7 +112,7 @@ class ParseLockfile {
    * Synchronously parses a lockfile
    * @return {object} parsed file
    */
-  parseSync() {
+  parseSync () {
     const lockfileParser = this.resolvePkgMgrForLockfile()
     if (!lockfileParser) {
       if (this.isLockfileTypeGiven()) {
@@ -127,7 +137,7 @@ class ParseLockfile {
     return lockfileParser.call(this, file)
   }
 
-  resolvePkgMgrForLockfile() {
+  resolvePkgMgrForLockfile () {
     const lockfileResolversByPackageManager = {
       npm: this.parseNpmLockfile,
       npmjs: this.parseNpmLockfile,
@@ -147,7 +157,7 @@ class ParseLockfile {
     return resolver
   }
 
-  resolvePkgMgrByFilename() {
+  resolvePkgMgrByFilename () {
     const lockfileResolverByFilename = {
       'package-lock.json': this.parseNpmLockfile,
       'yarn.lock': this.parseYarnLockfile
@@ -159,7 +169,7 @@ class ParseLockfile {
     return lockfileResolverByFilename[baseFilename]
   }
 
-  parseYarnLockfile(lockfileBuffer) {
+  parseYarnLockfile (lockfileBuffer) {
     let parsedFile
     try {
       parsedFile = yarnParseAndVerify(lockfileBuffer)
@@ -169,7 +179,7 @@ class ParseLockfile {
     return parsedFile
   }
 
-  parseNpmLockfile(lockfileBuffer) {
+  parseNpmLockfile (lockfileBuffer) {
     let flattenedDepTree
     try {
       const packageJsonParsed = JSON.parse(lockfileBuffer)
@@ -190,7 +200,9 @@ class ParseLockfile {
         npmDepsTree = packageJsonParsed.packages
       }
 
-      flattenedDepTree = npmDepsTree ? this._flattenNpmDepsTree(npmDepsTree) : {}
+      flattenedDepTree = npmDepsTree
+        ? this._flattenNpmDepsTree(npmDepsTree, {}, npmDepsTree === packageJsonParsed.packages)
+        : {}
     } catch (error) {
       throw new ParsingError(PARSE_NPMLOCKFILE_FAILED, this.options.lockfilePath, error)
     }
@@ -201,7 +213,26 @@ class ParseLockfile {
     }
   }
 
-  _flattenNpmDepsTree(npmDepsTree, npmDepMap = {}) {
+  _hasVerifiedBundler (packagePath, packages) {
+    let ancestorPath = packagePath
+    while (ancestorPath.includes('/node_modules/')) {
+      ancestorPath = ancestorPath.slice(0, ancestorPath.lastIndexOf('/node_modules/'))
+      const ancestor = packages[ancestorPath]
+      if (!ancestor || typeof ancestor !== 'object') return false
+      if (isBundled(ancestor)) continue
+
+      const declaration = ancestor.bundleDependencies
+      const declaresBundle =
+        declaration === true || (Array.isArray(declaration) && declaration.length > 0)
+      const bundler = Object.assign({}, ancestor, {
+        link: ancestor.link === true || !ancestorPath.split('/').includes('node_modules')
+      })
+      return declaresBundle && isVerifiedBundler(bundler)
+    }
+    return false
+  }
+
+  _flattenNpmDepsTree (npmDepsTree, npmDepMap, isPackageTable, bundler) {
     for (const [depName, depMetadata] of Object.entries(npmDepsTree)) {
       // only evaluate dependency metadata if it's an object with actual metadata
       // @TODO potentially, this entry can be just a dependency name and version
@@ -212,6 +243,24 @@ class ParseLockfile {
           resolved: depMetadata.resolved ? depMetadata.resolved : depMetadata.version,
           integrity: depMetadata.integrity,
           requires: depMetadata.requires
+        }
+        // Preserve source exceptions for integrity policies. Workspace package
+        // entries describe local directories rather than downloaded artifacts.
+        if (
+          depMetadata.link === true ||
+          (isPackageTable && !depName.split('/').includes('node_modules'))
+        ) {
+          depMetadataShortend.link = true
+        }
+        const verifiedBundle =
+          isBundled(depMetadata) &&
+          (isPackageTable
+            ? this._hasVerifiedBundler(depName, npmDepsTree)
+            : bundler && isVerifiedBundler(bundler))
+        if (verifiedBundle) {
+          depMetadataShortend.inBundle = true
+          // A lockfile cannot forge this marker with an inBundle/bundled field.
+          depMetadataShortend[VERIFIED_BUNDLE] = true
         }
         const hashedDepValues = hash(depMetadataShortend)
 
@@ -240,7 +289,12 @@ class ParseLockfile {
         const nestedDepsTree = depMetadata.dependencies
 
         if (nestedDepsTree && Object.keys(nestedDepsTree).length !== 0) {
-          this._flattenNpmDepsTree(nestedDepsTree, npmDepMap)
+          this._flattenNpmDepsTree(
+            nestedDepsTree,
+            npmDepMap,
+            false,
+            isBundled(depMetadata) ? bundler : depMetadataShortend
+          )
         }
       }
     }
@@ -248,7 +302,7 @@ class ParseLockfile {
     return npmDepMap
   }
 
-  extractedPackageName(packageName) {
+  extractedPackageName (packageName) {
     const parts = packageName.split('/')
     const lastIndex = parts.lastIndexOf('node_modules')
 

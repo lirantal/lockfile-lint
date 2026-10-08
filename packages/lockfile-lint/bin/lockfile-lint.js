@@ -47,7 +47,8 @@ async function run () {
     ['validate-package-names', 'ValidatePackageNames'],
     ['allowed-schemes', 'validateSchemes'],
     ['allowed-urls', 'validateUrls'],
-    ['validate-integrity', 'validateIntegrity']
+    ['validate-integrity', 'validateIntegrity'],
+    ['validate-integrity-strict', 'validateIntegrity']
   ])
 
   let lockfilesList = []
@@ -73,6 +74,10 @@ async function run () {
         continue
       }
 
+      if (commandArgument === 'validate-integrity' && config['validate-integrity-strict']) {
+        continue
+      }
+
       if (commandValue && supportedValidators.has(commandArgument)) {
         const validatorItem = supportedValidators.get(commandArgument)
         validators.push({
@@ -83,7 +88,8 @@ async function run () {
             allowedHosts: config['allowed-hosts'],
             allowedUrls: config['allowed-urls'],
             allowedPackageNameAliases: config['allowed-package-name-aliases'],
-            integrityExclude: config['integrity-exclude']
+            integrityExclude: config['integrity-exclude'],
+            integrityStrict: config['validate-integrity-strict']
           }
         })
       }
@@ -104,14 +110,23 @@ async function run () {
       process.exit(1)
     }
 
-    const {validatorCount, validatorFailures, validatorSuccesses} = result
+    const {
+      validatorCount,
+      validatorFailures,
+      validatorSuccesses,
+      unsupportedFormatFailures
+    } = result
 
     debug(`total validators invoked: ${validatorCount}`)
     debug(`total validator failures: ${validatorFailures}`)
     debug(`total validator successes: ${validatorSuccesses}`)
 
     if (validatorFailures !== 0) {
-      error('Error: security issues detected!')
+      error(
+        validatorFailures === unsupportedFormatFailures
+          ? 'Error: unsupported lockfile format for --validate-integrity-strict'
+          : 'Error: security issues detected!'
+      )
       process.exit(1)
     } else {
       success('No issues detected')

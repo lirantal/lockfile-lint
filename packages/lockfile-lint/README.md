@@ -88,8 +88,77 @@ lockfile-lint --path yarn.lock --allowed-hosts yarn --allowed-urls https://githu
 | `--empty-hostname`, `-e`         | allow empty hostnames, or set to false if you wish for a stricter policy                                                                                                                                                                                                              | ✅            |
 | `--validate-package-names`, `-n` | validates that the resolved URL matches the package name                                                                                                                                                                                                                              | ✅            |
 | `--validate-integrity`, `-i`     | validates the integrity field is a sha512 hash                                                                                                                                                                                                                                        | ✅            |
+| `--validate-integrity-strict` | requires complete SHA-512 integrity, with exceptions for Git, local directory, linked and bundled dependencies | ✅ |
 | `--allowed-package-name-aliases`, `-l` | allow package name aliases to be used by specifying package name and their alias as pairs (e.g: `string-width-cjs:string-width`)                                                                                                                                                | ✅            |
 | `--integrity-exclude`            | exclude packages from the `--validate-integrity` check                                                                                                                                                                                                                                | ✅            |
+
+# Strict integrity validation
+
+Use `--validate-integrity-strict` to require a complete, base64-encoded SHA-512
+digest for each dependency in npm lockfiles (versions 1, 2 and 3) or Yarn Classic
+lockfiles:
+
+```bash
+lockfile-lint --path package-lock.json --validate-integrity-strict
+```
+
+The flag works on its own and takes precedence over `--validate-integrity` when
+both are passed. The existing `--validate-integrity` behavior is unchanged.
+`--integrity-exclude` applies to either mode.
+
+Git dependencies, local directories (`file:`), workspace links and bundled
+dependencies are exempt because they may not have an integrity field. Local
+tarballs (`.tgz` or `.tar.gz`) and HTTP(S) tarballs still require integrity,
+including tarballs hosted on GitHub. Registry entries require complete `integrity` regardless of whether `resolved`
+is present. Missing or incomplete integrity is reported in either case.
+
+This validates the recorded hash's presence and format; it does not download
+packages or establish that their contents are trustworthy. Yarn Berry uses a
+different checksum format and is not supported by this SHA-512 integrity policy.
+
+In a configuration file, set `validateIntegrityStrict: true`.
+
+For npm v2/v3, bundled entries require a verified bundler ancestor. The parser
+walks up the package path, skipping ancestors marked `inBundle`/`bundled`, to the
+nearest non-bundled ancestor. That ancestor must exist and declare
+`bundleDependencies` as a non-empty array or `true`. It must also have a complete
+SHA-512 integrity value or qualify independently as a commit-pinned Git source,
+local directory or workspace link. Transitive bundled dependencies are covered
+even when their names are absent from the declaration.
+
+For npm v1, the nearest enclosing non-bundled ancestor must meet the same
+integrity/source requirement. The v1 dependency tree does not record the parent's
+`bundleDependencies`, so the parser cannot confirm the declaration itself.
+Missing or unverified ancestors leave children subject to the integrity check;
+excluding a parent from validation does not verify its bundle.
+
+Raw `link`, `bundled` or `inBundle` flags do not exempt HTTP(S) sources or local
+`.tgz`/`.tar.gz` files; the Git source exceptions below still apply.
+
+Git-protocol URLs and Git-host shorthands require a 7-40-character hexadecimal
+commit fragment to qualify for an exemption. Branches, tags, semver ranges and
+missing refs require complete SHA-512 integrity. Link/bundle flags cannot bypass
+this pin requirement. Local file URLs are classified using their decoded path:
+percent-encoded `.tgz`/`.tar.gz` extensions still require integrity, and malformed
+URL escapes do not qualify as local directories.
+
+Yarn Classic GitHub sources are also exempt when the URL is exactly
+`https://codeload.github.com/<owner>/<repo>/tar.gz/<40-hex-commit-sha>`,
+without a query string or fragment. Codeload URLs using tags, branches or short
+SHAs, and archive URLs that do not match this shape, still require integrity.
+
+HTTPS GitHub, GitLab and Bitbucket repository URLs of the form
+`https://<host>/<owner>/<repo>#<commit>` are exempt when the commit is 7-40
+hexadecimal characters and there is no query string. This separate Git-remote
+exception accepts abbreviated commits; archive/download paths remain subject
+to the tarball rules above.
+
+Strict mode rejects Yarn Berry with one unsupported-format message and exits
+non-zero. When this is the only failure, the CLI reports
+`Error: unsupported lockfile format for --validate-integrity-strict` without
+claiming security issues. If other validators also fail (for example,
+`--validate-https`), it retains `Error: security issues detected!` for those
+findings. This applies to both plain and pretty output.
 
 # File-Based Configuration
 
