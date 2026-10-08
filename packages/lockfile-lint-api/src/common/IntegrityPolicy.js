@@ -49,33 +49,45 @@ function isPinnedCodeload (source) {
   }
 }
 
-function isIntegrityExempt (packageMetadata, {allowBundle = true, requirePinnedGit = false} = {}) {
+function isLocalDirectory (source) {
+  try {
+    // Decode the path only, once, so encoded extensions cannot look like directories.
+    const pathname = decodeURIComponent(new URL(source).pathname)
+    return !/\.(tgz|tar\.gz)$/i.test(pathname)
+  } catch (error) {
+    // Invalid URLs/escapes are not evidence of a local directory.
+    return false
+  }
+}
+
+function isIntegrityExempt (packageMetadata, {allowBundle = true} = {}) {
   const source = normalizeSource(packageMetadata.resolved || packageMetadata.version)
+  if (
+    ['git:', 'github:', 'gitlab:', 'bitbucket:', 'ssh:', 'git@'].some(prefix =>
+      source.startsWith(prefix)
+    ) ||
+    /^git\+[^:]+:/.test(source)
+  ) {
+    return /^[^#]*#[a-f0-9]{7,40}$/i.test(source)
+  }
   const remoteSource = /^https?:/i.test(source)
-  const localTarball = /^file:.*\.(tgz|tar\.gz)([?#]|$)/i.test(source)
+  const localSource = /^file:/i.test(source)
+  const localDirectory = localSource && isLocalDirectory(source)
   if (
     !remoteSource &&
-    !localTarball &&
+    (!localSource || localDirectory) &&
     // eslint-disable-next-line security/detect-object-injection -- Fixed internal Symbol, not a key from the lockfile.
     (packageMetadata.link === true || (allowBundle && packageMetadata[VERIFIED_BUNDLE] === true))
   ) {
     return true
   }
 
-  if (
-    ((['git:', 'github:', 'gitlab:', 'bitbucket:', 'ssh:', 'git@'].some(prefix =>
-      source.startsWith(prefix)
-    ) ||
-      /^git\+[^:]+:/.test(source)) &&
-      (!requirePinnedGit || /#[a-f0-9]{7,40}$/i.test(source))) ||
-    isHttpsGitRemote(source) ||
-    isPinnedCodeload(source)
-  ) {
+  if (isHttpsGitRemote(source) || isPinnedCodeload(source)) {
     return true
   }
 
   // Local tarballs have integrity; local directories do not.
-  return source.startsWith('file:') && !localTarball
+  return localDirectory
 }
 
 function hasStrictIntegrity (packageMetadata) {

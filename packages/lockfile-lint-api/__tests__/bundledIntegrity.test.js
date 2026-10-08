@@ -81,7 +81,7 @@ describe.each([fixtureV2, fixtureV3])('npm v$lockfileVersion bundle ancestry', f
     resolved => {
       Object.assign(lockfile.packages[bundlerPath], {resolved})
       delete lockfile.packages[bundlerPath].integrity
-      expect(failedNames(lockfile)).toEqual(['debug', 'ms'])
+      expect(failedNames(lockfile)).toEqual(['bund2', 'debug', 'ms'])
     }
   )
 

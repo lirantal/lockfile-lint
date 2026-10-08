@@ -25,10 +25,7 @@ function isBundled (metadata) {
 
 function isVerifiedBundler (metadata) {
   // Check the ancestor on its own merits, without a bundled exemption or exclusions.
-  return (
-    hasStrictIntegrity(metadata) ||
-    isIntegrityExempt(metadata, {allowBundle: false, requirePinnedGit: true})
-  )
+  return hasStrictIntegrity(metadata) || isIntegrityExempt(metadata, {allowBundle: false})
 }
 
 /**

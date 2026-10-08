@@ -16,3 +16,6 @@ integrity.
 Report Yarn Berry as one marked unsupported-format error. The CLI exits non-zero
 without calling an unsupported format a security finding; other failing
 validators still report their security findings.
+
+Require commit pins for all Git-source exemptions, and recognize percent-encoded
+local tarball extensions before granting directory exemptions.

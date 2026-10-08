@@ -70,6 +70,13 @@ excluding a parent from validation does not verify its bundle.
 Raw `link`, `bundled` or `inBundle` flags do not exempt HTTP(S) sources or local
 `.tgz`/`.tar.gz` files; the Git source exceptions below still apply.
 
+Git-protocol URLs and Git-host shorthands require a 7-40-character hexadecimal
+commit fragment to qualify for an exemption. Branches, tags, semver ranges and
+missing refs require complete SHA-512 integrity. Link/bundle flags cannot bypass
+this pin requirement. Local file URLs are classified using their decoded path:
+percent-encoded `.tgz`/`.tar.gz` extensions still require integrity, and malformed
+URL escapes do not qualify as local directories.
+
 Yarn Classic GitHub sources are also exempt when the URL is exactly
 `https://codeload.github.com/<owner>/<repo>/tar.gz/<40-hex-commit-sha>`,
 without a query string or fragment. Codeload URLs using tags, branches or short

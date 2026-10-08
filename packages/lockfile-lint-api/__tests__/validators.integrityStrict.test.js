@@ -29,10 +29,10 @@ describe('strict integrity validation', () => {
   })
 
   test.each([
-    {version: 'git+https://github.com/example/pkg.git#abc'},
-    {resolved: 'git+ssh://git@github.com/example/pkg.git#abc'},
-    {resolved: 'git://github.com/example/pkg.git#abc'},
-    {version: 'github:example/pkg#abc'},
+    {version: 'git+https://github.com/example/pkg.git#abcdef0'},
+    {resolved: 'git+ssh://git@github.com/example/pkg.git#abcdef0'},
+    {resolved: 'git://github.com/example/pkg.git#abcdef0'},
+    {version: 'github:example/pkg#abcdef0'},
     {version: 'file:../local-package'},
     {resolved: 'file:packages/local'},
     {link: true}
@@ -84,7 +84,7 @@ describe('strict integrity validation', () => {
     lockfileVersion => {
       const missing = {version: '1.0.0'}
       const valid = {version: '1.0.0', integrity}
-      const git = {version: 'git+https://github.com/example/pkg.git#abc'}
+      const git = {version: 'git+https://github.com/example/pkg.git#abcdef0'}
       const lockfile =
         lockfileVersion === 1
           ? {
