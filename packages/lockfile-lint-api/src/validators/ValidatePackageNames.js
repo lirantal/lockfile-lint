@@ -53,9 +53,11 @@ module.exports = class ValidatePackageNames {
 
         const packageNameOnly = this._getPackageNameOnly(packageName)
 
-        const expectedURLBeginning = `${packageResolvedURL.origin}/${packageNameOnly}/`
+        // Use the normalized pathname from the parsed URL to prevent path traversal bypasses
+        // (e.g. "meow/../evil/..." raw-string-matches "meow/" but normalizes to "/evil/...").
+        const expectedPathPrefix = `/${packageNameOnly}/`
 
-        const isPassing = packageMetadata.resolved.startsWith(expectedURLBeginning)
+        const isPassing = packageResolvedURL.pathname.startsWith(expectedPathPrefix)
         if (!isPassing) {
           validationResult.errors.push({
             message: `detected resolved URL for package with a different name: ${packageNameOnly}\n    expected: ${packageNameOnly}\n    actual: ${packageNameFromResolved}\n`,

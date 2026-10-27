@@ -1,0 +1,120 @@
+{
+  "name": "bundle-fixture",
+  "version": "1.0.0",
+  "lockfileVersion": 2,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "bundle-fixture",
+      "version": "1.0.0",
+      "dependencies": {
+        "bund2": "file:../bundler/bund2-1.0.0.tgz",
+        "debug": "^4.3.4",
+        "ms": "^2.0.0"
+      }
+    },
+    "node_modules/bund2": {
+      "version": "1.0.0",
+      "resolved": "file:../bundler/bund2-1.0.0.tgz",
+      "integrity": "sha512-VU7zhiXtOVQxQAQHGezb6P37Mm9hxLCBu+ijTz6rVeUI2x5z5nJvyxvsJqHCOcQ30c0VIBS9fAQMt7l6wDvUQg==",
+      "bundleDependencies": [
+        "debug"
+      ],
+      "dependencies": {
+        "debug": "4.3.4"
+      }
+    },
+    "node_modules/bund2/node_modules/debug": {
+      "version": "4.3.4",
+      "inBundle": true,
+      "license": "MIT",
+      "dependencies": {
+        "ms": "2.1.2"
+      },
+      "engines": {
+        "node": ">=6.0"
+      },
+      "peerDependenciesMeta": {
+        "supports-color": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/bund2/node_modules/ms": {
+      "version": "2.1.2",
+      "inBundle": true,
+      "license": "MIT"
+    },
+    "node_modules/debug": {
+      "version": "4.3.4",
+      "resolved": "https://registry.npmjs.org/debug/-/debug-4.3.4.tgz",
+      "integrity": "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==",
+      "license": "MIT",
+      "dependencies": {
+        "ms": "2.1.2"
+      },
+      "engines": {
+        "node": ">=6.0"
+      },
+      "peerDependenciesMeta": {
+        "supports-color": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/debug/node_modules/ms": {
+      "version": "2.1.2",
+      "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz",
+      "integrity": "sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==",
+      "license": "MIT"
+    },
+    "node_modules/ms": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+      "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==",
+      "license": "MIT"
+    }
+  },
+  "dependencies": {
+    "bund2": {
+      "version": "file:..\\bundler\\bund2-1.0.0.tgz",
+      "integrity": "sha512-VU7zhiXtOVQxQAQHGezb6P37Mm9hxLCBu+ijTz6rVeUI2x5z5nJvyxvsJqHCOcQ30c0VIBS9fAQMt7l6wDvUQg==",
+      "requires": {
+        "debug": "4.3.4"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "4.3.4",
+          "bundled": true,
+          "requires": {
+            "ms": "2.1.2"
+          }
+        },
+        "ms": {
+          "version": "2.1.2",
+          "bundled": true
+        }
+      }
+    },
+    "debug": {
+      "version": "4.3.4",
+      "resolved": "https://registry.npmjs.org/debug/-/debug-4.3.4.tgz",
+      "integrity": "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==",
+      "requires": {
+        "ms": "2.1.2"
+      },
+      "dependencies": {
+        "ms": {
+          "version": "2.1.2",
+          "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz",
+          "integrity": "sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w=="
+        }
+      }
+    },
+    "ms": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+      "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="
+    }
+  }
+}

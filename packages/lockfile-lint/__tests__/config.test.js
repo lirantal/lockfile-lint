@@ -110,6 +110,15 @@ describe('config', () => {
   })
 
   describe('config file integration', () => {
+    test.each(['yaml-config', 'yml-config', 'extensionless-config'])(
+      'loads YAML configuration from %s',
+      async fixture => {
+        expect(
+          await loadConfig(['lockfile-lint.js'], false, path.join(__dirname, 'fixtures', fixture))
+        ).toEqual(expect.objectContaining({path: 'yarn.lock', type: 'yarn', validateHttps: true}))
+      }
+    )
+
     it('options are loaded from config files', async () => {
       expect(
         await loadConfig(['lockfile-lint.js'], false, path.join(__dirname, 'fixtures/valid-config'))

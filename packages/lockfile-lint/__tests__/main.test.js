@@ -4,6 +4,21 @@ const path = require('path')
 const main = require('../src/main')
 
 describe('Main CLI logic', () => {
+  test.each([false, true])(
+    'counts unsupported formats separately from findings (HTTPS: %s)',
+    withHttps => {
+      const validators = [{name: 'validateIntegrity', options: {integrityStrict: true}}]
+      if (withHttps) validators.push({name: 'validateHttps'})
+      const result = main.runValidators({
+        path: path.join(__dirname, '../../lockfile-lint-api/__tests__/__fixtures__/yarnberry.lock'),
+        type: 'yarn',
+        validators
+      })
+      expect(result.unsupportedFormatFailures).toBe(1)
+      expect(result.validatorFailures).toBe(withHttps ? 5 : 1)
+    }
+  )
+
   describe('Invoking validators should handle errors and defaults', () => {
     test('when no validator function is provided expect to fail', () => {
       const lockfilePath = path.join(__dirname, '/fixtures/yarn-only-http.lock')

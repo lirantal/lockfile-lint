@@ -1,0 +1,3 @@
+path: yarn.lock
+type: yarn
+validate-https: true

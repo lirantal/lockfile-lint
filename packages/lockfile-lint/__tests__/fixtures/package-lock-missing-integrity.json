@@ -1,0 +1,10 @@
+{
+  "name": "strict-integrity-example",
+  "lockfileVersion": 3,
+  "packages": {
+    "": {"name": "strict-integrity-example", "version": "1.0.0"},
+    "node_modules/missing": {"version": "1.0.0"},
+    "node_modules/local": {"resolved": "packages/local", "link": true},
+    "packages/local": {"name": "local", "version": "1.0.0"}
+  }
+}
