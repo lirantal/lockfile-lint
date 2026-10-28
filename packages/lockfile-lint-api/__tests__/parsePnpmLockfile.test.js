@@ -150,6 +150,65 @@ describe('ParseLockfile Pnpm', () => {
     ).toThrow(/"packages" must be a mapping/)
   })
 
+  it('rejects package entries without a mapping resolution', () => {
+    const cases = [
+      [
+        "lockfileVersion: '9.0'\npackages:\n  ms@2.1.3: null\n",
+        /package entry for "ms@2\.1\.3" must be a mapping/
+      ],
+      [
+        "lockfileVersion: '9.0'\npackages:\n  ms@2.1.3: hello\n",
+        /package entry for "ms@2\.1\.3" must be a mapping/
+      ],
+      [
+        "lockfileVersion: '9.0'\npackages:\n  ms@2.1.3:\n    - only-a-list\n",
+        /package entry for "ms@2\.1\.3" must be a mapping/
+      ],
+      [
+        "lockfileVersion: '9.0'\npackages:\n  ms@2.1.3:\n    version: 2.1.3\n",
+        /must include a mapping "resolution"/
+      ],
+      [
+        "lockfileVersion: '9.0'\npackages:\n  ms@2.1.3:\n    resolution: null\n",
+        /must include a mapping "resolution"/
+      ],
+      [
+        "lockfileVersion: '9.0'\npackages:\n  ms@2.1.3:\n    resolution: []\n",
+        /must include a mapping "resolution"/
+      ]
+    ]
+
+    cases.forEach(([lockfileText, pattern]) => {
+      expect(() =>
+        new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+      ).toThrow(pattern)
+    })
+  })
+
+  it('reconstructs tarball URLs using npm: alias targets', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  foo@npm:ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      '  bar@npm:@sindresorhus/is@4.6.0:',
+      '    resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}',
+      ''
+    ].join('\n')
+
+    const lockfile = new ParseLockfile({
+      lockfileText,
+      lockfileType: 'pnpm'
+    }).parseSync()
+
+    expect(lockfile.object['foo@npm:ms@2.1.3'].resolved).toEqual(
+      'https://registry.npmjs.org/ms/-/ms-2.1.3.tgz'
+    )
+    expect(lockfile.object['bar@npm:@sindresorhus/is@4.6.0'].resolved).toEqual(
+      'https://registry.npmjs.org/@sindresorhus/is/-/is-4.6.0.tgz'
+    )
+  })
+
   it('fails with an explicit error for unsupported lockfileVersion', () => {
     expect(() => parsePnpm('unsupported-version.yaml')).toThrow(
       /Unsupported pnpm lockfileVersion "6\.0"; only lockfileVersion 9\.x is supported/

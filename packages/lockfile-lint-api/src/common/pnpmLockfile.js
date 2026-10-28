@@ -57,6 +57,75 @@ function isUrlOrPathSpec (value) {
   )
 }
 
+function isPlainObject (value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+}
+
+/**
+ * Strip peer-dependency suffixes from a pnpm version/id fragment.
+ * e.g. `1.0.0(react@18.2.0)` → `1.0.0`
+ * @param {string} version
+ * @return {string}
+ */
+function stripPeerSuffix (version) {
+  if (typeof version !== 'string') return ''
+  const paren = version.indexOf('(')
+  return paren === -1 ? version : version.slice(0, paren)
+}
+
+/**
+ * Resolve the registry package name/version used to reconstruct a tarball URL.
+ * Handles `npm:` aliases (`foo@npm:ms@2.1.3` → ms@2.1.3).
+ * @param {string} dependencyId
+ * @param {object} entry
+ * @return {{name: string, version: string}|null}
+ */
+function registryPackageRef (dependencyId, entry) {
+  const {name: keyName, rest} = splitDependencyId(dependencyId)
+  const entryVersion =
+    entry && typeof entry.version === 'string' ? stripPeerSuffix(entry.version) : ''
+
+  if (typeof rest === 'string' && rest.startsWith('npm:')) {
+    const targetId = rest.slice('npm:'.length)
+    if (!targetId) return null
+    // npm:ms / npm:ms@2.1.3 / npm:@scope/pkg@1.0.0
+    if (targetId.startsWith('@') || targetId.includes('@')) {
+      const target = splitDependencyId(targetId.includes('@') ? targetId : `${targetId}@`)
+      const version = stripPeerSuffix(target.rest) || entryVersion
+      if (!target.name || !version) return null
+      return {name: target.name, version}
+    }
+    if (!entryVersion) return null
+    return {name: targetId, version: entryVersion}
+  }
+
+  if (isUrlOrPathSpec(rest)) {
+    return null
+  }
+
+  const version = stripPeerSuffix(rest) || entryVersion
+  if (!keyName || !version) return null
+  return {name: keyName, version}
+}
+
+/**
+ * Ensure a packages map value is a mapping with a mapping `resolution`.
+ * @param {string} dependencyId
+ * @param {*} entry
+ */
+function assertPnpmPackageEntry (dependencyId, entry) {
+  if (!isPlainObject(entry)) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" must be a mapping`
+    )
+  }
+  if (!isPlainObject(entry.resolution)) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" must include a mapping "resolution"`
+    )
+  }
+}
+
 /**
  * Normalize one pnpm packages entry into the shape validators expect.
  * @param {string} dependencyId
@@ -65,11 +134,15 @@ function isUrlOrPathSpec (value) {
  * @return {{version?: string, resolved?: string, integrity?: string, link?: boolean}}
  */
 function normalizePnpmPackageEntry (dependencyId, entry, registry) {
-  const resolution = (entry && entry.resolution) || {}
-  const {name, rest} = splitDependencyId(dependencyId)
-  const versionFromId = isUrlOrPathSpec(rest) ? undefined : rest
+  assertPnpmPackageEntry(dependencyId, entry)
+
+  const resolution = entry.resolution
+  const {rest} = splitDependencyId(dependencyId)
+  const registryRef = registryPackageRef(dependencyId, entry)
   const version =
-    (entry && typeof entry.version === 'string' && entry.version) || versionFromId || rest
+    (typeof entry.version === 'string' && entry.version) ||
+    (registryRef && registryRef.version) ||
+    rest
 
   const normalized = {
     version
@@ -107,12 +180,15 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
   }
 
   // Registry package: integrity-only — reconstruct tarball URL from inferred registry.
-  if (typeof resolution.integrity === 'string' && name && versionFromId) {
-    normalized.resolved = npmTarballUrl(name, versionFromId, registry)
+  // Prefer the alias target name/version when the id uses `npm:`.
+  if (typeof resolution.integrity === 'string' && registryRef) {
+    normalized.resolved = npmTarballUrl(registryRef.name, registryRef.version, registry)
     return normalized
   }
 
-  return normalized
+  throw new Error(
+    `Malformed pnpm lockfile: package entry for "${dependencyId}" has an unsupported or incomplete resolution`
+  )
 }
 
 /**
@@ -150,6 +226,7 @@ module.exports = {
   DEFAULT_PNPM_REGISTRY,
   npmTarballUrl,
   splitDependencyId,
+  assertPnpmPackageEntry,
   normalizePnpmPackageEntry,
   resolutionFingerprint
 }
