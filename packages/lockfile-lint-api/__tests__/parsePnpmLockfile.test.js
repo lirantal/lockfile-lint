@@ -631,6 +631,31 @@ describe('ParseLockfile Pnpm', () => {
     ).toThrow(/Unsupported pnpm lockfileVersion "true"/)
   })
 
+  it('rejects an explicit packages: null instead of treating it as empty', () => {
+    const lockfileText = ["lockfileVersion: '9.0'", 'packages: null', ''].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/"packages" must be a mapping/)
+  })
+
+  it('passes package-name validation for reconstructed revision URLs', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, revision: 1}',
+      ''
+    ].join('\n')
+    const {object: packages} = new ParseLockfile({
+      lockfileText,
+      lockfileType: 'pnpm'
+    }).parseSync()
+
+    expect(packages['ms@2.1.3'].resolved).toEqual('https://registry.npmjs.org/ms@2.1.3+r1')
+    expect(new ValidatePackageNames({packages}).validate().type).toEqual('success')
+  })
+
   it('rejects a hostless git repo URL', () => {
     const lockfileText = [
       "lockfileVersion: '9.0'",

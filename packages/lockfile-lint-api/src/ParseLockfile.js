@@ -301,12 +301,13 @@ class ParseLockfile {
         )
       }
 
-      const packages = document.packages
-      if (packages == null) {
+      // An omitted `packages` key is an empty lockfile document. An explicit null is malformed.
+      if (!Object.prototype.hasOwnProperty.call(document, 'packages')) {
         continue
       }
-      // Reject YAML scalars that box as objects, such as timestamps (`packages: 2024-01-01`).
-      if (Object.prototype.toString.call(packages) !== '[object Object]') {
+      const packages = document.packages
+      // Reject null, arrays, and YAML scalars that box as objects (e.g. `packages: 2024-01-01`).
+      if (packages == null || Object.prototype.toString.call(packages) !== '[object Object]') {
         throw new Error('Malformed pnpm lockfile: "packages" must be a mapping')
       }
 

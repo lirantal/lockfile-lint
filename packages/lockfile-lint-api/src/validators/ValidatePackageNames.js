@@ -25,17 +25,21 @@ module.exports = class ValidatePackageNames {
         continue
       }
 
-      if (Object.hasOwn(packageNameAliasPairs, this._getPackageNameOnly(packageName))) {
-        debug(
-          `skipping package name validation for aliased package name: ${packageName} resolving to: ${
-            packageNameAliasPairs[packageName]
-          }}`
-        )
-        continue
-      }
-
       try {
         const packageResolvedURL = new URL(packageMetadata.resolved)
+        const packageNameFromResolved = this._packageNameFromResolvedPath(
+          packageResolvedURL.pathname
+        )
+        const packageNameOnly = this._getPackageNameOnly(packageName, packageNameFromResolved)
+
+        if (Object.hasOwn(packageNameAliasPairs, packageNameOnly)) {
+          debug(
+            `skipping package name validation for aliased package name: ${packageName} resolving to: ${
+              packageNameAliasPairs[packageName]
+            }}`
+          )
+          continue
+        }
 
         // Only handle package name validation matching per registry URL
         // when the registry is one of the official public registries:
@@ -48,16 +52,10 @@ module.exports = class ValidatePackageNames {
           continue
         }
 
-        const path = packageResolvedURL.pathname
-        const packageNameFromResolved = path.split('/-/')[0].slice(1)
-
-        const packageNameOnly = this._getPackageNameOnly(packageName)
-
-        // Use the normalized pathname from the parsed URL to prevent path traversal bypasses
-        // (e.g. "meow/../evil/..." raw-string-matches "meow/" but normalizes to "/evil/...").
-        const expectedPathPrefix = `/${packageNameOnly}/`
-
-        const isPassing = packageResolvedURL.pathname.startsWith(expectedPathPrefix)
+        // Compare names extracted from the normalized pathname so classic
+        // `/-/<tarball>` URLs and pnpm revision `/name@version+rN` URLs both work,
+        // and path-traversal forms normalize before the check.
+        const isPassing = packageNameOnly === packageNameFromResolved
         if (!isPassing) {
           validationResult.errors.push({
             message: `detected resolved URL for package with a different name: ${packageNameOnly}\n    expected: ${packageNameOnly}\n    actual: ${packageNameFromResolved}\n`,
@@ -76,23 +74,73 @@ module.exports = class ValidatePackageNames {
     return validationResult
   }
 
-  _getPackageNameOnly (packageName) {
-    // pnpm alias keys keep the left-hand name (`foo@npm:ms@2.1.3`) while the resolved
-    // tarball is for the target. Yarn Berry uses `ms@npm:2.1.2` where the npm: value is
-    // only a version — keep the left-hand name in that case.
+  /**
+   * Package name encoded in an official-registry pathname.
+   * Classic: `/name/-/name-version.tgz`. Revision: `/name@version+rN`.
+   * @param {string} pathname
+   * @return {string}
+   */
+  _packageNameFromResolvedPath (pathname) {
+    if (pathname.includes('/-/')) {
+      return pathname.split('/-/')[0].slice(1)
+    }
+
+    const body = pathname.startsWith('/') ? pathname.slice(1) : pathname
+    if (body.startsWith('@')) {
+      const scopeSlash = body.indexOf('/')
+      if (scopeSlash === -1) {
+        return body
+      }
+      const versionAt = body.indexOf('@', scopeSlash)
+      return versionAt === -1 ? body : body.slice(0, versionAt)
+    }
+
+    const versionAt = body.indexOf('@')
+    return versionAt === -1 ? body : body.slice(0, versionAt)
+  }
+
+  /**
+   * When `npm:` embeds another package id, return that target name. Otherwise null
+   * (Yarn version / dist-tag / bare token — resolved metadata decides).
+   * @param {string} target
+   * @return {string|null}
+   */
+  _packageNameFromNpmTarget (target) {
+    if (!target) {
+      return null
+    }
+    if (target.startsWith('@')) {
+      const scopeSlash = target.indexOf('/')
+      if (scopeSlash === -1) {
+        return null
+      }
+      const versionAt = target.indexOf('@', scopeSlash)
+      return versionAt === -1 ? target : target.slice(0, versionAt)
+    }
+    if (target.includes('@')) {
+      return target.split('@')[0]
+    }
+    return null
+  }
+
+  _getPackageNameOnly (packageName, resolvedPackageName) {
+    // pnpm: `foo@npm:ms@2.1.3` — tarball is for the npm: target.
+    // Yarn Berry: `ms@npm:2.1.2` / `ms@npm:latest` — npm: value is a version/dist-tag.
     const npmAlias = packageName.indexOf('@npm:')
     if (npmAlias !== -1) {
+      const leftHand = packageName.slice(0, npmAlias)
       const target = packageName.slice(npmAlias + '@npm:'.length)
-      if (target.startsWith('@')) {
-        return `@${target.slice(1).split('@')[0]}`
+      const fromTarget = this._packageNameFromNpmTarget(target)
+      if (fromTarget) {
+        return fromTarget
       }
-      if (target.includes('@')) {
-        return target.split('@')[0]
-      }
-      // Bare `npm:<name>` (no version in the key) vs Yarn `npm:<version>`.
-      if (target && !/^[0-9^~<=>*]/.test(target)) {
+      // Bare `npm:<token>`: use the token when it matches the resolved package name
+      // (pnpm alias to that package, including numeric-leading names); otherwise the
+      // left-hand name (Yarn version or dist-tag).
+      if (target && resolvedPackageName && target === resolvedPackageName) {
         return target
       }
+      return leftHand
     }
 
     // Remove versioning info from packageName. The @ sign is the delimiter, but could also be the

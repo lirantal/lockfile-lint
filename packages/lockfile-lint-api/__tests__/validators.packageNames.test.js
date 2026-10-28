@@ -163,10 +163,44 @@ describe('Validator: PackageName', () => {
     })
   })
 
-  it('validator should keep the left-hand name for Yarn Berry npm: version keys', () => {
+  it('validator should keep the left-hand name for Yarn Berry npm: version and dist-tag keys', () => {
     const mockedPackages = {
       'ms@npm:2.1.2': {
         resolved: 'https://registry.npmjs.org/ms/-/ms-2.1.2.tgz'
+      },
+      'ms@npm:latest': {
+        resolved: 'https://registry.npmjs.org/ms/-/ms-2.1.3.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should resolve bare npm: aliases from the resolved package path', () => {
+    const mockedPackages = {
+      'foo@npm:123pack': {
+        resolved: 'https://registry.npmjs.org/123pack/-/123pack-1.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should accept pnpm registry revision URLs', () => {
+    const mockedPackages = {
+      'ms@2.1.3': {
+        resolved: 'https://registry.npmjs.org/ms@2.1.3+r1'
+      },
+      '@sindresorhus/is@4.6.0': {
+        resolved: 'https://registry.npmjs.org/@sindresorhus/is@4.6.0+r2'
       }
     }
 
