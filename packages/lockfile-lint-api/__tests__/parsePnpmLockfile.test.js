@@ -251,24 +251,62 @@ describe('ParseLockfile Pnpm', () => {
     ).toThrow(/invalid resolution\.tarball URL/)
   })
 
-  it('detects conflicting resolutions that differ only by an own __proto__ key', () => {
+  it('ignores irrelevant resolution keys when comparing multi-doc fingerprints', () => {
     const lockfileText = [
       '---',
       "lockfileVersion: '9.0'",
       'packages:',
       '  ms@2.1.3:',
-      "    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, __proto__: a}",
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, note: a}',
       '---',
       "lockfileVersion: '9.0'",
       'packages:',
       '  ms@2.1.3:',
-      "    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, __proto__: b}",
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, note: b}',
       ''
     ].join('\n')
 
+    const lockfile = new ParseLockfile({
+      lockfileText,
+      lockfileType: 'pnpm'
+    }).parseSync()
+
+    expect(lockfile.object['ms@2.1.3'].resolved).toEqual(
+      'https://registry.npmjs.org/ms/-/ms-2.1.3.tgz'
+    )
+  })
+
+  it('rejects non-scalar lockfileVersion values', () => {
+    const lockfileText = ['lockfileVersion: [9]', 'packages: {}', ''].join('\n')
+
     expect(() =>
       new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
-    ).toThrow(/Conflicting package entries for "ms@2\.1\.3"/)
+    ).toThrow(/Unsupported pnpm lockfileVersion/)
+  })
+
+  it('rejects incomplete typed directory or git resolutions', () => {
+    const cases = [
+      [
+        "lockfileVersion: '9.0'\npackages:\n  local@file:../x:\n    resolution: {type: directory, integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}\n",
+        /incomplete or unsupported typed resolution/
+      ],
+      [
+        "lockfileVersion: '9.0'\npackages:\n  pkg@git+https://example.com/a.git:\n    resolution: {type: git, integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}\n",
+        /incomplete or unsupported typed resolution/
+      ]
+    ]
+
+    cases.forEach(([lockfileText, pattern]) => {
+      expect(() =>
+        new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+      ).toThrow(pattern)
+    })
+  })
+
+  it('rejects an invalid pnpmRegistry URL', () => {
+    expect(() =>
+      parsePnpm('valid-registry.yaml', {pnpmRegistry: 'not-a-url'})
+    ).toThrow(/Malformed pnpm registry URL/)
   })
 
   it('treats a __proto__ package key as an own entry without polluting the map prototype', () => {
@@ -287,6 +325,7 @@ describe('ParseLockfile Pnpm', () => {
 
     expect(Object.getPrototypeOf(lockfile.object)).toBeNull()
     expect(Object.prototype.hasOwnProperty.call(lockfile.object, '__proto__')).toBe(true)
+    // eslint-disable-next-line no-proto, dot-notation
     expect(lockfile.object['__proto__'].resolved).toEqual(
       'https://registry.npmjs.org/ms/-/ms-2.1.3.tgz'
     )

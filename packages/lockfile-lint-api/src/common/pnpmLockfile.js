@@ -3,6 +3,29 @@
 const DEFAULT_PNPM_REGISTRY = 'https://registry.npmjs.org'
 
 /**
+ * Ensure pnpmRegistry is an absolute http(s) URL (no search/hash).
+ * Invalid values would produce unparsable `resolved` URLs that validators swallow.
+ * @param {string} registry
+ * @return {string} registry base ending with `/`
+ */
+function assertPnpmRegistry (registry) {
+  let parsed
+  try {
+    parsed = new URL(registry)
+  } catch (error) {
+    throw new Error(`Malformed pnpm registry URL: "${registry}"`)
+  }
+  if (
+    (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') ||
+    parsed.search ||
+    parsed.hash
+  ) {
+    throw new Error(`Malformed pnpm registry URL: "${registry}"`)
+  }
+  return registry.endsWith('/') ? registry : `${registry}/`
+}
+
+/**
  * Build the canonical npm-style tarball URL pnpm omits for registry packages.
  * Mirrors pnpm's get-npm-tarball-url helper.
  * @param {string} name
@@ -11,7 +34,7 @@ const DEFAULT_PNPM_REGISTRY = 'https://registry.npmjs.org'
  * @return {string}
  */
 function npmTarballUrl (name, version, registry) {
-  const base = registry.endsWith('/') ? registry : `${registry}/`
+  const base = assertPnpmRegistry(registry)
   const scopeless = name.startsWith('@') ? name.slice(name.indexOf('/') + 1) : name
   const versionWithoutBuild = version.includes('+') ? version.split('+')[0] : version
   return `${base}${name}/-/${scopeless}-${versionWithoutBuild}.tgz`
@@ -188,6 +211,13 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     return normalized
   }
 
+  // Incomplete typed resolutions must not fall through to the registry tarball path.
+  if (resolution.type != null) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" has an incomplete or unsupported typed resolution`
+    )
+  }
+
   // Registry package: integrity-only — reconstruct tarball URL from inferred registry.
   // Prefer the alias target name/version when the id uses `npm:`.
   if (typeof resolution.integrity === 'string' && registryRef) {
@@ -225,15 +255,28 @@ function canonicalize (value) {
 
 /**
  * Stable serialization for comparing package entries across multi-doc lockfiles.
- * Includes resolution and version so differing versions are treated as conflicts
- * even when the resolution object matches.
+ * Only fingerprints resolution fields that affect normalization (avoids deep-copying
+ * arbitrary YAML alias graphs) plus version.
  * @param {object} entry
  * @return {string}
  */
 function resolutionFingerprint (entry) {
+  const resolution = entry && entry.resolution
+  const relevant =
+    resolution && typeof resolution === 'object' && !Array.isArray(resolution)
+      ? {
+          integrity: typeof resolution.integrity === 'string' ? resolution.integrity : null,
+          tarball: typeof resolution.tarball === 'string' ? resolution.tarball : null,
+          type: resolution.type != null ? resolution.type : null,
+          directory: typeof resolution.directory === 'string' ? resolution.directory : null,
+          repo: typeof resolution.repo === 'string' ? resolution.repo : null,
+          commit: typeof resolution.commit === 'string' ? resolution.commit : null
+        }
+      : null
+
   return JSON.stringify(
     canonicalize({
-      resolution: (entry && entry.resolution) || null,
+      resolution: relevant,
       version: entry && typeof entry.version === 'string' ? entry.version : null
     })
   )
@@ -241,6 +284,7 @@ function resolutionFingerprint (entry) {
 
 module.exports = {
   DEFAULT_PNPM_REGISTRY,
+  assertPnpmRegistry,
   npmTarballUrl,
   splitDependencyId,
   assertPnpmPackageEntry,
