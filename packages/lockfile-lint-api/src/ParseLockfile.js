@@ -244,7 +244,8 @@ class ParseLockfile {
 
       const lockfileVersion = document.lockfileVersion
       const versionText = lockfileVersion == null ? '' : String(lockfileVersion)
-      if (!/^9(\.|$)/.test(versionText)) {
+      // Accept numeric 9 / 9.x / 9.x.y forms only (reject e.g. "9.not-a-version").
+      if (!/^9(\.\d+)*$/.test(versionText)) {
         throw new Error(
           `Unsupported pnpm lockfileVersion "${versionText ||
             '(missing)'}"; only lockfileVersion 9.x is supported`

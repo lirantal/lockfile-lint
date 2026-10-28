@@ -101,6 +101,28 @@ describe('ParseLockfile Pnpm', () => {
     )
   })
 
+  it('fails when the same package key has the same resolution but different versions across documents', () => {
+    const lockfileText = [
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    version: 2.1.3',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    version: 2.1.4',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/Conflicting package entries for "ms@2\.1\.3"/)
+  })
+
   it('treats equivalent resolutions with different key order as the same entry', () => {
     const lockfileText = [
       '---',
@@ -213,6 +235,20 @@ describe('ParseLockfile Pnpm', () => {
     expect(() => parsePnpm('unsupported-version.yaml')).toThrow(
       /Unsupported pnpm lockfileVersion "6\.0"; only lockfileVersion 9\.x is supported/
     )
+  })
+
+  it('rejects malformed lockfileVersion values that only share a 9. prefix', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.not-a-version'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/Unsupported pnpm lockfileVersion "9\.not-a-version"/)
   })
 
   it('resolves parser by pnpm-lock.yaml filename', () => {
