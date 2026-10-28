@@ -202,7 +202,12 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     version
   }
 
-  if (typeof resolution.integrity === 'string') {
+  if (Object.prototype.hasOwnProperty.call(resolution, 'integrity')) {
+    if (typeof resolution.integrity !== 'string') {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string resolution.integrity`
+      )
+    }
     normalized.integrity = resolution.integrity
   }
 
