@@ -233,6 +233,14 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
   }
 
   if (resolution.type === 'directory' && typeof resolution.directory === 'string') {
+    const directoryPath = resolution.directory.startsWith('file:')
+      ? resolution.directory.slice('file:'.length)
+      : resolution.directory
+    if (!directoryPath.trim()) {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has an empty directory path`
+      )
+    }
     // Match npm's file: directory entries (link:true for integrity-strict exemptions).
     normalized.resolved = resolution.directory.startsWith('file:')
       ? resolution.directory

@@ -350,6 +350,45 @@ describe('ParseLockfile Pnpm', () => {
     ).toThrow(/non-string resolution\.integrity/)
   })
 
+  it('rejects a non-string pnpmRegistry instead of using the public registry', () => {
+    expect(() => parsePnpm('private-registry.yaml', {pnpmRegistry: 123})).toThrow(
+      /Malformed pnpm registry URL/
+    )
+  })
+
+  it('rejects a later duplicate whose non-string fields were dropped from the fingerprint', () => {
+    const lockfileText = [
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, tarball: 1}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/non-string resolution\.tarball/)
+  })
+
+  it('rejects an empty directory path instead of marking it as a local link', () => {
+    const cases = [
+      "lockfileVersion: '9.0'\npackages:\n  local@file:\n    resolution: {type: directory, directory: ''}\n",
+      "lockfileVersion: '9.0'\npackages:\n  local@file:\n    resolution: {type: directory, directory: 'file:'}\n"
+    ]
+
+    cases.forEach(lockfileText => {
+      expect(() =>
+        new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+      ).toThrow(/empty directory path/)
+    })
+  })
+
   it('rejects an invalid pnpmRegistry URL', () => {
     expect(() => parsePnpm('valid-registry.yaml', {pnpmRegistry: 'not-a-url'})).toThrow(
       /Malformed pnpm registry URL/

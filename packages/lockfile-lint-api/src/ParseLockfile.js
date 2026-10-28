@@ -247,10 +247,12 @@ class ParseLockfile {
     }
 
     const configuredRegistry = this.options.pnpmRegistry
+    // Only a missing or empty option falls back to the public registry.
+    // Any other value, including non-strings, is validated and rejected.
     const registry = assertPnpmRegistry(
-      typeof configuredRegistry === 'string' && configuredRegistry
-        ? configuredRegistry
-        : DEFAULT_PNPM_REGISTRY
+      configuredRegistry == null || configuredRegistry === ''
+        ? DEFAULT_PNPM_REGISTRY
+        : configuredRegistry
     )
 
     // Null prototype so keys like "__proto__" become own entries, not prototype pollution.
@@ -291,6 +293,9 @@ class ParseLockfile {
 
       for (const [dependencyId, entry] of Object.entries(packages)) {
         assertPnpmPackageEntry(dependencyId, entry)
+        // Normalize before the duplicate shortcut so a later document cannot skip
+        // validation by matching a fingerprint that drops non-string fields.
+        const normalized = normalizePnpmPackageEntry(dependencyId, entry, registry)
         const fingerprint = resolutionFingerprint(entry)
         if (Object.prototype.hasOwnProperty.call(fingerprints, dependencyId)) {
           if (fingerprints[dependencyId] !== fingerprint) {
@@ -302,7 +307,7 @@ class ParseLockfile {
         }
 
         fingerprints[dependencyId] = fingerprint
-        mergedPackages[dependencyId] = normalizePnpmPackageEntry(dependencyId, entry, registry)
+        mergedPackages[dependencyId] = normalized
       }
     }
 
