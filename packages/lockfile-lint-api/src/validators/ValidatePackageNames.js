@@ -77,6 +77,24 @@ module.exports = class ValidatePackageNames {
   }
 
   _getPackageNameOnly (packageName) {
+    // pnpm alias keys keep the left-hand name (`foo@npm:ms@2.1.3`) while the resolved
+    // tarball is for the target. Yarn Berry uses `ms@npm:2.1.2` where the npm: value is
+    // only a version — keep the left-hand name in that case.
+    const npmAlias = packageName.indexOf('@npm:')
+    if (npmAlias !== -1) {
+      const target = packageName.slice(npmAlias + '@npm:'.length)
+      if (target.startsWith('@')) {
+        return `@${target.slice(1).split('@')[0]}`
+      }
+      if (target.includes('@')) {
+        return target.split('@')[0]
+      }
+      // Bare `npm:<name>` (no version in the key) vs Yarn `npm:<version>`.
+      if (target && !/^[0-9^~<=>*]/.test(target)) {
+        return target
+      }
+    }
+
     // Remove versioning info from packageName. The @ sign is the delimiter, but could also be the
     // first character of a scoped package name. We handle this edge-case here.
     const packageNameOnly = packageName.startsWith('@')
