@@ -213,6 +213,54 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     normalized.integrity = resolution.integrity
   }
 
+  if (resolution.type != null) {
+    if (Object.prototype.hasOwnProperty.call(resolution, 'tarball')) {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has both a typed resolution and a tarball`
+      )
+    }
+
+    if (resolution.type === 'directory' && typeof resolution.directory === 'string') {
+      const directoryPath = resolution.directory.startsWith('file:')
+        ? resolution.directory.slice('file:'.length)
+        : resolution.directory
+      if (!directoryPath.trim()) {
+        throw new Error(
+          `Malformed pnpm lockfile: package entry for "${dependencyId}" has an empty directory path`
+        )
+      }
+      // Match npm's file: directory entries (link:true for integrity-strict exemptions).
+      normalized.resolved = resolution.directory.startsWith('file:')
+        ? resolution.directory
+        : `file:${resolution.directory}`
+      normalized.link = true
+      return normalized
+    }
+
+    if (resolution.type === 'git' && typeof resolution.repo === 'string') {
+      if (resolution.commit != null && typeof resolution.commit !== 'string') {
+        throw new Error(
+          `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string git commit`
+        )
+      }
+      const commit = typeof resolution.commit === 'string' ? resolution.commit : ''
+      const repo = resolution.repo
+      if (commit && repo.includes('#')) {
+        normalized.resolved = `${repo.replace(/#.*$/, '')}#${commit}`
+      } else if (commit) {
+        normalized.resolved = `${repo}#${commit}`
+      } else {
+        normalized.resolved = repo
+      }
+      assertGitResolvedUrl(dependencyId, normalized.resolved)
+      return normalized
+    }
+
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" has an incomplete or unsupported typed resolution`
+    )
+  }
+
   if (Object.prototype.hasOwnProperty.call(resolution, 'tarball')) {
     if (typeof resolution.tarball !== 'string') {
       throw new Error(
@@ -237,49 +285,6 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     }
     normalized.resolved = resolution.tarball
     return normalized
-  }
-
-  if (resolution.type === 'directory' && typeof resolution.directory === 'string') {
-    const directoryPath = resolution.directory.startsWith('file:')
-      ? resolution.directory.slice('file:'.length)
-      : resolution.directory
-    if (!directoryPath.trim()) {
-      throw new Error(
-        `Malformed pnpm lockfile: package entry for "${dependencyId}" has an empty directory path`
-      )
-    }
-    // Match npm's file: directory entries (link:true for integrity-strict exemptions).
-    normalized.resolved = resolution.directory.startsWith('file:')
-      ? resolution.directory
-      : `file:${resolution.directory}`
-    normalized.link = true
-    return normalized
-  }
-
-  if (resolution.type === 'git' && typeof resolution.repo === 'string') {
-    if (resolution.commit != null && typeof resolution.commit !== 'string') {
-      throw new Error(
-        `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string git commit`
-      )
-    }
-    const commit = typeof resolution.commit === 'string' ? resolution.commit : ''
-    const repo = resolution.repo
-    if (commit && repo.includes('#')) {
-      normalized.resolved = `${repo.replace(/#.*$/, '')}#${commit}`
-    } else if (commit) {
-      normalized.resolved = `${repo}#${commit}`
-    } else {
-      normalized.resolved = repo
-    }
-    assertGitResolvedUrl(dependencyId, normalized.resolved)
-    return normalized
-  }
-
-  // Incomplete typed resolutions must not fall through to the registry tarball path.
-  if (resolution.type != null) {
-    throw new Error(
-      `Malformed pnpm lockfile: package entry for "${dependencyId}" has an incomplete or unsupported typed resolution`
-    )
   }
 
   // Registry package: integrity-only — reconstruct tarball URL from inferred registry.

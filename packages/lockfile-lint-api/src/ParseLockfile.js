@@ -287,7 +287,8 @@ class ParseLockfile {
       if (packages == null) {
         continue
       }
-      if (typeof packages !== 'object' || Array.isArray(packages)) {
+      // Reject YAML scalars that box as objects, such as timestamps (`packages: 2024-01-01`).
+      if (Object.prototype.toString.call(packages) !== '[object Object]') {
         throw new Error('Malformed pnpm lockfile: "packages" must be a mapping')
       }
 
