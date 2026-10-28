@@ -88,7 +88,13 @@ function ValidateHttpsManager ({path, type, pnpmRegistry, validatorValues, valid
   return validator.validate()
 }
 
-function ValidatePackageNamesManager ({path, type, pnpmRegistry, validatorValues, validatorOptions}) {
+function ValidatePackageNamesManager ({
+  path,
+  type,
+  pnpmRegistry,
+  validatorValues,
+  validatorOptions
+}) {
   debug(
     `validate-package-names-manager invoked with validator options: ${JSON.stringify(
       validatorValues

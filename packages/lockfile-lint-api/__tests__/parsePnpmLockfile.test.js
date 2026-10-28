@@ -237,6 +237,27 @@ describe('ParseLockfile Pnpm', () => {
     )
   })
 
+  it('treats a __proto__ package key as an own entry without polluting the map prototype', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      "  '__proto__':",
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, tarball: https://registry.npmjs.org/ms/-/ms-2.1.3.tgz}',
+      ''
+    ].join('\n')
+
+    const lockfile = new ParseLockfile({
+      lockfileText,
+      lockfileType: 'pnpm'
+    }).parseSync()
+
+    expect(Object.getPrototypeOf(lockfile.object)).toBeNull()
+    expect(Object.prototype.hasOwnProperty.call(lockfile.object, '__proto__')).toBe(true)
+    expect(lockfile.object['__proto__'].resolved).toEqual(
+      'https://registry.npmjs.org/ms/-/ms-2.1.3.tgz'
+    )
+  })
+
   it('rejects malformed lockfileVersion values that only share a 9. prefix', () => {
     const lockfileText = [
       "lockfileVersion: '9.not-a-version'",
