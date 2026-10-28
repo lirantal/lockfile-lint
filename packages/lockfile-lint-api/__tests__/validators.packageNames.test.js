@@ -180,9 +180,9 @@ describe('Validator: PackageName', () => {
     })
   })
 
-  it('validator should resolve bare npm: aliases from the resolved package path', () => {
+  it('validator should use an embedded npm: package id for numeric-leading targets', () => {
     const mockedPackages = {
-      'foo@npm:123pack': {
+      'foo@npm:123pack@1.0.0': {
         resolved: 'https://registry.npmjs.org/123pack/-/123pack-1.0.0.tgz'
       }
     }
@@ -192,6 +192,19 @@ describe('Validator: PackageName', () => {
       type: 'success',
       errors: []
     })
+  })
+
+  it('validator should reject bare npm: tokens that only match the resolved package name', () => {
+    const mockedPackages = {
+      'ms@npm:evil': {
+        resolved: 'https://registry.npmjs.org/evil/-/evil-1.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    const result = validator.validate()
+    expect(result.type).toBe('error')
+    expect(result.errors[0].package).toBe('ms')
   })
 
   it('validator should accept pnpm registry revision URLs', () => {
@@ -206,6 +219,42 @@ describe('Validator: PackageName', () => {
 
     const validator = new ValidatePackageNames({packages: mockedPackages})
     expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should fail when a revision URL names a different package', () => {
+    const mockedPackages = {
+      'ms@2.1.3': {
+        resolved: 'https://registry.npmjs.org/evil@1.0.0+r1'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    const result = validator.validate()
+    expect(result.type).toBe('error')
+    expect(result.errors[0].package).toBe('ms')
+    expect(result.errors[0].message).toMatch(/actual: evil/)
+  })
+
+  it('validator should match alias allow-list against the lockfile key, not the npm: target', () => {
+    const mockedPackages = {
+      'foo@npm:ms@2.1.3': {
+        resolved: 'https://registry.npmjs.org/evil/-/evil-1.0.0.tgz'
+      }
+    }
+
+    // Listing the target (`ms`) must not skip validation of the `foo` lockfile key.
+    const skippedByTarget = new ValidatePackageNames({packages: mockedPackages}).validate([
+      'ms:ms'
+    ])
+    expect(skippedByTarget.type).toBe('error')
+    expect(skippedByTarget.errors[0].package).toBe('ms')
+
+    // Listing the lockfile key (`foo`) is the supported alias allow-list form.
+    const skippedByKey = new ValidatePackageNames({packages: mockedPackages}).validate(['foo:ms'])
+    expect(skippedByKey).toEqual({
       type: 'success',
       errors: []
     })

@@ -25,21 +25,20 @@ module.exports = class ValidatePackageNames {
         continue
       }
 
+      // Alias allow-list is keyed by the lockfile entry name (left-hand side), not the
+      // npm: target — otherwise `foo@npm:ms@…` would be skipped when `ms` is listed.
+      const lockfileKeyName = this._lockfileKeyPackageName(packageName)
+      if (Object.hasOwn(packageNameAliasPairs, lockfileKeyName)) {
+        debug(
+          `skipping package name validation for aliased package name: ${packageName} resolving to: ${
+            packageNameAliasPairs[lockfileKeyName]
+          }}`
+        )
+        continue
+      }
+
       try {
         const packageResolvedURL = new URL(packageMetadata.resolved)
-        const packageNameFromResolved = this._packageNameFromResolvedPath(
-          packageResolvedURL.pathname
-        )
-        const packageNameOnly = this._getPackageNameOnly(packageName, packageNameFromResolved)
-
-        if (Object.hasOwn(packageNameAliasPairs, packageNameOnly)) {
-          debug(
-            `skipping package name validation for aliased package name: ${packageName} resolving to: ${
-              packageNameAliasPairs[packageName]
-            }}`
-          )
-          continue
-        }
 
         // Only handle package name validation matching per registry URL
         // when the registry is one of the official public registries:
@@ -51,6 +50,11 @@ module.exports = class ValidatePackageNames {
           )
           continue
         }
+
+        const packageNameFromResolved = this._packageNameFromResolvedPath(
+          packageResolvedURL.pathname
+        )
+        const packageNameOnly = this._getPackageNameOnly(packageName)
 
         // Compare names extracted from the normalized pathname so classic
         // `/-/<tarball>` URLs and pnpm revision `/name@version+rN` URLs both work,
@@ -72,6 +76,21 @@ module.exports = class ValidatePackageNames {
     }
 
     return validationResult
+  }
+
+  /**
+   * Left-hand package name from a lockfile key (before `@npm:` / version).
+   * @param {string} packageName
+   * @return {string}
+   */
+  _lockfileKeyPackageName (packageName) {
+    const npmAlias = packageName.indexOf('@npm:')
+    if (npmAlias !== -1) {
+      return packageName.slice(0, npmAlias)
+    }
+    return packageName.startsWith('@')
+      ? `@${packageName.slice(1).split('@')[0]}`
+      : packageName.split('@')[0]
   }
 
   /**
@@ -100,8 +119,10 @@ module.exports = class ValidatePackageNames {
   }
 
   /**
-   * When `npm:` embeds another package id, return that target name. Otherwise null
-   * (Yarn version / dist-tag / bare token — resolved metadata decides).
+   * When `npm:` embeds another package id (`name@version` or `@scope/name…`),
+   * return that target name. Bare tokens are Yarn versions/dist-tags — use the
+   * left-hand lockfile name instead (do not trust token===resolved, which
+   * accepts `ms@npm:evil` → evil tarball).
    * @param {string} target
    * @return {string|null}
    */
@@ -123,7 +144,7 @@ module.exports = class ValidatePackageNames {
     return null
   }
 
-  _getPackageNameOnly (packageName, resolvedPackageName) {
+  _getPackageNameOnly (packageName) {
     // pnpm: `foo@npm:ms@2.1.3` — tarball is for the npm: target.
     // Yarn Berry: `ms@npm:2.1.2` / `ms@npm:latest` — npm: value is a version/dist-tag.
     const npmAlias = packageName.indexOf('@npm:')
@@ -131,16 +152,7 @@ module.exports = class ValidatePackageNames {
       const leftHand = packageName.slice(0, npmAlias)
       const target = packageName.slice(npmAlias + '@npm:'.length)
       const fromTarget = this._packageNameFromNpmTarget(target)
-      if (fromTarget) {
-        return fromTarget
-      }
-      // Bare `npm:<token>`: use the token when it matches the resolved package name
-      // (pnpm alias to that package, including numeric-leading names); otherwise the
-      // left-hand name (Yarn version or dist-tag).
-      if (target && resolvedPackageName && target === resolvedPackageName) {
-        return target
-      }
-      return leftHand
+      return fromTarget || leftHand
     }
 
     // Remove versioning info from packageName. The @ sign is the delimiter, but could also be the

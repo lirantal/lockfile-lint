@@ -337,16 +337,19 @@ describe('Main CLI logic', () => {
         '../../lockfile-lint-api/__tests__/__fixtures__/pnpm/bad-host.yaml'
       )
       const error = jest.spyOn(console, 'error').mockImplementation(() => {})
-      const result = main.runValidators({
-        path: lockfilePath,
-        type: 'pnpm',
-        validators: [{name: 'validateHosts', values: ['npm']}]
-      })
+      try {
+        const result = main.runValidators({
+          path: lockfilePath,
+          type: 'pnpm',
+          validators: [{name: 'validateHosts', values: ['npm']}]
+        })
 
-      expect(result.validatorFailures).toEqual(1)
-      expect(result.validatorSuccesses).toEqual(0)
-      expect(error).toHaveBeenCalledWith(expect.stringMatching(/evil\.example/))
-      error.mockRestore()
+        expect(result.validatorFailures).toEqual(1)
+        expect(result.validatorSuccesses).toEqual(0)
+        expect(error).toHaveBeenCalledWith(expect.stringMatching(/evil\.example/))
+      } finally {
+        error.mockRestore()
+      }
     })
 
     test('should use pnpmRegistry when reconstructing integrity-only URLs', () => {
