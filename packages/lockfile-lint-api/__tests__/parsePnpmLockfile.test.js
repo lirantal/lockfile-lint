@@ -418,6 +418,34 @@ describe('ParseLockfile Pnpm', () => {
     ).toThrow(/non-string resolution\.tarball/)
   })
 
+  it('rejects a hostless git repo URL', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  pkg@git:dependency:',
+      '    resolution: {type: git, repo: git:dependency, commit: abcdef1}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/unsupported git repo URL/)
+  })
+
+  it('rejects a non-http(s) tarball URL', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {tarball: "data:text/plain,hi", integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/resolution\.tarball URL that is not http\(s\)/)
+  })
+
   it('rejects git resolutions whose repo is not a supported URL', () => {
     const lockfileText = [
       "lockfileVersion: '9.0'",
