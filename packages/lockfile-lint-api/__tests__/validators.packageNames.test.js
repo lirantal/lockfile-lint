@@ -145,4 +145,48 @@ describe('Validator: PackageName', () => {
     expect(result.errors).toHaveLength(1)
     expect(result.errors[0].package).toBe('@scope/pkg')
   })
+
+  it('validator should use the npm: alias target name for pnpm alias keys', () => {
+    const mockedPackages = {
+      'foo@npm:ms@2.1.3': {
+        resolved: 'https://registry.npmjs.org/ms/-/ms-2.1.3.tgz'
+      },
+      'bar@npm:@sindresorhus/is@4.6.0': {
+        resolved: 'https://registry.npmjs.org/@sindresorhus/is/-/is-4.6.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should keep the left-hand name for Yarn Berry npm: version keys', () => {
+    const mockedPackages = {
+      'ms@npm:2.1.2': {
+        resolved: 'https://registry.npmjs.org/ms/-/ms-2.1.2.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    expect(validator.validate()).toEqual({
+      type: 'success',
+      errors: []
+    })
+  })
+
+  it('validator should fail when a pnpm npm: alias resolves to a different package', () => {
+    const mockedPackages = {
+      'foo@npm:ms@2.1.3': {
+        resolved: 'https://registry.npmjs.org/evil/-/evil-1.0.0.tgz'
+      }
+    }
+
+    const validator = new ValidatePackageNames({packages: mockedPackages})
+    const result = validator.validate()
+    expect(result.type).toBe('error')
+    expect(result.errors[0].package).toBe('ms')
+  })
 })

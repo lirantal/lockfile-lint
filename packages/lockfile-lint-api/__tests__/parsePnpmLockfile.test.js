@@ -267,6 +267,60 @@ describe('ParseLockfile Pnpm', () => {
     expect(lockfile.object['bar@npm:@sindresorhus/is@4.6.0'].resolved).toEqual(
       'https://registry.npmjs.org/@sindresorhus/is/-/is-4.6.0.tgz'
     )
+    expect(new ValidatePackageNames({packages: lockfile.object}).validate().type).toEqual(
+      'success'
+    )
+  })
+
+  it('normalizes scp-style and hosting-shorthand typed git repos', () => {
+    const scp = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  is-positive@git@github.com:kevva/is-positive.git:',
+      '    resolution:',
+      '      type: git',
+      '      repo: git@github.com:kevva/is-positive.git',
+      '      commit: abcdef0123456789abcdef0123456789abcdef01',
+      ''
+    ].join('\n')
+    const scpLockfile = new ParseLockfile({lockfileText: scp, lockfileType: 'pnpm'}).parseSync()
+    expect(
+      scpLockfile.object['is-positive@git@github.com:kevva/is-positive.git'].resolved
+    ).toEqual(
+      'ssh://git@github.com/kevva/is-positive.git#abcdef0123456789abcdef0123456789abcdef01'
+    )
+
+    const shorthand = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  is-positive@github:kevva/is-positive:',
+      '    resolution:',
+      '      type: git',
+      '      repo: github:kevva/is-positive',
+      '      commit: abcdef0123456789abcdef0123456789abcdef01',
+      ''
+    ].join('\n')
+    const shorthandLockfile = new ParseLockfile({
+      lockfileText: shorthand,
+      lockfileType: 'pnpm'
+    }).parseSync()
+    expect(shorthandLockfile.object['is-positive@github:kevva/is-positive'].resolved).toEqual(
+      'https://github.com/kevva/is-positive#abcdef0123456789abcdef0123456789abcdef01'
+    )
+  })
+
+  it('rejects integrity-only scp-style git ids instead of treating them as registry packages', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  is-positive@git@github.com:kevva/is-positive.git:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/must use a typed git resolution/)
   })
 
   it('fails with an explicit error for unsupported lockfileVersion', () => {

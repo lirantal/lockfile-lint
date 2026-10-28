@@ -12,6 +12,13 @@ const GIT_URL_PROTOCOLS = new Set([
   'git+ssh:'
 ])
 
+// Hosting shorthands that `new URL()` parses with an empty hostname (host checks would allow them).
+const GIT_HOST_SHORTHANDS = Object.create(null)
+GIT_HOST_SHORTHANDS['github:'] = 'https://github.com/'
+GIT_HOST_SHORTHANDS['gitlab:'] = 'https://gitlab.com/'
+GIT_HOST_SHORTHANDS['bitbucket:'] = 'https://bitbucket.org/'
+GIT_HOST_SHORTHANDS['gist:'] = 'https://gist.github.com/'
+
 /**
  * Ensure pnpmRegistry is an absolute http(s) URL (no search/hash).
  * Invalid values would produce unparsable `resolved` URLs that validators swallow.
@@ -64,6 +71,70 @@ function assertRemoteOrFileUrl (dependencyId, value, label) {
       `Malformed pnpm lockfile: package entry for "${dependencyId}" has a ${label} that is not http(s)`
     )
   }
+}
+
+/**
+ * Expand scp-style and hosting-shorthand git sources into URLs validators can parse.
+ * Matches pnpm's normalizeGitRepoForPkgResolutionId for scp (`user@host:path` → `ssh://…`).
+ * @param {string} repo
+ * @return {string}
+ */
+function normalizeGitRepoUrl (repo) {
+  if (typeof repo !== 'string' || !repo) {
+    return repo
+  }
+
+  let hash = ''
+  let base = repo
+  const hashIdx = repo.indexOf('#')
+  if (hashIdx !== -1) {
+    base = repo.slice(0, hashIdx)
+    hash = repo.slice(hashIdx)
+  }
+
+  // Already a URL scheme (including ssh://). Do not touch @host:port forms.
+  if (base.includes('://')) {
+    return repo
+  }
+
+  // scp-style shorthand: user@host:path
+  const scp = /^([^@\s]+@[^:\s]+):(.+)$/.exec(base)
+  if (scp) {
+    return `ssh://${scp[1]}/${scp[2]}${hash}`
+  }
+
+  for (const prefix of Object.keys(GIT_HOST_SHORTHANDS)) {
+    if (base.startsWith(prefix)) {
+      // eslint-disable-next-line security/detect-object-injection
+      return `${GIT_HOST_SHORTHANDS[prefix]}${base.slice(prefix.length)}${hash}`
+    }
+  }
+
+  return repo
+}
+
+/**
+ * True when a packages-key remainder is a Git source (URL, scp, or hosting shorthand).
+ * @param {string} value
+ * @return {boolean}
+ */
+function isGitLikeDependencyRest (value) {
+  if (typeof value !== 'string' || !value) {
+    return false
+  }
+  if (
+    value.startsWith('git:') ||
+    value.startsWith('git+') ||
+    value.startsWith('ssh:') ||
+    value.startsWith('github:') ||
+    value.startsWith('gitlab:') ||
+    value.startsWith('bitbucket:') ||
+    value.startsWith('gist:')
+  ) {
+    return true
+  }
+  // scp-style user@host:path — must not be treated as a registry version.
+  return /^[^@\s]+@[^:\s]+:.+$/.test(value)
 }
 
 /**
@@ -207,7 +278,7 @@ function registryPackageRef (dependencyId, entry) {
     return {name: targetId, version: entryVersion}
   }
 
-  if (isUrlOrPathSpec(rest)) {
+  if (isUrlOrPathSpec(rest) || isGitLikeDependencyRest(rest)) {
     return null
   }
 
@@ -306,7 +377,7 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
         )
       }
       const commit = typeof resolution.commit === 'string' ? resolution.commit : ''
-      const repo = resolution.repo
+      const repo = normalizeGitRepoUrl(resolution.repo)
       if (commit && repo.includes('#')) {
         normalized.resolved = `${repo.replace(/#.*$/, '')}#${commit}`
       } else if (commit) {
@@ -371,11 +442,8 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     return normalized
   }
 
-  // Git ids such as ssh:// must not be rewritten as registry tarballs.
-  if (
-    typeof rest === 'string' &&
-    (rest.startsWith('ssh:') || rest.startsWith('git:') || rest.startsWith('git+'))
-  ) {
+  // Git ids (ssh://, scp-style, github:…, …) must not be rewritten as registry tarballs.
+  if (isGitLikeDependencyRest(rest)) {
     throw new Error(
       `Malformed pnpm lockfile: package entry for "${dependencyId}" is a Git dependency and must use a typed git resolution`
     )
