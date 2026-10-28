@@ -24,7 +24,8 @@ Lints an npm, yarn, or pnpm lockfile to analyze and detect issues
 (`lockfileVersion` 9.x), integrity-only registry packages get a reconstructed
 tarball URL using `pnpmRegistry` (inferred default: `https://registry.npmjs.org`).
 `pnpmRegistry` must be an absolute `http:` or `https:` base URL with no `?` or `#`.
-`null` and `''` are treated as missing and fall back to that default; any other value throws.
+`null`, `undefined`, and `''` are treated as missing and fall back to that default; invalid
+values throw, and surrounding whitespace is normalized.
 
 Directory resolutions become `file:` URLs, and Git resolutions keep the
 repository scheme (`https:`, `git+https:`, `git+ssh:`, and so on). Those
