@@ -13,6 +13,7 @@ const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
 const {
   DEFAULT_PNPM_REGISTRY,
   assertPnpmPackageEntry,
+  assertPnpmRegistry,
   normalizePnpmPackageEntry,
   resolutionFingerprint
 } = require('./common/pnpmLockfile')
@@ -245,10 +246,12 @@ class ParseLockfile {
       throw new Error('Lockfile does not seem to contain a valid pnpm dependency list')
     }
 
-    const registry =
-      typeof this.options.pnpmRegistry === 'string' && this.options.pnpmRegistry
-        ? this.options.pnpmRegistry
+    const configuredRegistry = this.options.pnpmRegistry
+    const registry = assertPnpmRegistry(
+      typeof configuredRegistry === 'string' && configuredRegistry
+        ? configuredRegistry
         : DEFAULT_PNPM_REGISTRY
+    )
 
     // Null prototype so keys like "__proto__" become own entries, not prototype pollution.
     const mergedPackages = Object.create(null)

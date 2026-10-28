@@ -303,6 +303,26 @@ describe('ParseLockfile Pnpm', () => {
     })
   })
 
+  it('rejects a malformed pnpmRegistry even when packages only have explicit tarballs', () => {
+    expect(() => parsePnpm('private-registry.yaml', {pnpmRegistry: 'not-a-url'})).toThrow(
+      /Malformed pnpm registry URL/
+    )
+  })
+
+  it('rejects a non-string resolution.integrity when a tarball is present', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: 1, tarball: https://registry.npmjs.org/ms/-/ms-2.1.3.tgz}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/non-string resolution\.integrity/)
+  })
+
   it('rejects an invalid pnpmRegistry URL', () => {
     expect(() => parsePnpm('valid-registry.yaml', {pnpmRegistry: 'not-a-url'})).toThrow(
       /Malformed pnpm registry URL/
