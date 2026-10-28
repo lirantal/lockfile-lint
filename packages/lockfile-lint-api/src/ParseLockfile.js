@@ -33,6 +33,23 @@ const {
  * @param {string} versionText
  * @return {boolean}
  */
+function describePnpmLockfileVersion (lockfileVersion) {
+  if (lockfileVersion == null) return '(missing)'
+  if (
+    typeof lockfileVersion === 'string' ||
+    typeof lockfileVersion === 'number' ||
+    typeof lockfileVersion === 'boolean'
+  ) {
+    return String(lockfileVersion)
+  }
+  return Object.prototype.toString.call(lockfileVersion)
+}
+
+/**
+ * True for scalar lockfileVersion values of the form 9 / 9.x / 9.x.y…
+ * @param {string} versionText
+ * @return {boolean}
+ */
 function isSupportedPnpmLockfileVersion (versionText) {
   if (typeof versionText !== 'string' || versionText.length === 0) {
     return false
@@ -278,8 +295,9 @@ class ParseLockfile {
       // Accept numeric 9 / 9.x / 9.x.y forms only (reject e.g. "9.not-a-version").
       if (!isSupportedPnpmLockfileVersion(versionText)) {
         throw new Error(
-          `Unsupported pnpm lockfileVersion "${versionText ||
-            '(missing)'}"; only lockfileVersion 9.x is supported`
+          `Unsupported pnpm lockfileVersion "${describePnpmLockfileVersion(
+            lockfileVersion
+          )}"; only lockfileVersion 9.x is supported`
         )
       }
 

@@ -42,6 +42,35 @@ function assertPnpmRegistry (registry) {
  * @param {string} dependencyId
  * @param {string} resolved
  */
+function assertRemoteOrFileUrl (dependencyId, value, label) {
+  if (value.startsWith('file:')) {
+    if (!value.slice('file:'.length).trim()) {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has an empty file: ${label}`
+      )
+    }
+    return
+  }
+  let parsed
+  try {
+    parsed = new URL(value)
+  } catch (error) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" has an invalid ${label}`
+    )
+  }
+  if ((parsed.protocol !== 'http:' && parsed.protocol !== 'https:') || !parsed.hostname) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" has a ${label} that is not http(s)`
+    )
+  }
+}
+
+/**
+ * Git `resolved` values must be URLs validators can parse; otherwise host/HTTPS checks swallow the error.
+ * @param {string} dependencyId
+ * @param {string} resolved
+ */
 function assertGitResolvedUrl (dependencyId, resolved) {
   let parsed
   try {
@@ -66,11 +95,33 @@ function assertGitResolvedUrl (dependencyId, resolved) {
  * @param {string} registry
  * @return {string}
  */
-function npmTarballUrl (name, version, registry) {
+function npmTarballUrl (name, version, registry, revision) {
   const base = assertPnpmRegistry(registry)
+  if (revision != null) {
+    // pnpm fetches registry revisions from `<registry>/<name>@<version>+r<revision>`.
+    return `${base}${name}@${version}+r${revision}`
+  }
   const scopeless = name.startsWith('@') ? name.slice(name.indexOf('/') + 1) : name
   const versionWithoutBuild = version.includes('+') ? version.split('+')[0] : version
   return `${base}${name}/-/${scopeless}-${versionWithoutBuild}.tgz`
+}
+
+/**
+ * @param {*} revision
+ * @return {string|null}
+ */
+function pnpmRevisionText (revision) {
+  if (typeof revision === 'number' && Number.isInteger(revision) && revision >= 0) {
+    return String(revision)
+  }
+  if (typeof revision === 'string' && revision.length > 0 && revision.length <= 16) {
+    for (let i = 0; i < revision.length; i++) {
+      const code = revision.charCodeAt(i)
+      if (code < 48 || code > 57) return null
+    }
+    return revision
+  }
+  return null
 }
 
 /**
@@ -267,6 +318,17 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
       return normalized
     }
 
+    if (resolution.type === 'binary') {
+      if (typeof resolution.url !== 'string' || !resolution.url) {
+        throw new Error(
+          `Malformed pnpm lockfile: package entry for "${dependencyId}" has a binary resolution without a URL`
+        )
+      }
+      assertRemoteOrFileUrl(dependencyId, resolution.url, 'binary URL')
+      normalized.resolved = resolution.url
+      return normalized
+    }
+
     throw new Error(
       `Malformed pnpm lockfile: package entry for "${dependencyId}" has an incomplete or unsupported typed resolution`
     )
@@ -322,7 +384,16 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
   // Registry package: integrity-only — reconstruct tarball URL from inferred registry.
   // Prefer the alias target name/version when the id uses `npm:`.
   if (typeof resolution.integrity === 'string' && registryRef) {
-    normalized.resolved = npmTarballUrl(registryRef.name, registryRef.version, registry)
+    let revision = null
+    if (Object.prototype.hasOwnProperty.call(resolution, 'revision')) {
+      revision = pnpmRevisionText(resolution.revision)
+      if (revision == null) {
+        throw new Error(
+          `Malformed pnpm lockfile: package entry for "${dependencyId}" has an invalid resolution.revision`
+        )
+      }
+    }
+    normalized.resolved = npmTarballUrl(registryRef.name, registryRef.version, registry, revision)
     return normalized
   }
 
@@ -371,7 +442,10 @@ function resolutionFingerprint (entry) {
           type: typeof resolution.type === 'string' ? resolution.type : null,
           directory: typeof resolution.directory === 'string' ? resolution.directory : null,
           repo: typeof resolution.repo === 'string' ? resolution.repo : null,
-          commit: typeof resolution.commit === 'string' ? resolution.commit : null
+          commit: typeof resolution.commit === 'string' ? resolution.commit : null,
+          url: typeof resolution.url === 'string' ? resolution.url : null,
+          revision:
+            resolution.revision == null ? null : pnpmRevisionText(resolution.revision) || null
         }
       : null
 

@@ -512,6 +512,71 @@ describe('ParseLockfile Pnpm', () => {
     expect(lockfile.object['local@file:../pkg-1.0.0.tgz'].resolved).toEqual('file:../pkg-1.0.0.tgz')
   })
 
+  it('keeps a binary resolution URL and its integrity', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  node@22.14.0:',
+      '    resolution:',
+      '      type: binary',
+      '      archive: tarball',
+      '      url: https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz',
+      '      integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==',
+      '      bin: node',
+      ''
+    ].join('\n')
+
+    const lockfile = new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+
+    expect(lockfile.object['node@22.14.0']).toEqual({
+      version: '22.14.0',
+      integrity:
+        'sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==',
+      resolved: 'https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz'
+    })
+  })
+
+  it('reconstructs a revision-specific registry URL and conflicts on a different revision', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, revision: 1}',
+      ''
+    ].join('\n')
+    const lockfile = new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+
+    expect(lockfile.object['ms@2.1.3'].resolved).toEqual(
+      'https://registry.npmjs.org/ms@2.1.3+r1'
+    )
+
+    const conflict = [
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, revision: 1}',
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, revision: 2}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText: conflict, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/Conflicting package entries for "ms@2\.1\.3"/)
+  })
+
+  it('reports a non-scalar lockfileVersion instead of calling it missing', () => {
+    const lockfileText = ['lockfileVersion: true', 'packages: {}', ''].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/Unsupported pnpm lockfileVersion "true"/)
+  })
+
   it('rejects a hostless git repo URL', () => {
     const lockfileText = [
       "lockfileVersion: '9.0'",
