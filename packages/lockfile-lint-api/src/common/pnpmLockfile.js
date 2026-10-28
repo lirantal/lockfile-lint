@@ -2,6 +2,16 @@
 
 const DEFAULT_PNPM_REGISTRY = 'https://registry.npmjs.org'
 
+const GIT_URL_PROTOCOLS = new Set([
+  'http:',
+  'https:',
+  'ssh:',
+  'git:',
+  'git+http:',
+  'git+https:',
+  'git+ssh:'
+])
+
 /**
  * Ensure pnpmRegistry is an absolute http(s) URL (no search/hash).
  * Invalid values would produce unparsable `resolved` URLs that validators swallow.
@@ -9,20 +19,41 @@ const DEFAULT_PNPM_REGISTRY = 'https://registry.npmjs.org'
  * @return {string} registry base ending with `/`
  */
 function assertPnpmRegistry (registry) {
+  // `new URL('https://host?')` yields an empty search, so check the raw string.
+  if (typeof registry !== 'string' || registry.includes('?') || registry.includes('#')) {
+    throw new Error(`Malformed pnpm registry URL: "${registry}"`)
+  }
   let parsed
   try {
     parsed = new URL(registry)
   } catch (error) {
     throw new Error(`Malformed pnpm registry URL: "${registry}"`)
   }
-  if (
-    (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') ||
-    parsed.search ||
-    parsed.hash
-  ) {
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
     throw new Error(`Malformed pnpm registry URL: "${registry}"`)
   }
   return registry.endsWith('/') ? registry : `${registry}/`
+}
+
+/**
+ * Git `resolved` values must be URLs validators can parse; otherwise host/HTTPS checks swallow the error.
+ * @param {string} dependencyId
+ * @param {string} resolved
+ */
+function assertGitResolvedUrl (dependencyId, resolved) {
+  let parsed
+  try {
+    parsed = new URL(resolved)
+  } catch (error) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" has an invalid git repo URL`
+    )
+  }
+  if (!GIT_URL_PROTOCOLS.has(parsed.protocol)) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" has an unsupported git repo URL`
+    )
+  }
 }
 
 /**
@@ -175,7 +206,12 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     normalized.integrity = resolution.integrity
   }
 
-  if (typeof resolution.tarball === 'string') {
+  if (Object.prototype.hasOwnProperty.call(resolution, 'tarball')) {
+    if (typeof resolution.tarball !== 'string') {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string resolution.tarball`
+      )
+    }
     try {
       // Validators swallow URL parse errors; reject bad tarballs here so they cannot bypass checks.
       // eslint-disable-next-line no-new
@@ -199,6 +235,11 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
   }
 
   if (resolution.type === 'git' && typeof resolution.repo === 'string') {
+    if (resolution.commit != null && typeof resolution.commit !== 'string') {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string git commit`
+      )
+    }
     const commit = typeof resolution.commit === 'string' ? resolution.commit : ''
     const repo = resolution.repo
     if (commit && repo.includes('#')) {
@@ -208,6 +249,7 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     } else {
       normalized.resolved = repo
     }
+    assertGitResolvedUrl(dependencyId, normalized.resolved)
     return normalized
   }
 

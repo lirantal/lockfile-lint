@@ -304,9 +304,46 @@ describe('ParseLockfile Pnpm', () => {
   })
 
   it('rejects an invalid pnpmRegistry URL', () => {
+    expect(() => parsePnpm('valid-registry.yaml', {pnpmRegistry: 'not-a-url'})).toThrow(
+      /Malformed pnpm registry URL/
+    )
+  })
+
+  it('rejects a pnpmRegistry that is only an empty query or hash', () => {
     expect(() =>
-      parsePnpm('valid-registry.yaml', {pnpmRegistry: 'not-a-url'})
+      parsePnpm('valid-registry.yaml', {pnpmRegistry: 'https://registry.npmjs.org?'})
     ).toThrow(/Malformed pnpm registry URL/)
+    expect(() =>
+      parsePnpm('valid-registry.yaml', {pnpmRegistry: 'https://registry.npmjs.org#'})
+    ).toThrow(/Malformed pnpm registry URL/)
+  })
+
+  it('rejects a non-string resolution.tarball instead of inventing a registry URL', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {tarball: 1, integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/non-string resolution\.tarball/)
+  })
+
+  it('rejects git resolutions whose repo is not a supported URL', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  pkg@1.0.0:',
+      '    resolution: {type: git, repo: not-a-url, commit: abcdef1}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/invalid git repo URL/)
   })
 
   it('treats a __proto__ package key as an own entry without polluting the map prototype', () => {
