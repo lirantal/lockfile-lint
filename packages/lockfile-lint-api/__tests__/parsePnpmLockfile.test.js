@@ -456,6 +456,62 @@ describe('ParseLockfile Pnpm', () => {
     ).toThrow(/non-string resolution\.tarball/)
   })
 
+  it('rejects an integrity-only ssh git id instead of rewriting it as an npm tarball', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  pkg@ssh://git.example.com/org/pkg.git:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/must use a typed git resolution/)
+  })
+
+  it('rejects a directory resolution that also sets repo', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  local@file:../pkg:',
+      '    resolution: {type: directory, directory: ../pkg, repo: https://git.example.com/org/pkg.git}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/directory resolution that also sets repo/)
+  })
+
+  it('rejects a git resolution that also sets directory', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  pkg@1.0.0:',
+      '    resolution: {type: git, repo: https://git.example.com/org/pkg.git, directory: ../pkg}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/git resolution that also sets directory/)
+  })
+
+  it('keeps a local file: tarball instead of requiring http(s)', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  local@file:../pkg-1.0.0.tgz:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, tarball: file:../pkg-1.0.0.tgz}',
+      ''
+    ].join('\n')
+
+    const lockfile = new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+
+    expect(lockfile.object['local@file:../pkg-1.0.0.tgz'].resolved).toEqual('file:../pkg-1.0.0.tgz')
+  })
+
   it('rejects a hostless git repo URL', () => {
     const lockfileText = [
       "lockfileVersion: '9.0'",

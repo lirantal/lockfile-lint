@@ -38,7 +38,7 @@ lockfile-lint --type <yarn|npm|pnpm> --path <path-to-lockfile> --validate-https 
 Supported lockfiles:
 - npm's `package-lock.json` and `npm-shrinkwrap.json`
 - yarn's `yarn.lock`
-- pnpm's `pnpm-lock.yaml` (`lockfileVersion` 9.x). Directory entries and Git entries whose repository scheme is not `https:` (for example `git+https:` or `git+ssh:`) fail `--validate-https`. A Git entry whose repository URL is already `https:` passes. Use `--allowed-schemes` instead of `--validate-https` (the flags are mutually exclusive) when you need `file:`, `git+https:`, or `git+ssh:`.
+- pnpm's `pnpm-lock.yaml` (`lockfileVersion` 9.x). `--type pnpm` can be omitted when the filename is `pnpm-lock.yaml`. Directory entries and Git entries whose repository scheme is not `https:` (for example `git+https:` or `git+ssh:`) fail `--validate-https`. A Git entry whose repository URL is already `https:` passes. Use `--allowed-schemes` instead of `--validate-https` (the flags are mutually exclusive) when you need `file:`, `git+https:`, or `git+ssh:`.
 
 # Example
 
@@ -55,6 +55,7 @@ lockfile-lint --path yarn.lock --allowed-hosts registry.yarnpkg.com --validate-h
 ```
 
 - `--type yarn` is ommitted since lockfile-lint can figure it out on it's own
+- `--type` can likewise be omitted for `pnpm-lock.yaml`; the basename selects the pnpm parser
 - `--allowed-hosts` explicitly set to match yarn's mirror host
 
 **Example 3**: allow the lockfile to contain packages served over github and so need to specify github.com as a host as well as the `git+https:` as a valid URI scheme

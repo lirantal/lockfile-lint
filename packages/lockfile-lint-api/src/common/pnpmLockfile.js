@@ -107,6 +107,7 @@ function isUrlOrPathSpec (value) {
       value.startsWith('file:') ||
       value.startsWith('git:') ||
       value.startsWith('git+') ||
+      value.startsWith('ssh:') ||
       value.startsWith('link:') ||
       value.startsWith('portal:') ||
       value.startsWith('workspace:'))
@@ -221,6 +222,11 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     }
 
     if (resolution.type === 'directory' && typeof resolution.directory === 'string') {
+      if (resolution.repo != null) {
+        throw new Error(
+          `Malformed pnpm lockfile: package entry for "${dependencyId}" has a directory resolution that also sets repo`
+        )
+      }
       const directoryPath = resolution.directory.startsWith('file:')
         ? resolution.directory.slice('file:'.length)
         : resolution.directory
@@ -238,6 +244,11 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     }
 
     if (resolution.type === 'git' && typeof resolution.repo === 'string') {
+      if (resolution.directory != null) {
+        throw new Error(
+          `Malformed pnpm lockfile: package entry for "${dependencyId}" has a git resolution that also sets directory`
+        )
+      }
       if (resolution.commit != null && typeof resolution.commit !== 'string') {
         throw new Error(
           `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string git commit`
@@ -267,6 +278,17 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
         `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string resolution.tarball`
       )
     }
+    if (resolution.tarball.startsWith('file:')) {
+      const filePath = resolution.tarball.slice('file:'.length)
+      if (!filePath.trim()) {
+        throw new Error(
+          `Malformed pnpm lockfile: package entry for "${dependencyId}" has an empty file: tarball path`
+        )
+      }
+      // pnpm records local tarball dependencies as file: URLs, not http(s).
+      normalized.resolved = resolution.tarball
+      return normalized
+    }
     let tarballUrl
     try {
       tarballUrl = new URL(resolution.tarball)
@@ -285,6 +307,16 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
     }
     normalized.resolved = resolution.tarball
     return normalized
+  }
+
+  // Git ids such as ssh:// must not be rewritten as registry tarballs.
+  if (
+    typeof rest === 'string' &&
+    (rest.startsWith('ssh:') || rest.startsWith('git:') || rest.startsWith('git+'))
+  ) {
+    throw new Error(
+      `Malformed pnpm lockfile: package entry for "${dependencyId}" is a Git dependency and must use a typed git resolution`
+    )
   }
 
   // Registry package: integrity-only — reconstruct tarball URL from inferred registry.
