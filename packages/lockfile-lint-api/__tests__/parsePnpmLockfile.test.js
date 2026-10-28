@@ -237,6 +237,40 @@ describe('ParseLockfile Pnpm', () => {
     )
   })
 
+  it('rejects package entries with an invalid resolution.tarball URL', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {tarball: not-a-valid-url, integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/invalid resolution\.tarball URL/)
+  })
+
+  it('detects conflicting resolutions that differ only by an own __proto__ key', () => {
+    const lockfileText = [
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      "    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, __proto__: a}",
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      "    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, __proto__: b}",
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/Conflicting package entries for "ms@2\.1\.3"/)
+  })
+
   it('treats a __proto__ package key as an own entry without polluting the map prototype', () => {
     const lockfileText = [
       "lockfileVersion: '9.0'",

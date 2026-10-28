@@ -87,7 +87,7 @@ When you whitelist all hosts from npmjs, yarnpkg, github or other registries you
 
 ## What about pnpm support?
 
-`lockfile-lint` supports pnpm's `pnpm-lock.yaml` for `lockfileVersion` 9.x (`--type pnpm`, or a path ending in `pnpm-lock.yaml`).
+`lockfile-lint` supports pnpm's `pnpm-lock.yaml` for `lockfileVersion` 9.x (`--type pnpm`, or a path whose basename is `pnpm-lock.yaml`).
 
 pnpm often omits tarball URLs for registry packages and stores only `integrity`. In that case lockfile-lint **infers** `https://registry.npmjs.org` when reconstructing URLs for host/HTTPS/package-name checks. Override with `--pnpm-registry` for private registries. Explicit `resolution.tarball`, git, and directory entries are validated as recorded.
 

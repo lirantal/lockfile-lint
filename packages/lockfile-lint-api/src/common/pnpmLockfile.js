@@ -153,6 +153,15 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
   }
 
   if (typeof resolution.tarball === 'string') {
+    try {
+      // Validators swallow URL parse errors; reject bad tarballs here so they cannot bypass checks.
+      // eslint-disable-next-line no-new
+      new URL(resolution.tarball)
+    } catch (error) {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has an invalid resolution.tarball URL`
+      )
+    }
     normalized.resolved = resolution.tarball
     return normalized
   }
@@ -201,7 +210,8 @@ function canonicalize (value) {
     return value.map(canonicalize)
   }
   if (value && typeof value === 'object') {
-    const sorted = {}
+    // Null prototype so an own "__proto__" key is preserved in fingerprints.
+    const sorted = Object.create(null)
     Object.keys(value)
       .sort()
       .forEach(key => {
