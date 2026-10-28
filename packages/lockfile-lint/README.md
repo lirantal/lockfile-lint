@@ -38,7 +38,7 @@ lockfile-lint --type <yarn|npm|pnpm> --path <path-to-lockfile> --validate-https 
 Supported lockfiles:
 - npm's `package-lock.json` and `npm-shrinkwrap.json`
 - yarn's `yarn.lock`
-- pnpm's `pnpm-lock.yaml` (`lockfileVersion` 9.x)
+- pnpm's `pnpm-lock.yaml` (`lockfileVersion` 9.x). Git and directory entries fail `--validate-https` by default because their schemes are not `https:`; allow them with `--allowed-schemes` (for example `https:`, `git+https:`, `file:`).
 
 # Example
 

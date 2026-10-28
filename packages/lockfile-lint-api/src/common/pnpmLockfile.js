@@ -32,7 +32,9 @@ function assertPnpmRegistry (registry) {
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
     throw new Error(`Malformed pnpm registry URL: "${registry}"`)
   }
-  return registry.endsWith('/') ? registry : `${registry}/`
+  // Use the normalized URL. Raw input can keep whitespace that `URL` trims, which
+  // would make the reconstructed tarball unparsable and bypass host/HTTPS checks.
+  return parsed.href.endsWith('/') ? parsed.href : `${parsed.href}/`
 }
 
 /**
@@ -314,7 +316,7 @@ function resolutionFingerprint (entry) {
       ? {
           integrity: typeof resolution.integrity === 'string' ? resolution.integrity : null,
           tarball: typeof resolution.tarball === 'string' ? resolution.tarball : null,
-          type: resolution.type != null ? resolution.type : null,
+          type: typeof resolution.type === 'string' ? resolution.type : null,
           directory: typeof resolution.directory === 'string' ? resolution.directory : null,
           repo: typeof resolution.repo === 'string' ? resolution.repo : null,
           commit: typeof resolution.commit === 'string' ? resolution.commit : null

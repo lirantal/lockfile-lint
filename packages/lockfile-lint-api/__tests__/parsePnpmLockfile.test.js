@@ -303,6 +303,33 @@ describe('ParseLockfile Pnpm', () => {
     })
   })
 
+  it('normalizes a whitespace-padded pnpmRegistry before reconstructing tarball URLs', () => {
+    const lockfile = parsePnpm('integrity-only-private.yaml', {
+      pnpmRegistry: ' https://npm.pkg.github.com '
+    })
+
+    expect(lockfile.object['ms@2.1.3'].resolved).toEqual(
+      'https://npm.pkg.github.com/ms/-/ms-2.1.3.tgz'
+    )
+  })
+
+  it('rejects an object-valued resolution.type without walking it as a fingerprint graph', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution:',
+      '      type:',
+      '        nested: value',
+      '      integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/incomplete or unsupported typed resolution/)
+  })
+
   it('rejects a malformed pnpmRegistry even when packages only have explicit tarballs', () => {
     expect(() => parsePnpm('private-registry.yaml', {pnpmRegistry: 'not-a-url'})).toThrow(
       /Malformed pnpm registry URL/
