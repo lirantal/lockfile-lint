@@ -11,7 +11,7 @@ importers:
 packages:
 
   ms@2.1.3:
-    resolution: {integrity: sha1-abcdef0123456789abcdef0123456789abcdef01}
+    resolution: {integrity: sha1-1ZNEUixLxGSmWnMKxpUAf9tm3Yg=}
 
 snapshots:
 

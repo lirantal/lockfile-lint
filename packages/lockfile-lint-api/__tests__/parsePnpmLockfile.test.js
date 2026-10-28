@@ -101,6 +101,55 @@ describe('ParseLockfile Pnpm', () => {
     )
   })
 
+  it('treats equivalent resolutions with different key order as the same entry', () => {
+    const lockfileText = [
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, tarball: https://registry.npmjs.org/ms/-/ms-2.1.3.tgz}',
+      '---',
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {tarball: https://registry.npmjs.org/ms/-/ms-2.1.3.tgz, integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      ''
+    ].join('\n')
+
+    const lockfile = new ParseLockfile({
+      lockfileText,
+      lockfileType: 'pnpm'
+    }).parseSync()
+
+    expect(lockfile.object['ms@2.1.3'].resolved).toEqual(
+      'https://registry.npmjs.org/ms/-/ms-2.1.3.tgz'
+    )
+  })
+
+  it('rejects trailing non-mapping YAML documents', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  ms@2.1.3:',
+      '    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}',
+      '---',
+      'not-a-mapping',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/expected a YAML mapping document/)
+  })
+
+  it('rejects a non-mapping packages section', () => {
+    const lockfileText = ["lockfileVersion: '9.0'", 'packages:', '  - ms@2.1.3', ''].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/"packages" must be a mapping/)
+  })
+
   it('fails with an explicit error for unsupported lockfileVersion', () => {
     expect(() => parsePnpm('unsupported-version.yaml')).toThrow(
       /Unsupported pnpm lockfileVersion "6\.0"; only lockfileVersion 9\.x is supported/

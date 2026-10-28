@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  Lint an npm or yarn lockfile to analyze and detect issues
+  Lint an npm, yarn, or pnpm lockfile to analyze and detect issues
 </p>
 
 <p align="center">

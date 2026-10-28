@@ -217,9 +217,7 @@ class ParseLockfile {
   }
 
   _normalizePnpmLockfile (lockfileBuffer) {
-    const documents = yaml
-      .loadAll(String(lockfileBuffer))
-      .filter(doc => doc && typeof doc === 'object')
+    const documents = yaml.loadAll(String(lockfileBuffer))
     if (documents.length === 0) {
       throw new Error('Lockfile does not seem to contain a valid pnpm dependency list')
     }
@@ -231,8 +229,18 @@ class ParseLockfile {
 
     const mergedPackages = {}
     const fingerprints = Object.create(null)
+    let sawMappingDocument = false
 
     for (const document of documents) {
+      // js-yaml yields null for empty documents between --- markers.
+      if (document == null) {
+        continue
+      }
+      if (typeof document !== 'object' || Array.isArray(document)) {
+        throw new Error('Malformed pnpm lockfile: expected a YAML mapping document')
+      }
+      sawMappingDocument = true
+
       const lockfileVersion = document.lockfileVersion
       const versionText = lockfileVersion == null ? '' : String(lockfileVersion)
       if (!/^9(\.|$)/.test(versionText)) {
@@ -243,8 +251,11 @@ class ParseLockfile {
       }
 
       const packages = document.packages
-      if (!packages || typeof packages !== 'object') {
+      if (packages == null) {
         continue
+      }
+      if (typeof packages !== 'object' || Array.isArray(packages)) {
+        throw new Error('Malformed pnpm lockfile: "packages" must be a mapping')
       }
 
       for (const [dependencyId, entry] of Object.entries(packages)) {
@@ -261,6 +272,10 @@ class ParseLockfile {
         fingerprints[dependencyId] = fingerprint
         mergedPackages[dependencyId] = normalizePnpmPackageEntry(dependencyId, entry, registry)
       }
+    }
+
+    if (!sawMappingDocument) {
+      throw new Error('Lockfile does not seem to contain a valid pnpm dependency list')
     }
 
     return mergedPackages

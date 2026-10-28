@@ -116,12 +116,34 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
 }
 
 /**
+ * Deterministic JSON for nested values (sorts object keys at every level).
+ * @param {*} value
+ * @return {*}
+ */
+function canonicalize (value) {
+  if (Array.isArray(value)) {
+    return value.map(canonicalize)
+  }
+  if (value && typeof value === 'object') {
+    const sorted = {}
+    Object.keys(value)
+      .sort()
+      .forEach(key => {
+        // eslint-disable-next-line security/detect-object-injection
+        sorted[key] = canonicalize(value[key])
+      })
+    return sorted
+  }
+  return value
+}
+
+/**
  * Stable serialization for comparing resolutions across multi-doc lockfiles.
  * @param {object} entry
  * @return {string}
  */
 function resolutionFingerprint (entry) {
-  return JSON.stringify((entry && entry.resolution) || null)
+  return JSON.stringify(canonicalize((entry && entry.resolution) || null))
 }
 
 module.exports = {
