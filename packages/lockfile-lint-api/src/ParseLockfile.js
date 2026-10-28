@@ -228,7 +228,8 @@ class ParseLockfile {
         ? this.options.pnpmRegistry
         : DEFAULT_PNPM_REGISTRY
 
-    const mergedPackages = {}
+    // Null prototype so keys like "__proto__" become own entries, not prototype pollution.
+    const mergedPackages = Object.create(null)
     const fingerprints = Object.create(null)
     let sawMappingDocument = false
 
