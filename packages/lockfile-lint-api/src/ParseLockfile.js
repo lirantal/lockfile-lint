@@ -27,6 +27,28 @@ const {
   PARSE_PNPMLOCKFILE_FAILED
 } = ERROR_MESSAGES
 
+/**
+ * True for scalar lockfileVersion values of the form 9 / 9.x / 9.x.y…
+ * @param {string} versionText
+ * @return {boolean}
+ */
+function isSupportedPnpmLockfileVersion (versionText) {
+  if (typeof versionText !== 'string' || versionText.length === 0) {
+    return false
+  }
+  const parts = versionText.split('.')
+  if (parts[0] !== '9' || parts.length > 6) {
+    return false
+  }
+  for (let i = 1; i < parts.length; i++) {
+    const part = parts[i]
+    if (!part || !/^\d+$/.test(part)) {
+      return false
+    }
+  }
+  return true
+}
+
 function isBundled (metadata) {
   return metadata.inBundle === true || metadata.bundled === true
 }
@@ -244,9 +266,12 @@ class ParseLockfile {
       sawMappingDocument = true
 
       const lockfileVersion = document.lockfileVersion
-      const versionText = lockfileVersion == null ? '' : String(lockfileVersion)
+      const versionText =
+        typeof lockfileVersion === 'string' || typeof lockfileVersion === 'number'
+          ? String(lockfileVersion)
+          : ''
       // Accept numeric 9 / 9.x / 9.x.y forms only (reject e.g. "9.not-a-version").
-      if (!/^9(\.\d+)*$/.test(versionText)) {
+      if (!isSupportedPnpmLockfileVersion(versionText)) {
         throw new Error(
           `Unsupported pnpm lockfileVersion "${versionText ||
             '(missing)'}"; only lockfileVersion 9.x is supported`
