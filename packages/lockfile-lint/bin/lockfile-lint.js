@@ -100,6 +100,7 @@ async function run () {
       result = main.runValidators({
         path: lockfilePath,
         type: config.type,
+        pnpmRegistry: config['pnpm-registry'],
         validators
       })
     } catch (errorPayload) {

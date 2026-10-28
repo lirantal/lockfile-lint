@@ -1,0 +1,18 @@
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    dependencies:
+      local-lib:
+        specifier: file:../local-pkg
+        version: file:../local-pkg
+
+packages:
+
+  local-lib@file:../local-pkg:
+    resolution: {directory: ../local-pkg, type: directory}
+
+snapshots:
+
+  local-lib@file:../local-pkg: {}

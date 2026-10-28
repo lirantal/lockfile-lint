@@ -20,14 +20,15 @@ module.exports = {
   ValidateIntegrityManager
 }
 
-function ValidateSchemeManager ({path, type, validatorValues, validatorOptions}) {
+function ValidateSchemeManager ({path, type, pnpmRegistry, validatorValues, validatorOptions}) {
   debug(
     `validate-scheme-manager invoked with validator options: ${JSON.stringify(validatorValues)}`
   )
 
   const options = {
     lockfilePath: path,
-    lockfileType: type
+    lockfileType: type,
+    pnpmRegistry
   }
 
   const parser = new ParseLockfile(options)
@@ -37,12 +38,13 @@ function ValidateSchemeManager ({path, type, validatorValues, validatorOptions})
   return validator.validate(validatorValues)
 }
 
-function ValidateHostManager ({path, type, validatorValues, validatorOptions}) {
+function ValidateHostManager ({path, type, pnpmRegistry, validatorValues, validatorOptions}) {
   debug(`validate-host-manager invoked with validator options: ${JSON.stringify(validatorValues)}`)
 
   const options = {
     lockfilePath: path,
-    lockfileType: type
+    lockfileType: type,
+    pnpmRegistry
   }
 
   const parser = new ParseLockfile(options)
@@ -70,12 +72,13 @@ function ValidateHostManager ({path, type, validatorValues, validatorOptions}) {
   return validationResult
 }
 
-function ValidateHttpsManager ({path, type, validatorValues, validatorOptions}) {
+function ValidateHttpsManager ({path, type, pnpmRegistry, validatorValues, validatorOptions}) {
   debug(`validate-host-manager invoked with validator options: ${JSON.stringify(validatorValues)}`)
 
   const options = {
     lockfilePath: path,
-    lockfileType: type
+    lockfileType: type,
+    pnpmRegistry
   }
 
   const parser = new ParseLockfile(options)
@@ -85,7 +88,7 @@ function ValidateHttpsManager ({path, type, validatorValues, validatorOptions}) 
   return validator.validate()
 }
 
-function ValidatePackageNamesManager ({path, type, validatorValues, validatorOptions}) {
+function ValidatePackageNamesManager ({path, type, pnpmRegistry, validatorValues, validatorOptions}) {
   debug(
     `validate-package-names-manager invoked with validator options: ${JSON.stringify(
       validatorValues
@@ -94,7 +97,8 @@ function ValidatePackageNamesManager ({path, type, validatorValues, validatorOpt
 
   const options = {
     lockfilePath: path,
-    lockfileType: type
+    lockfileType: type,
+    pnpmRegistry
   }
 
   const parser = new ParseLockfile(options)
@@ -105,12 +109,13 @@ function ValidatePackageNamesManager ({path, type, validatorValues, validatorOpt
   return validator.validate(packageNameAliases)
 }
 
-function ValidateUrlManager ({path, type, validatorValues, validatorOptions}) {
+function ValidateUrlManager ({path, type, pnpmRegistry, validatorValues, validatorOptions}) {
   debug(`validate-url-manager invoked with validator options: ${JSON.stringify(validatorValues)}`)
 
   const options = {
     lockfilePath: path,
-    lockfileType: type
+    lockfileType: type,
+    pnpmRegistry
   }
 
   const parser = new ParseLockfile(options)
@@ -120,14 +125,15 @@ function ValidateUrlManager ({path, type, validatorValues, validatorOptions}) {
   return validator.validate(validatorValues, validatorOptions)
 }
 
-function ValidateIntegrityManager ({path, type, validatorValues, validatorOptions}) {
+function ValidateIntegrityManager ({path, type, pnpmRegistry, validatorValues, validatorOptions}) {
   debug(
     `validate-integrity-manager invoked with validator options: ${JSON.stringify(validatorValues)}`
   )
 
   const options = {
     lockfilePath: path,
-    lockfileType: type
+    lockfileType: type,
+    pnpmRegistry
   }
 
   const parser = new ParseLockfile(options)

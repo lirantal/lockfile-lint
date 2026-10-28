@@ -1,0 +1,19 @@
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    dependencies:
+      left-pad:
+        specifier: https://registry.npmmirror.com/left-pad/-/left-pad-1.3.0.tgz
+        version: https://registry.npmmirror.com/left-pad/-/left-pad-1.3.0.tgz
+
+packages:
+
+  left-pad@https://registry.npmmirror.com/left-pad/-/left-pad-1.3.0.tgz:
+    resolution: {integrity: sha512-XI5MPzVNApjAyhQzphX8BkmKsKUxD4LdyK24iZeQGinBN9yTQT3bFlCBy/aVx2HrNcqQGsdot8ghrjyrvMCoEA==, tarball: https://registry.npmmirror.com/left-pad/-/left-pad-1.3.0.tgz}
+    version: 1.3.0
+
+snapshots:
+
+  left-pad@https://registry.npmmirror.com/left-pad/-/left-pad-1.3.0.tgz: {}
