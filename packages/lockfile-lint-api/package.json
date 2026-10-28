@@ -1,7 +1,7 @@
 {
   "name": "lockfile-lint-api",
   "version": "5.10.0",
-  "description": "Lint an npm or yarn lockfile to analyze and detect issues",
+  "description": "Lint an npm, yarn, or pnpm lockfile to analyze and detect issues",
   "main": "index.js",
   "engines": {
     "node": ">=16.0.0"
@@ -40,7 +40,8 @@
     "linter",
     "parse",
     "npm",
-    "yarn"
+    "yarn",
+    "pnpm"
   ],
   "homepage": "https://github.com/lirantal/lockfile-lint",
   "bugs": {
@@ -54,6 +55,7 @@
   "dependencies": {
     "@yarnpkg/parsers": "^3.0.0-rc.48.1",
     "debug": "^4.3.4",
+    "js-yaml": "^4.1.0",
     "object-hash": "^3.0.0"
   },
   "devDependencies": {

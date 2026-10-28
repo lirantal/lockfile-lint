@@ -1,0 +1,24 @@
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    dependencies:
+      is-number:
+        specifier: git+https://git.example.com/jonschlinkert/is-number.git#98e8ff1da1a89f93d1397a24d7413ed15421c139
+        version: git+https://git.example.com/jonschlinkert/is-number.git#98e8ff1da1a89f93d1397a24d7413ed15421c139
+
+packages:
+
+  is-number@git+https://git.example.com/jonschlinkert/is-number.git#98e8ff1da1a89f93d1397a24d7413ed15421c139:
+    resolution:
+      {
+        type: git,
+        repo: git+https://git.example.com/jonschlinkert/is-number.git,
+        commit: 98e8ff1da1a89f93d1397a24d7413ed15421c139
+      }
+    version: 7.0.0
+
+snapshots:
+
+  is-number@git+https://git.example.com/jonschlinkert/is-number.git#98e8ff1da1a89f93d1397a24d7413ed15421c139: {}

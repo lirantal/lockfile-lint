@@ -33,7 +33,7 @@ describe('ParseLockfile', () => {
     expect(() => {
       parser.parseSync()
     }).toThrowError(
-      'Unable to find relevant lockfile parser for type "meow", the currently available options are npm,yarn.'
+      'Unable to find relevant lockfile parser for type "meow", the currently available options are npm,yarn,pnpm.'
     )
   })
 

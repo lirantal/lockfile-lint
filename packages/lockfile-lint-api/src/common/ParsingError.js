@@ -11,7 +11,8 @@ const ERROR_MESSAGES = {
     `Unable to find relevant lockfile parser for "${path}", consider passing the --type option.`,
   READ_FAILED: path => `Unable to read lockfile "${path}"`,
   PARSE_NPMLOCKFILE_FAILED: path => `Unable to parse npm lockfile "${path}"`,
-  PARSE_YARNLOCKFILE_FAILED: path => `Unable to parse yarn lockfile "${path}"`
+  PARSE_YARNLOCKFILE_FAILED: path => `Unable to parse yarn lockfile "${path}"`,
+  PARSE_PNPMLOCKFILE_FAILED: path => `Unable to parse pnpm lockfile "${path}"`
 }
 
 class ParsingError extends Error {
