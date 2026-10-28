@@ -12,6 +12,7 @@ const {VERIFIED_BUNDLE, hasStrictIntegrity, isIntegrityExempt} = require('./comm
 const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
 const {
   DEFAULT_PNPM_REGISTRY,
+  assertPnpmPackageEntry,
   normalizePnpmPackageEntry,
   resolutionFingerprint
 } = require('./common/pnpmLockfile')
@@ -259,6 +260,7 @@ class ParseLockfile {
       }
 
       for (const [dependencyId, entry] of Object.entries(packages)) {
+        assertPnpmPackageEntry(dependencyId, entry)
         const fingerprint = resolutionFingerprint(entry)
         if (Object.prototype.hasOwnProperty.call(fingerprints, dependencyId)) {
           if (fingerprints[dependencyId] !== fingerprint) {
