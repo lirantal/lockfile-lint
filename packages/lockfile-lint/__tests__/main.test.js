@@ -307,7 +307,9 @@ describe('Main CLI logic', () => {
       expect(result.validatorCount).toEqual(1)
       expect(result.validatorSuccesses).toEqual(1)
     })
+  })
 
+  describe('pnpm', () => {
     test('should succeed validating a pnpm-lock.yaml registry file', () => {
       const lockfilePath = path.join(
         __dirname,

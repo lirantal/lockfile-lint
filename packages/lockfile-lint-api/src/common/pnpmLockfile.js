@@ -214,12 +214,19 @@ function canonicalize (value) {
 }
 
 /**
- * Stable serialization for comparing resolutions across multi-doc lockfiles.
+ * Stable serialization for comparing package entries across multi-doc lockfiles.
+ * Includes resolution and version so differing versions are treated as conflicts
+ * even when the resolution object matches.
  * @param {object} entry
  * @return {string}
  */
 function resolutionFingerprint (entry) {
-  return JSON.stringify(canonicalize((entry && entry.resolution) || null))
+  return JSON.stringify(
+    canonicalize({
+      resolution: (entry && entry.resolution) || null,
+      version: entry && typeof entry.version === 'string' ? entry.version : null
+    })
+  )
 }
 
 module.exports = {
