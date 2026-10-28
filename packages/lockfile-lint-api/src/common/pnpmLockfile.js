@@ -51,7 +51,7 @@ function assertGitResolvedUrl (dependencyId, resolved) {
       `Malformed pnpm lockfile: package entry for "${dependencyId}" has an invalid git repo URL`
     )
   }
-  if (!GIT_URL_PROTOCOLS.has(parsed.protocol)) {
+  if (!GIT_URL_PROTOCOLS.has(parsed.protocol) || !parsed.hostname) {
     throw new Error(
       `Malformed pnpm lockfile: package entry for "${dependencyId}" has an unsupported git repo URL`
     )
@@ -219,13 +219,20 @@ function normalizePnpmPackageEntry (dependencyId, entry, registry) {
         `Malformed pnpm lockfile: package entry for "${dependencyId}" has a non-string resolution.tarball`
       )
     }
+    let tarballUrl
     try {
-      // Validators swallow URL parse errors; reject bad tarballs here so they cannot bypass checks.
-      // eslint-disable-next-line no-new
-      new URL(resolution.tarball)
+      tarballUrl = new URL(resolution.tarball)
     } catch (error) {
       throw new Error(
         `Malformed pnpm lockfile: package entry for "${dependencyId}" has an invalid resolution.tarball URL`
+      )
+    }
+    // Host checks allow an empty hostname, so only http(s) tarballs with a host are safe to return.
+    const tarballIsHttp =
+      (tarballUrl.protocol === 'http:' || tarballUrl.protocol === 'https:') && tarballUrl.hostname
+    if (!tarballIsHttp) {
+      throw new Error(
+        `Malformed pnpm lockfile: package entry for "${dependencyId}" has a resolution.tarball URL that is not http(s)`
       )
     }
     normalized.resolved = resolution.tarball
