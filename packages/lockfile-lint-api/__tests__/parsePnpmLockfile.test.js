@@ -164,6 +164,44 @@ describe('ParseLockfile Pnpm', () => {
     ).toThrow(/expected a YAML mapping document/)
   })
 
+  it('rejects a timestamp used as the packages mapping', () => {
+    const lockfileText = ["lockfileVersion: '9.0'", 'packages: 2024-01-01', ''].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/"packages" must be a mapping/)
+  })
+
+  it('rejects a typed resolution that also sets a tarball', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  pkg@1.0.0:',
+      '    resolution: {type: git, tarball: https://registry.npmjs.org/ms/-/ms-2.1.3.tgz}',
+      ''
+    ].join('\n')
+
+    expect(() =>
+      new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    ).toThrow(/both a typed resolution and a tarball/)
+  })
+
+  it('keeps an https git repository scheme so HTTPS validation can pass', () => {
+    const lockfileText = [
+      "lockfileVersion: '9.0'",
+      'packages:',
+      '  pkg@1.0.0:',
+      '    resolution: {type: git, repo: https://git.example.com/org/pkg.git, commit: abcdef1}',
+      ''
+    ].join('\n')
+
+    const lockfile = new ParseLockfile({lockfileText, lockfileType: 'pnpm'}).parseSync()
+    const pkg = Object.values(lockfile.object)[0]
+
+    expect(pkg.resolved).toEqual('https://git.example.com/org/pkg.git#abcdef1')
+    expect(new ValidateHttps({packages: lockfile.object}).validate().type).toEqual('success')
+  })
+
   it('rejects a non-mapping packages section', () => {
     const lockfileText = ["lockfileVersion: '9.0'", 'packages:', '  - ms@2.1.3', ''].join('\n')
 
