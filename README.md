@@ -87,9 +87,9 @@ When you whitelist all hosts from npmjs, yarnpkg, github or other registries you
 
 ## What about pnpm support?
 
-pnpm doesn't maintain the tarball source of an npm package so unlike yarn, and npm, there's no way to inject an attacker-controlled malicious source file in `pnpm-lock.yaml`. Other vectors that were explored were to inject new packages into the lockfile (that aren't in `package.json`) yet pnpm isn't prone to these malicious attempts and would not install them.
+`lockfile-lint` supports pnpm's `pnpm-lock.yaml` for `lockfileVersion` 9.x (`--type pnpm`, or a path ending in `pnpm-lock.yaml`).
 
-If you have witnessed a possible attack vector on pnpm's lockfile, please open an issue with reproducible steps.
+pnpm often omits tarball URLs for registry packages and stores only `integrity`. In that case lockfile-lint **infers** `https://registry.npmjs.org` when reconstructing URLs for host/HTTPS/package-name checks. Override with `--pnpm-registry` for private registries. Explicit `resolution.tarball`, git, and directory entries are validated as recorded.
 
 ## How is this different from `npm audit`?
 

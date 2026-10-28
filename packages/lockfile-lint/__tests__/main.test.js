@@ -307,5 +307,62 @@ describe('Main CLI logic', () => {
       expect(result.validatorCount).toEqual(1)
       expect(result.validatorSuccesses).toEqual(1)
     })
+
+    test('should succeed validating a pnpm-lock.yaml registry file', () => {
+      const lockfilePath = path.join(
+        __dirname,
+        '../../lockfile-lint-api/__tests__/__fixtures__/pnpm/valid-registry.yaml'
+      )
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: 'pnpm',
+        validators: [
+          {name: 'validateHosts', values: ['npm']},
+          {name: 'validateHttps'},
+          {name: 'validateIntegrity'},
+          {name: 'ValidatePackageNames'}
+        ]
+      })
+
+      expect(result.validatorFailures).toEqual(0)
+      expect(result.validatorCount).toEqual(4)
+      expect(result.validatorSuccesses).toEqual(4)
+    })
+
+    test('should fail validating a pnpm lockfile with a disallowed host', () => {
+      const lockfilePath = path.join(
+        __dirname,
+        '../../lockfile-lint-api/__tests__/__fixtures__/pnpm/bad-host.yaml'
+      )
+      const result = main.runValidators({
+        path: lockfilePath,
+        type: 'pnpm',
+        validators: [{name: 'validateHosts', values: ['npm']}]
+      })
+
+      expect(result.validatorFailures).toEqual(1)
+      expect(result.validatorSuccesses).toEqual(0)
+    })
+
+    test('should use pnpmRegistry when reconstructing integrity-only URLs', () => {
+      const lockfilePath = path.join(
+        __dirname,
+        '../../lockfile-lint-api/__tests__/__fixtures__/pnpm/integrity-only-private.yaml'
+      )
+      const failing = main.runValidators({
+        path: lockfilePath,
+        type: 'pnpm',
+        validators: [{name: 'validateHosts', values: ['npm.pkg.github.com']}]
+      })
+      const passing = main.runValidators({
+        path: lockfilePath,
+        type: 'pnpm',
+        pnpmRegistry: 'https://npm.pkg.github.com',
+        validators: [{name: 'validateHosts', values: ['npm.pkg.github.com']}]
+      })
+
+      expect(failing.validatorFailures).toEqual(1)
+      expect(passing.validatorFailures).toEqual(0)
+    })
   })
 })

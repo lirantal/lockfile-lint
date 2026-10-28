@@ -1,0 +1,19 @@
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    dependencies:
+      ms:
+        specifier: https://registry.npmjs.org/evil/-/evil-1.0.0.tgz
+        version: https://registry.npmjs.org/evil/-/evil-1.0.0.tgz
+
+packages:
+
+  ms@https://registry.npmjs.org/evil/-/evil-1.0.0.tgz:
+    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==, tarball: https://registry.npmjs.org/evil/-/evil-1.0.0.tgz}
+    version: 1.0.0
+
+snapshots:
+
+  ms@https://registry.npmjs.org/evil/-/evil-1.0.0.tgz: {}

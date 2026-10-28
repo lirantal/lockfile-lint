@@ -53,7 +53,12 @@ module.exports = async (argv, exitProcess = false, searchFrom = process.cwd()) =
       type: {
         alias: ['t'],
         type: 'string',
-        describe: 'lockfile type, options are "npm" or "yarn"'
+        describe: 'lockfile type, options are "npm", "yarn", or "pnpm"'
+      },
+      'pnpm-registry': {
+        type: 'string',
+        describe:
+          'registry base URL used to reconstruct tarball URLs for pnpm packages that only record integrity (inferred default: https://registry.npmjs.org)'
       },
       'validate-https': {
         alias: ['s'],

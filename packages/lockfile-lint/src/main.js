@@ -19,7 +19,7 @@ const validatorFunctions = new Map([
   ['validateIntegrity', ValidateIntegrityManager]
 ])
 
-function runValidators ({type, path, validators} = {}) {
+function runValidators ({type, path, validators, pnpmRegistry} = {}) {
   let validatorCount = 0
   let validatorFailures = 0
   let validatorSuccesses = 0
@@ -42,6 +42,7 @@ function runValidators ({type, path, validators} = {}) {
     const validationResult = validatorFunction({
       path,
       type,
+      pnpmRegistry,
       validatorValues: validator.values,
       validatorOptions: validator.options
     })

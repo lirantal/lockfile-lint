@@ -32,12 +32,13 @@ npm install --save lockfile-lint
 `lockfile-lint` can be installed per a project scope, or globally and exposes a `lockfile-lint` executable that should be practiced during builds, CIs, and general static code analysis procedures to ensure that lockfiles are kept up to date with pre-defined security and usage policies.
 
 ```bash
-lockfile-lint --type <yarn|npm> --path <path-to-lockfile> --validate-https --allowed-hosts <host-to-match> --allowed-urls <urls-to-match>
+lockfile-lint --type <yarn|npm|pnpm> --path <path-to-lockfile> --validate-https --allowed-hosts <host-to-match> --allowed-urls <urls-to-match>
 ```
 
 Supported lockfiles:
 - npm's `package-lock.json` and `npm-shrinkwrap.json`
 - yarn's `yarn.lock`
+- pnpm's `pnpm-lock.yaml` (`lockfileVersion` 9.x)
 
 # Example
 
@@ -79,7 +80,8 @@ lockfile-lint --path yarn.lock --allowed-hosts yarn --allowed-urls https://githu
 | command line argument            | description                                                                                                                                                                                                                                                                           | implemented   |
 |----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
 | `--path`, `-p`                   | path to the lockfile but you can also provide a glob matching pattern as long as it isn't expanded by a shell like bash or zsh. If that's the case, you can provide it as a string, for example: `-p '/Users/lirantal/repos/**/package-lock.json'` to match multiple lockfiles        | ✅            |
-| `--type`, `-t`                   | lockfile type, options are `npm` or `yarn`                                                                                                                                                                                                                                            | ✅            |
+| `--type`, `-t`                   | lockfile type, options are `npm`, `yarn`, or `pnpm`                                                                                                                                                                                                                                   | ✅            |
+| `--pnpm-registry`                | registry base URL used to reconstruct tarball URLs for pnpm packages that only record integrity (inferred default: `https://registry.npmjs.org`)                                                                                                                                      | ✅            |
 | `--format`, `-f`                 | sets what type of report output is desired, one of [ `pretty`, `plain` ] with `plain` removing colors & status symbols from output                                                                                                                                                    | ✅            |
 | `--validate-https`, `-s`         | validates the use of HTTPS as protocol schema for all resources in the lockfile                                                                                                                                                                                                       | ✅            |
 | `--allowed-hosts`, `-a`          | validates a list of allowed hosts to be used for all resources in the lockfile. Supported short-hands aliases are `npm`, `yarn`, and `verdaccio` which will match URLs `https://registry.npmjs.org`, `https://registry.yarnpkg.com` and `https://registry.verdaccio.org` respectively | ✅            |

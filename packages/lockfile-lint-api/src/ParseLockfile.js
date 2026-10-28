@@ -6,9 +6,15 @@ const debug = require('debug')('lockfile-lint')
 
 const path = require('path')
 const yarnParseSyml = require('@yarnpkg/parsers').parseSyml
+const yaml = require('js-yaml')
 const hash = require('object-hash')
 const {VERIFIED_BUNDLE, hasStrictIntegrity, isIntegrityExempt} = require('./common/IntegrityPolicy')
 const {ParsingError, ERROR_MESSAGES} = require('./common/ParsingError')
+const {
+  DEFAULT_PNPM_REGISTRY,
+  normalizePnpmPackageEntry,
+  resolutionFingerprint
+} = require('./common/pnpmLockfile')
 const {
   NO_OPTIONS,
   NO_LOCKFILE,
@@ -16,7 +22,8 @@ const {
   NO_PARSER_FOR_TYPE,
   READ_FAILED,
   PARSE_NPMLOCKFILE_FAILED,
-  PARSE_YARNLOCKFILE_FAILED
+  PARSE_YARNLOCKFILE_FAILED,
+  PARSE_PNPMLOCKFILE_FAILED
 } = ERROR_MESSAGES
 
 function isBundled (metadata) {
@@ -85,6 +92,8 @@ class ParseLockfile {
    * @param {string} [options.lockfileText] - utf-8 string content of the lockfile
    * @param {string} options.lockfileType - the package manager type
    * for lockfile
+   * @param {string} [options.pnpmRegistry] - registry base URL used to reconstruct
+   * tarball URLs for pnpm integrity-only packages (default: https://registry.npmjs.org)
    */
   constructor (options) {
     if (!options || typeof options !== 'object') {
@@ -98,6 +107,7 @@ class ParseLockfile {
     this.options.lockfilePath = options.lockfilePath
     this.options.lockfileText = options.lockfileText
     this.options.lockfileType = options.lockfileType
+    this.options.pnpmRegistry = options.pnpmRegistry
   }
 
   /**
@@ -142,7 +152,8 @@ class ParseLockfile {
       npm: this.parseNpmLockfile,
       npmjs: this.parseNpmLockfile,
       yarn: this.parseYarnLockfile,
-      yarnpkg: this.parseYarnLockfile
+      yarnpkg: this.parseYarnLockfile,
+      pnpm: this.parsePnpmLockfile
     }
 
     let resolver
@@ -160,7 +171,8 @@ class ParseLockfile {
   resolvePkgMgrByFilename () {
     const lockfileResolverByFilename = {
       'package-lock.json': this.parseNpmLockfile,
-      'yarn.lock': this.parseYarnLockfile
+      'yarn.lock': this.parseYarnLockfile,
+      'pnpm-lock.yaml': this.parsePnpmLockfile
     }
 
     const pathInfo = path.parse(this.options.lockfilePath)
@@ -177,6 +189,96 @@ class ParseLockfile {
       throw new ParsingError(PARSE_YARNLOCKFILE_FAILED, this.options.lockfilePath, error)
     }
     return parsedFile
+  }
+
+  parsePnpmLockfile (lockfileBuffer) {
+    let normalizedPackages
+    try {
+      normalizedPackages = this._normalizePnpmLockfile(lockfileBuffer)
+    } catch (error) {
+      if (error instanceof ParsingError) {
+        throw error
+      }
+      const parsingError = new ParsingError(
+        PARSE_PNPMLOCKFILE_FAILED,
+        this.options.lockfilePath,
+        error
+      )
+      if (error && error.message) {
+        parsingError.message = `${parsingError.message}: ${error.message}`
+      }
+      throw parsingError
+    }
+
+    return {
+      type: 'success',
+      object: normalizedPackages
+    }
+  }
+
+  _normalizePnpmLockfile (lockfileBuffer) {
+    const documents = yaml.loadAll(String(lockfileBuffer))
+    if (documents.length === 0) {
+      throw new Error('Lockfile does not seem to contain a valid pnpm dependency list')
+    }
+
+    const registry =
+      typeof this.options.pnpmRegistry === 'string' && this.options.pnpmRegistry
+        ? this.options.pnpmRegistry
+        : DEFAULT_PNPM_REGISTRY
+
+    const mergedPackages = {}
+    const fingerprints = Object.create(null)
+    let sawMappingDocument = false
+
+    for (const document of documents) {
+      // js-yaml yields null for empty documents between --- markers.
+      if (document == null) {
+        continue
+      }
+      if (typeof document !== 'object' || Array.isArray(document)) {
+        throw new Error('Malformed pnpm lockfile: expected a YAML mapping document')
+      }
+      sawMappingDocument = true
+
+      const lockfileVersion = document.lockfileVersion
+      const versionText = lockfileVersion == null ? '' : String(lockfileVersion)
+      if (!/^9(\.|$)/.test(versionText)) {
+        throw new Error(
+          `Unsupported pnpm lockfileVersion "${versionText ||
+            '(missing)'}"; only lockfileVersion 9.x is supported`
+        )
+      }
+
+      const packages = document.packages
+      if (packages == null) {
+        continue
+      }
+      if (typeof packages !== 'object' || Array.isArray(packages)) {
+        throw new Error('Malformed pnpm lockfile: "packages" must be a mapping')
+      }
+
+      for (const [dependencyId, entry] of Object.entries(packages)) {
+        const fingerprint = resolutionFingerprint(entry)
+        if (Object.prototype.hasOwnProperty.call(fingerprints, dependencyId)) {
+          if (fingerprints[dependencyId] !== fingerprint) {
+            throw new Error(
+              `Conflicting package entries for "${dependencyId}" across pnpm lockfile documents`
+            )
+          }
+          continue
+        }
+
+        fingerprints[dependencyId] = fingerprint
+        mergedPackages[dependencyId] = normalizePnpmPackageEntry(dependencyId, entry, registry)
+      }
+    }
+
+    if (!sawMappingDocument) {
+      throw new Error('Lockfile does not seem to contain a valid pnpm dependency list')
+    }
+
+    return mergedPackages
   }
 
   parseNpmLockfile (lockfileBuffer) {

@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  Lint an npm or yarn lockfile to analyze and detect issues
+  Lint an npm, yarn, or pnpm lockfile to analyze and detect issues
 </p>
 
 <p align="center">
@@ -18,7 +18,11 @@
 
 # About
 
-Lints an npm or yarn lockfile to analyze and detect issues
+Lints an npm, yarn, or pnpm lockfile to analyze and detect issues
+
+`ParseLockfile` accepts `lockfileType: 'npm' | 'yarn' | 'pnpm'`. For pnpm
+(`lockfileVersion` 9.x), integrity-only registry packages get a reconstructed
+tarball URL using `pnpmRegistry` (inferred default: `https://registry.npmjs.org`).
 
 # Install
 
