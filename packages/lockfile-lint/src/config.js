@@ -2,12 +2,17 @@
 
 const debug = require('debug')('lockfile-lint')
 const yargs = require('yargs')
-const {cosmiconfig} = require('cosmiconfig')
+const {lilconfig} = require('lilconfig')
+const yaml = require('yaml')
+
+// the extension-less .lockfile-lintrc is parsed as YAML (a superset of JSON),
+// matching the behavior of cosmiconfig which lilconfig replaced
+const yamlLoader = (_, content) => yaml.parse(content)
 
 module.exports = async (argv, exitProcess = false, searchFrom = process.cwd()) => {
-  let cosmiconfigResult
+  let searchResult
   try {
-    const explorer = cosmiconfig('lockfile-lint', {
+    const explorer = lilconfig('lockfile-lint', {
       searchPlaces: [
         'package.json',
         '.lockfile-lintrc',
@@ -20,20 +25,26 @@ module.exports = async (argv, exitProcess = false, searchFrom = process.cwd()) =
         'lockfile-lint.config.js',
         'lockfile-lint.config.cjs',
         'lockfile-lint.config.mjs'
-      ]
+      ],
+      loaders: {
+        '.yaml': yamlLoader,
+        '.yml': yamlLoader,
+        noExt: yamlLoader
+      },
+      // only search in searchFrom itself, without traversing up the
+      // directory tree, matching cosmiconfig@9's default search strategy
+      stopDir: searchFrom
     })
-    cosmiconfigResult = await explorer.search(searchFrom)
+    searchResult = await explorer.search(searchFrom)
   } catch (err) {
     debug(`error encountered while loading configuration: ${err}`)
   }
 
   let fileConfig = {}
-  if (cosmiconfigResult) {
-    fileConfig = cosmiconfigResult.config
+  if (searchResult) {
+    fileConfig = searchResult.config
     debug(
-      `loaded the following config from ${cosmiconfigResult.filepath}: ${JSON.stringify(
-        fileConfig
-      )}`
+      `loaded the following config from ${searchResult.filepath}: ${JSON.stringify(fileConfig)}`
     )
   }
 
