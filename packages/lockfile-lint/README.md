@@ -162,7 +162,7 @@ findings. This applies to both plain and pretty output.
 
 # File-Based Configuration
 
-Lockfile-lint uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) for configuration file support. This means you can configure the above options via (in order of precedence):
+Lockfile-lint uses [lilconfig](https://github.com/antonk52/lilconfig) for configuration file support. You can configure the above options via (in order of precedence):
 
 - A "lockfile-lint" key in your package.json file.
 - A .lockfile-lintrc file, written in JSON or YAML, with optional extensions: .json/.yaml/.yml (without extension takes precedence).
@@ -180,7 +180,7 @@ export default {
 }
 ```
 
-The configuration file will be resolved starting from the current working directory, and searching up the file tree until a config file is (or isn't) found. Command-line options take precedence over any file-based configuration.
+Configuration files are searched for only in the current working directory; parent directories are not searched. Run lockfile-lint from the directory containing the configuration you want to use. Command-line options take precedence over any file-based configuration.
 
 The options accepted in the configuration file are the same as the options above in camelcase (e.g. "path", "allowedHosts").
 
