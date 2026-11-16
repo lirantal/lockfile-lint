@@ -10,6 +10,37 @@ describe('ParseLockfile', () => {
     }).not.toThrowError()
   })
 
+  it.each([1, 2, 3])('infers npm-shrinkwrap.json with lockfileVersion %i', version => {
+    const metadata = {
+      version: '1.0.0',
+      resolved: 'https://registry.npmjs.org/example/-/example-1.0.0.tgz'
+    }
+    const content = version === 1
+      ? {lockfileVersion: version, dependencies: {example: metadata}}
+      : {lockfileVersion: version, packages: {'node_modules/example': metadata}}
+    const parser = new ParseLockfile({
+      lockfilePath: '/project/npm-shrinkwrap.json',
+      lockfileText: JSON.stringify(content)
+    })
+
+    const result = parser.parseSync()
+    expect(result.type).toBe('success')
+    expect(Object.values(result.object)).toEqual([expect.objectContaining(metadata)])
+  })
+
+  it('preserves explicit parser selection for npm-shrinkwrap.json', () => {
+    const parser = new ParseLockfile({
+      lockfilePath: '/project/npm-shrinkwrap.json',
+      lockfileType: 'yarn'
+    })
+    expect(parser.resolvePkgMgrForLockfile()).toBe(parser.parseYarnLockfile)
+  })
+
+  it('does not infer npm for a shrinkwrap lookalike', () => {
+    const parser = new ParseLockfile({lockfilePath: '/project/npm-shrinkwrap.json.bak'})
+    expect(() => parser.parseSync()).toThrowError('Unable to find relevant lockfile parser')
+  })
+
   it('instantiating a parser with invalid object throws an error', () => {
     expect(() => {
       new ParseLockfile()
