@@ -160,6 +160,7 @@ class ParseLockfile {
   resolvePkgMgrByFilename () {
     const lockfileResolverByFilename = {
       'package-lock.json': this.parseNpmLockfile,
+      'npm-shrinkwrap.json': this.parseNpmLockfile,
       'yarn.lock': this.parseYarnLockfile
     }
 

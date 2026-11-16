@@ -52,11 +52,14 @@ Easily invoked with npx on any project and lint it:
 npx lockfile-lint --path yarn.lock --allowed-hosts npm yarn --validate-https
 ```
 
-To lint the npm-shrinkwrap.json file, add the `--type npm` flag:
+The standard `npm-shrinkwrap.json` filename is detected automatically, like
+`package-lock.json`:
 
 ```bash
-npx lockfile-lint --path npm-shrinkwrap.json --type npm --allowed-hosts npm yarn --validate-https
+npx lockfile-lint --path npm-shrinkwrap.json --allowed-hosts npm yarn --validate-https
 ```
+
+For a nonstandard npm lockfile filename, pass `--type npm` explicitly.
 
 If you get no results, congratulations, the file passes!
 
