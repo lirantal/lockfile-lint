@@ -36,11 +36,50 @@ describe('ParseLockfile Yarn', () => {
     expect(lockfile.type).toEqual('success')
     expect(lockfile.object).toEqual(
       expect.objectContaining({
-        'debug@npm:4.1.1': expect.any(Object),
+        'debug@npm:4.1.1': expect.objectContaining({resolved: 'npm:4.1.1'}),
         'ms@npm:2.1.2': expect.any(Object),
         'ms@npm:^2.1.1': expect.any(Object),
-        'test@workspace:.': expect.any(Object)
+        'test@workspace:.': expect.objectContaining({resolved: 'workspace:.'})
       })
+    )
+  })
+
+  describe('Yarn Berry resolutions', () => {
+    function parseResolution (name, resolution) {
+      const descriptor = `${name}@npm:1.0.0`
+      const lockfileText = `__metadata:
+  version: 8
+${JSON.stringify(descriptor)}:
+  version: 1.0.0
+  resolution: ${JSON.stringify(resolution)}
+`
+      const parser = new ParseLockfile({lockfileText, lockfileType: 'yarn'})
+
+      return Object.values(parser.parseSync().object)[0]
+    }
+
+    it.each(['package-name', '@scope/package-name'])(
+      'preserves the full URL reference for %s',
+      name => {
+        const reference = 'https://registry.example/archive/package-name@1.0.0.tgz'
+
+        expect(parseResolution(name, `${name}@${reference}`).resolved).toBe(reference)
+      }
+    )
+
+    it('preserves a reference containing a nested locator', () => {
+      const reference = 'patch:package-name@npm%3A1.0.0#./fix.patch'
+
+      expect(parseResolution('package-name', `package-name@${reference}`).resolved).toBe(reference)
+    })
+
+    it.each(['package-name', '@scope/package-name@', 'package-name@unknown', '', 42])(
+      'rejects the invalid resolution %p',
+      resolution => {
+        expect(() => parseResolution('package-name', resolution)).toThrow(
+          'Unable to parse yarn lockfile'
+        )
+      }
     )
   })
 
