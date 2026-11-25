@@ -1,5 +1,14 @@
 # Change Log
 
+## 5.1.1
+
+### Patch Changes
+
+- [#249](https://github.com/lirantal/lockfile-lint/pull/249) [`79af078face4bb0504f1cb1e14606db34a6813b9`](https://github.com/lirantal/lockfile-lint/commit/79af078face4bb0504f1cb1e14606db34a6813b9) Thanks [@lirantal](https://github.com/lirantal)! - Preserve full Yarn Berry dependency references during lockfile validation and reject malformed locators.
+
+- Updated dependencies [[`79af078face4bb0504f1cb1e14606db34a6813b9`](https://github.com/lirantal/lockfile-lint/commit/79af078face4bb0504f1cb1e14606db34a6813b9)]:
+  - lockfile-lint-api@5.10.2
+
 ## 5.1.0
 
 ### Minor Changes
