@@ -19,6 +19,9 @@ const {
   PARSE_YARNLOCKFILE_FAILED
 } = ERROR_MESSAGES
 
+// Match Yarn Berry's locator boundary and retain the entire reference.
+const YARN_BERRY_LOCATOR = /^(?:@[^/]+\/[^@/]+|[^@/]+)@(.+)$/
+
 function isBundled (metadata) {
   return metadata.inBundle === true || metadata.bundled === true
 }
@@ -60,19 +63,16 @@ function yarnParseAndVerify (lockfileBuffer) {
 
   if (isYarnBerry) {
     const normalizedLockFile = {}
-    Object.entries(lockfile).forEach(([packageName, packageDetails]) => {
-      const resolution = packageDetails.resolution
-      if (resolution) {
-        const splitByAt = resolution.split('@')
-        let host
-        if (splitByAt.length > 2 && resolution[0] === '@') {
-          host = splitByAt[2]
-        } else {
-          host = splitByAt[1]
-        }
-        normalizedLockFile[packageName] = Object.assign({}, packageDetails, {resolved: host})
+    for (const [packageName, packageDetails] of Object.entries(lockfile)) {
+      if (packageName === '__metadata') continue
+
+      const resolution = packageDetails && packageDetails.resolution
+      const locator = typeof resolution === 'string' && YARN_BERRY_LOCATOR.exec(resolution)
+      if (!locator || locator[1] === 'unknown') {
+        throw Error('Lockfile contains an invalid Yarn Berry resolution')
       }
-    })
+      normalizedLockFile[packageName] = Object.assign({}, packageDetails, {resolved: locator[1]})
+    }
     return {type: 'success', object: normalizedLockFile, format: 'yarn-berry'}
   }
   return {type: 'success', object: lockfile}
