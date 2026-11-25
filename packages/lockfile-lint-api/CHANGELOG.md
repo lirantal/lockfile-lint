@@ -1,5 +1,11 @@
 # Change Log
 
+## 5.10.1
+
+### Patch Changes
+
+- [#246](https://github.com/lirantal/lockfile-lint/pull/246) [`96de1c3eebce0f233006365718d9bb44471df265`](https://github.com/lirantal/lockfile-lint/commit/96de1c3eebce0f233006365718d9bb44471df265) Thanks [@cryptostrapon](https://github.com/cryptostrapon)! - Recognize npm-shrinkwrap.json as an npm lockfile without requiring an explicit type. This also enables CLI filename inference when no configuration sets the type.
+
 ## 5.10.0
 
 ### Minor Changes
